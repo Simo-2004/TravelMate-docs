@@ -26,7 +26,7 @@ To address the outlined problem, various alternative scenarios and design option
 
 *   **Visual Design:** **Figma** was used for UI/UX prototyping, allowing the user experience to be defined in advance to avoid costly rework during the subsequent phases of the Waterfall model.
 
-<iframe src="/pics/homepage.svg" width="440px" height="935px" style="border: 1px solid #dddddd; border-radius: 30px;"></iframe>
+<iframe src="/static/pics/homepage.svg" width="440px" height="935px" style="border: 1px solid #dddddd; border-radius: 30px;"></iframe>
 
 
 ## 4. Time and Resource Estimation (Gantt Chart)
@@ -45,7 +45,7 @@ To support the design choices and tangibly assess the feasibility of the solutio
 
 
 
-<iframe src="/pics/diagramma-di-gantt.png" width="100%" height="450px" style="border: 1px solid #ddd; border-radius: 7px;"></iframe>
+<iframe src="/static/pics/diagramma-di-gantt.png" width="100%" height="450px" style="border: 1px solid #ddd; border-radius: 7px;"></iframe>
 
 
 
