@@ -1,0 +1,13 @@
+:root {
+  /* Hero section title and text */
+  --vp-home-hero-name-color: #FFC73D;
+  
+  /* Buttons text */
+  --vp-button-brand-text: #000000;
+
+  /* Brand button background and feature link text */
+  --vp-button-brand-bg: #FFC73D;
+  --vp-c-brand-1: #FFC73D;
+  --vp-c-brand-2: #d9ad31;
+  --vp-c-brand-3: #b88d1f;
+}

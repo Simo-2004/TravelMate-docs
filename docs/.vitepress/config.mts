@@ -12,7 +12,6 @@ const projectDocsSidebar = [
       { text: '2. Current System', link: '/rad/current-system' },
       {
         text: '3. Proposed System',
-        // Struttura snella: 3 file invece di 15
         items: [
           { text: 'Overview & Functional', link: '/rad/proposed-system/functional' },
           { text: '3.3 Non-Functional', link: '/rad/proposed-system/non-functional' },
@@ -64,10 +63,14 @@ export default defineConfig({
             { text: 'Architecture', link: '/flutter/architecture' },
             { text: 'State Management', link: '/flutter/state-management' },
             { text: 'Dependencies', link: '/flutter/dependencies' },
-            { text: 'Documentazione Codice (API)', link: '/api/index.html', target: '_blank' }
+            { text: 'Code Documentation (API)', link: '/api/index.html', target: '_blank' }
           ]
         }
       ]
+    },
+
+    footer: { 
+      message: 'Released under the MIT License - Icons by <a href="https://www.streamlinehq.com/">Streamline</a>',
     },
 
     socialLinks: [

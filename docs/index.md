@@ -5,6 +5,9 @@ hero:
   name: "TravelMate - Docs" 
   text: "Find a mate and start a journey!"
   tagline: "A Flutter app to find your potential travel companion."
+  image:
+    src: /pics/travelmate-logo.png
+    alt: TravelMate Logo
   actions:
     - theme: brand
       text: Getting Started
@@ -17,6 +20,16 @@ hero:
       link: https://github.com/Simo-2004/TravelMate
 
 features:
+  - icon:
+      dark: /icons/feasibility-study-dark.svg
+      light: /icons/feasibility-study-light.svg
+      width: 48
+      height: 48
+    title: Feasibility Study
+    details: A feasibility study is the first stage in the Waterfall model’s life cycle
+    link: /feasibility-study
+    linkText: Take a look to the feasibility study
+
   - icon:
       dark: /icons/rad-dark.svg
       light: /icons/rad-light.svg
@@ -58,8 +71,8 @@ features:
     linkText: API Reference
 
   - icon:
-      dark: /icons/app-dark.svg
-      light: /icons/app-light.svg
+      dark: /icons/flutter-dark.svg
+      light: /icons/flutter-light.svg
       width: 48
       height: 48
     title: Flutter Architecture
@@ -68,8 +81,8 @@ features:
     linkText: Architecture Guide
 
   - icon:
-      dark: /icons/guides-dark.svg
-      light: /icons/guides-light.svg
+      dark: /icons/state-management-dark.svg
+      light: /icons/state-management-light.svg
       width: 48
       height: 48
     title: State Management
