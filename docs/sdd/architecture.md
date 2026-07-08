@@ -1,5 +1,7 @@
 ﻿# SDD - System Design Document
 
+> **Methodological Note:** Following the sequential nature of the Waterfall model, this System Design Document (SDD) was developed strictly after the complete freezing of the requirements (RAD). It outlines the architectural and high-level structural blueprint of the application, serving as the definitive guideline for the Implementation phase.
+
 ## Architecture & Subsystems
 
 ### Overall System Architecture

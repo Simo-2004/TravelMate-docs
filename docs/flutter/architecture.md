@@ -1,5 +1,7 @@
 ﻿# Flutter Architecture
 
+> **Methodological Note:** In accordance with the Waterfall lifecycle, the Implementation (Coding) phase commenced strictly after the approval and freezing of all design specifications (SDD and ODD). The following API documentation and source code represent the exact translation of the previously frozen design into functional software modules, culminating in the *Code Freeze* milestone.
+
 ## Overview of the Flutter Application Structure
 
 TravelMate follows a **Clean Architecture** pattern with clear separation of concerns across multiple layers. The application is organized into logical modules within the `lib` directory.
