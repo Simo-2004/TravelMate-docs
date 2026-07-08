@@ -6,7 +6,7 @@ hero:
   text: "Find a mate and start a journey!"
   tagline: "A Flutter app to find your potential travel companion."
   image:
-    src: /docs/static/pics/travelmate-logo.png
+    src: /static/pics/travelmate-logo.png
     alt: TravelMate Logo
   actions:
     - theme: brand
@@ -21,8 +21,8 @@ hero:
 
 features:
   - icon:
-      dark: /docs/static/icons/feasibility-study-dark.svg
-      light: /docs/static/icons/feasibility-study-light.svg
+      dark: /static/icons/feasibility-study-dark.svg
+      light: /static/icons/feasibility-study-light.svg
       width: 48
       height: 48
     title: Feasibility Study
@@ -31,8 +31,8 @@ features:
     linkText: Take a look to the feasibility study
 
   - icon:
-      dark: /docs/static/icons/rad-dark.svg
-      light: /docs/static/icons/rad-light.svg
+      dark: /static/icons/rad-dark.svg
+      light: /static/icons/rad-light.svg
       width: 48
       height: 48
     title: RAD - Requirements Analysis
@@ -41,8 +41,8 @@ features:
     linkText: Open RAD
 
   - icon:
-      dark: /docs/static/icons/sdd-dark.svg
-      light: /docs/static/icons/sdd-light.svg
+      dark: /static/icons/sdd-dark.svg
+      light: /static/icons/sdd-light.svg
       width: 48
       height: 48
     title: SDD - System Design
@@ -51,8 +51,8 @@ features:
     linkText: Open SDD
 
   - icon:
-      dark: /docs/static/icons/odd-dark.svg
-      light: /docs/static/icons/odd-light.svg
+      dark: /static/icons/odd-dark.svg
+      light: /static/icons/odd-light.svg
       width: 48
       height: 48
     title: ODD - Object Design
@@ -61,8 +61,8 @@ features:
     linkText: Open ODD
 
   - icon:
-      dark: /docs/static/icons/api-dark.svg
-      light: /docs/static/icons/api-light.svg
+      dark: /static/icons/api-dark.svg
+      light: /static/icons/api-light.svg
       width: 48
       height: 48
     title: API Documentation
@@ -71,8 +71,8 @@ features:
     linkText: API Reference
 
   - icon:
-      dark: /docs/static/icons/flutter-dark.svg
-      light: /docs/static/icons/flutter-light.svg
+      dark: /static/icons/flutter-dark.svg
+      light: /static/icons/flutter-light.svg
       width: 48
       height: 48
     title: Flutter Architecture
@@ -81,8 +81,8 @@ features:
     linkText: Architecture Guide
 
   - icon:
-      dark: /docs/static/icons/state-management-dark.svg
-      light: /docs/static/icons/state-management-light.svg
+      dark: /static/icons/state-management-dark.svg
+      light: /static/icons/state-management-light.svg
       width: 48
       height: 48
     title: State Management
