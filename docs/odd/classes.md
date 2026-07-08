@@ -1,6 +1,14 @@
 ﻿# ODD - Object Design Document
 
+> **Methodological Note:** In strict adherence to the Waterfall model, this Object Design Document (ODD) was produced during the System Design phase. The object-oriented blueprint and the UML diagrams presented below were generated only after the functional requirements (RAD) were fully frozen, serving as the definitive and unalterable guide for the subsequent Implementation (Coding) phase.
+
 ## Class Diagrams
+
+Below is the complete UML Class Diagram representing the system architecture.
+
+<iframe src="/static/pics/UML.png" width="100%" height="700px" style="border: 1px solid #ddd; border-radius: 7px;"></iframe>
+
+*(If you cannot view the image correctly, you can download it [by clicking here](/static/pics/UML.png)).*
 
 ### Project Overview
 
