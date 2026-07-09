@@ -18,7 +18,7 @@ The first scan provided a general overview of the system's health, highlighting 
 
 
 
-<img src="/static/pics/sonar-pre-test1.png" alt="SonarCloud Overview - Before" width="100%" style="border: 1px solid #ddd; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;" />
+<img src="/static/pics/sonar-pre-test-1.png" alt="SonarCloud Overview - Before" width="100%" style="border: 1px solid #ddd; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;" />
 
 
 
@@ -28,7 +28,7 @@ A deeper look into the codebase revealed specific areas for improvement, such as
 
 
 
-<img src="/static/pics/sonar-pre-test2.png" alt="SonarCloud Issues - Before" width="100%" style="border: 1px solid #ddd; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;" />
+<img src="/static/pics/sonar-pre-test-2.png" alt="SonarCloud Issues - Before" width="100%" style="border: 1px solid #ddd; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;" />
 
 
 
