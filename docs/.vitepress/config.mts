@@ -1,11 +1,19 @@
 import { defineConfig } from 'vitepress'
 
-// Definiamo una singola sidebar per tutti i documenti di progetto.
-// In questo modo, l'utente vede l'intero progetto (RAD, SDD, ODD) 
-// navigando in qualsiasi di queste sezioni.
-const projectDocsSidebar = [
+// Definiamo un'UNICA sidebar sequenziale che mostra l'intero Ciclo di Vita a Cascata (Waterfall).
+// L'utente vedrà tutte le 5 fasi del progetto in ordine cronologico.
+const waterfallSidebar = [
   {
-    text: 'RAD - Requirements Analysis',
+    text: 'Phase 1: Feasibility Study',
+    collapsed: false,
+    items: [
+      // Assicurati che feasibility-study.md sia nella stessa cartella base (es. docs/)
+      { text: 'Feasibility Study & Gantt', link: '/feasibility-study' }
+    ]
+  },
+  {
+    text: 'Phase 2: Requirements (RAD)',
+    collapsed: false,
     items: [
       { text: 'Overview', link: '/rad/overview' },
       { text: '1. Introduction', link: '/rad/introduction' },
@@ -22,18 +30,35 @@ const projectDocsSidebar = [
     ]
   },
   {
-    text: 'SDD - System Design',
+    text: 'Phase 3: System Design',
+    collapsed: false,
     items: [
-      { text: 'Architecture & Subsystems', link: '/sdd/architecture' },
-      { text: 'Hardware & Software Mapping', link: '/sdd/mapping' },
-      { text: 'Persistent Data', link: '/sdd/data' }
+      // SDD
+      { text: 'SDD - Architecture & Subsystems', link: '/sdd/architecture' },
+      { text: 'SDD - Hardware & Software Mapping', link: '/sdd/mapping' },
+      { text: 'SDD - Persistent Data', link: '/sdd/data' },
+      // ODD
+      { text: 'ODD - Class Diagrams (UML)', link: '/odd/classes' },
+      { text: 'ODD - Object Interfaces', link: '/odd/interfaces' }
     ]
   },
   {
-    text: 'ODD - Object Design',
+    text: 'Phase 4: Implementation',
+    collapsed: false,
     items: [
-      { text: 'Class Diagrams', link: '/odd/classes' },
-      { text: 'Object Interfaces', link: '/odd/interfaces' }
+      // Inseriamo la documentazione Flutter direttamente nella cascata!
+      { text: 'Flutter Architecture', link: '/flutter/architecture' },
+      { text: 'State Management', link: '/flutter/state-management' },
+      { text: 'Dependencies', link: '/flutter/dependencies' },
+      { text: 'Code Documentation (API)', link: '/api/index.html', target: '_blank' }
+    ]
+  },
+  {
+    text: 'Phase 5: Testing & Integration',
+    collapsed: false,
+    items: [
+      // Assicurati che system-testing.md sia nella stessa cartella base (es. docs/)
+      { text: 'System Testing (SonarCloud)', link: '/system-testing' }
     ]
   }
 ];
@@ -44,29 +69,22 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Project Docs', link: '/rad/overview' },
-      { text: 'Flutter Guide', link: '/flutter/architecture' },
+      // Modificato: il link principale ora punta all'inizio della cascata (Fase 1)
+      { text: 'Waterfall Lifecycle', link: '/feasibility-study' }, 
       { text: 'API Reference', link: '/api/index.html', target: '_blank' }
     ],
 
     sidebar: {
-      // Assegniamo la stessa sidebar condivisa a tutte le cartelle di ingegneria
-      '/rad/': projectDocsSidebar,
-      '/sdd/': projectDocsSidebar,
-      '/odd/': projectDocsSidebar,
+      // Applichiamo la STESSA sidebar universale a tutte le sezioni del sito.
+      // Così, ovunque si trovi l'utente, vedrà l'intero processo a cascata.
+      '/rad/': waterfallSidebar,
+      '/sdd/': waterfallSidebar,
+      '/odd/': waterfallSidebar,
+      '/flutter/': waterfallSidebar,
       
-      // La sidebar di Flutter rimane isolata solo per il codice
-      '/flutter/': [
-        {
-          text: 'Application Development',
-          items: [
-            { text: 'Architecture', link: '/flutter/architecture' },
-            { text: 'State Management', link: '/flutter/state-management' },
-            { text: 'Dependencies', link: '/flutter/dependencies' },
-            { text: 'Code Documentation (API)', link: '/api/index.html', target: '_blank' }
-          ]
-        }
-      ]
+      // Serve per mappare correttamente anche i due file nuovi se li hai messi nella root
+      '/feasibility-study': waterfallSidebar,
+      '/system-testing': waterfallSidebar,
     },
 
     footer: { 
