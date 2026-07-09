@@ -60,6 +60,13 @@ const waterfallSidebar = [
       // Assicurati che system-testing.md sia nella stessa cartella base (es. docs/)
       { text: 'System Testing (SonarCloud)', link: '/system-testing' }
     ]
+  },
+  {
+    text: 'Phase 6: Deployment',
+    collapsed: false,
+    items: [
+      { text: 'Release 1.0 (APK)', link: '/deployment' }
+    ]
   }
 ];
 
