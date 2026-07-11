@@ -2,15 +2,17 @@
 
 > **Methodological Note:** Following the sequential nature of the Waterfall model, this System Design Document (SDD) was developed strictly after the complete freezing of the requirements (RAD). It outlines the architectural and high-level structural blueprint of the application, serving as the definitive guideline for the Implementation phase.
 
+> **Binding scope:** This document designs the **Release 1.0** baseline — the `[R1.0 – Frozen]` requirements of the RAD, realised as a **local-first Flutter application**. The remote client-server target architecture (which serves the `[EM – Deferred]` requirements) is documented separately and *informatively* in **Annex A**; it is **not** part of the frozen design and does not bind the Implementation phase.
+
 ## Architecture & Subsystems
 
-### Overall System Architecture
+### Overall System Architecture (Release 1.0 — Binding)
 
-TravelMate follows a **3-Tier Client-Server Mobile Architecture** with a clear separation between presentation, business logic, and data layers.
+TravelMate Release 1.0 follows a **local-first, layered on-device architecture** with a clear separation between presentation, business logic, and data layers. All data is persisted locally via `SharedPreferences`; there is no network tier in the frozen baseline.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    CLIENT LAYER (Flutter Mobile App)                      │
+│                CLIENT (Flutter Application — On-Device)             │
 │  ┌─────────────────────────────────────────────────────┐  │
 │  │        Presentation Layer (Screens & Widgets)          │  │
 │  └─────────────────────────────────────────────────┘  │
@@ -20,22 +22,13 @@ TravelMate follows a **3-Tier Client-Server Mobile Architecture** with a clear s
 │  ┌─────────────────────────────────────────────────┐  │
 │  │      Data Layer (Models & Repositories)            │  │
 │  └─────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                        ↓ (Future Integration)
-┌─────────────────────────────────────────────────────────┐
-│              SERVER LAYER (Django REST API - Future)                 │
-│  ┌───────────┐  ┌──────────┐  ┌──────────┐     │
-│  │ Serializers │  │  Views   │  │ Services │     │
-│  └──────────┘  └──────────┘  └──────────┘     │
-└─────────────────────────────────────────────────────────┘
-                        ↓ (HTTP/REST)
-┌─────────────────────────────────────────────────────────┐
-│               DATABASE LAYER (PostgreSQL)                     │
-│  ┌──────┐  ┌──────┐  ┌──────┐     │
-│  │ Users  │  │  Trips  │  │ Messages │     │
-│  └──────┘  └──────┘  └──────┘     │
+│  ┌─────────────────────────────────────────────────┐  │
+│  │   Local Persistence (SharedPreferences)            │  │
+│  └─────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────┘
 ```
+
+> The 3-tier client-server design (Django REST API + PostgreSQL) is retained for completeness in **Annex A — Target Architecture (Informative, Non-Binding)** at the end of this document.
 
 ## Subsystems
 
@@ -228,11 +221,8 @@ Any layer --> Store.instance --> Centralized state
 - **Local-first** - No network required for core features
 - **Lightweight** - Minimal dependencies
 
-### Future Enhancements
-- **Backend Integration** - Add Django REST API layer
-- **Real-time Sync** - WebSocket for live updates
-- **Offline-first** - Local database (SQLite)
-- **Advanced State** - Migration to Provider/BLoC if needed
+### Evolutionary Maintenance directions (informative)
+The scalability directions that would require the remote backend — Django REST API integration, WebSocket real-time sync, networked/SQLite persistence — are consolidated in **Annex A** and are outside the frozen Release 1.0 design.
 
 ## Security Considerations
 
@@ -241,10 +231,8 @@ Any layer --> Store.instance --> Centralized state
 - Sensitive data would need encryption layer
 - No hardcoded secrets or credentials
 
-### Network Security (Future)
-- HTTPS for all API communication
-- JWT token-based authentication
-- Certificate pinning for sensitive endpoints
+### Network Security
+Not applicable to the local-first Release 1.0 (no network tier). The envisioned transport security controls (HTTPS/TLS, JWT authentication, certificate pinning) are documented in **Annex A**.
 
 ### Code Security
 - Input validation for all user inputs
@@ -291,3 +279,47 @@ App Distribution (App Store/Play Store)
 - Semantic versioning (MAJOR.MINOR.PATCH)
 - Feature branches for development
 - Release builds for distribution
+
+---
+
+## Annex A — Target Architecture (Informative, Non-Binding)
+
+> **Status:** This annex is **informative only**. It documents the envisioned remote client-server architecture that would serve the `[EM – Deferred]` requirements of the RAD. It is **not** part of the frozen Release 1.0 design and does **not** bind the Implementation, Testing, or Deployment phases of this lifecycle. Adopting any part of it constitutes **Evolutionary Maintenance** and requires a new lifecycle beginning with a dedicated Feasibility Study.
+
+### Envisioned 3-Tier Client-Server Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    CLIENT LAYER (Flutter Mobile App)                      │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │        Presentation Layer (Screens & Widgets)          │  │
+│  └─────────────────────────────────────────────────┘  │
+│  ┌─────────────────────────────────────────────────┐  │
+│  │     Business Logic Layer (State Management)          │  │
+│  └─────────────────────────────────────────────────┘  │
+│  ┌─────────────────────────────────────────────────┐  │
+│  │      Data Layer (Models & Repositories)            │  │
+│  └─────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────┘
+                        ↓ (HTTP/REST)
+┌─────────────────────────────────────────────────────────┐
+│                     SERVER LAYER (Django REST API)                  │
+│  ┌───────────┐  ┌──────────┐  ┌──────────┐     │
+│  │ Serializers │  │  Views   │  │ Services │     │
+│  └──────────┘  └──────────┘  └──────────┘     │
+└─────────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│               DATABASE LAYER (PostgreSQL)                     │
+│  ┌──────┐  ┌──────┐  ┌──────┐     │
+│  │ Users  │  │  Trips  │  │ Messages │     │
+│  └──────┘  └──────┘  └──────┘     │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Envisioned server-side concerns (informative)
+
+- **Backend integration**: Django REST API layer exposing the resources defined in the RAD interface requirements.
+- **Real-time sync**: WebSocket channel for live messaging and notifications.
+- **Networked persistence**: PostgreSQL primary store (optionally a local SQLite cache on-device).
+- **Network security**: HTTPS/TLS for all API traffic, JWT-based authentication, and certificate pinning for sensitive endpoints.

@@ -4,7 +4,7 @@
 
 ## Overview of the Flutter Application Structure
 
-TravelMate follows a **Clean Architecture** pattern with clear separation of concerns across multiple layers. The application is organized into logical modules within the `lib` directory.
+TravelMate implements the **local-first, layered on-device architecture (MVVM)** defined in the SDD and ODD, with clear separation of concerns across layers. The application is organized into logical modules within the `lib` directory. This document is the code-level view of the frozen Release 1.0 design.
 
 ## Directory Structure
 
@@ -268,11 +268,13 @@ The modular structure supports:
 - **Widget Tests**: Test individual widgets in isolation
 - **Integration Tests**: Test complete features end-to-end
 
-## Future Scalability
+## Extensibility for Evolutionary Maintenance (informative)
 
-The architecture supports:
+The layered structure keeps the frozen baseline open to future Evolutionary Maintenance lifecycles (each of which would start from its own Feasibility Study):
 - Adding new features in `/features` without affecting others
-- Extending data layer with API integration (replace catalogs)
+- Extending the data layer with API integration (replacing the catalogs)
 - Adding state management middleware (logging, analytics)
 - Implementing advanced navigation (GoRouter, AutoRoute)
 - Backend integration without major refactoring
+
+> These directions are informative and are **not** part of the Release 1.0 baseline.

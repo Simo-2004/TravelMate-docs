@@ -1,5 +1,7 @@
 ﻿# Persistent Data Management
 
+> **Binding scope:** This document designs the **Release 1.0** on-device persistence. The SQL/relational schema at the end is *informative only* (Evolutionary Maintenance) and does not bind the frozen baseline.
+
 ## Overview
 
 TravelMate uses a **local-first data management strategy** with SharedPreferences for persistent storage. This section details how data is structured, stored, retrieved, and managed.
@@ -408,9 +410,11 @@ Future<void> addMultipleBookmarks(List<SavedTripPreview> items) async {
 - Cache computed values
 - Clear unused references
 
-## Future Database Migration
+## Annex — Relational Schema (Informative, Non-Binding)
 
-### SQL Schema (When Migrating to SQLite)
+> This schema pertains to a future networked/SQLite persistence layer under Evolutionary Maintenance. It is **not** part of the frozen Release 1.0 design.
+
+### SQL Schema (candidate, when migrating to SQLite/PostgreSQL)
 
 ```sql
 CREATE TABLE users (

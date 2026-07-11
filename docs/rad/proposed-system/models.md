@@ -58,6 +58,8 @@
 
 ## 3.4.2 Use Case Model
 
+> **Scope note:** These scenarios and use cases depict the **envisioned** platform end-to-end. Within the **Release 1.0** baseline, only the on-device flows are realised — **UC2 (local search)**, **UC3 (save profile/trip)**, and the local portions of **UC8 (manage account/settings)** are `[R1.0 – Frozen]`. Use cases that depend on the remote backend — **UC1 (register), UC4 (send message), UC5/UC6 (create/join trip), UC7 (report user)** — are `[EM – Deferred]`.
+
 ### Primary Use Cases
 
 #### UC1: Register and Create Profile
@@ -291,21 +293,6 @@ REPORT (Entity)
    └─ Many-to-1: Administrator (User)
 
 NOTIFICATION (Entity)
-
-### 3.4.4 Current codebase mapping
-
-The following model classes are present in the TravelMate repository and map to the conceptual entities above (file paths indicate the concrete implementations):
-
-- `MateProfile` — `lib/shared/models/mate_profile.dart` (represents travel companion profiles used by `MateCatalog`).
-- `TripTileData` / `TripTag` — `lib/shared/models/trip_tile_data.dart` and `lib/shared/models/trip_tag.dart` (used by `TripCatalog` and UI tiles).
-- `SavedTripPreview` — `lib/shared/models/saved_trip_preview.dart` (bookmark preview model stored in `SavedBookmarksData`).
-- `PersonalProfile` / `PersonalTag` — `lib/shared/models/personal_profile.dart` and `lib/shared/models/personal_tag.dart` (user profile model with interests).
-- `PrivacySettings` / `PrivacySettingKey` — `lib/shared/models/privacy_settings.dart` (privacy configuration).
-- `SearchResearchMode` — `lib/shared/models/search_research_mode.dart` (enum switching search modes between trips and mates).
-
-Notes:
-- The repository is currently a mobile-front-end Release 1.0; several backend entities such as `User` with authentication, persistent `Trip` records, and server-side `Message` entities are represented conceptually in this RAD but are not implemented as backend models in the repository.
-- Mock catalogs (`MateCatalog`, `TripCatalog`, `TripMediaCatalog`) provide static data used by the UI; they live in `lib/shared/data/`.
 ├─ id: UUID (PK)
 ├─ user_id: UUID (FK)
 ├─ type: String (NewMessage, MatchRecommendation, etc.)
@@ -318,7 +305,26 @@ Notes:
    └─ Many-to-1: User
 ```
 
-## 3.4.4 Dynamic Model
+> **Scope note:** The object model above describes the **envisioned** data model. Entities that require the remote backend — `USER` authentication fields, server-side `TRIP`, `MESSAGE`, `CHAT_ROOM`, `REPORT`, `NOTIFICATION` — are `[EM – Deferred]`. The `[R1.0 – Frozen]` baseline persists only the on-device models listed in the codebase mapping below.
+
+### Current codebase mapping (Object Model traceability)
+
+The following model classes are present in the TravelMate repository and map to the conceptual entities above (file paths indicate the concrete implementations):
+
+- `MateProfile` — `lib/shared/models/mate_profile.dart` (represents travel companion profiles used by `MateCatalog`).
+- `TripTileData` / `TripTag` — `lib/shared/models/trip_tile_data.dart` and `lib/shared/models/trip_tag.dart` (used by `TripCatalog` and UI tiles).
+- `SavedTripPreview` — `lib/shared/models/saved_trip_preview.dart` (bookmark preview model stored in `SavedBookmarksData`).
+- `PersonalProfile` / `PersonalTag` — `lib/shared/models/personal_profile.dart` and `lib/shared/models/personal_tag.dart` (user profile model with interests).
+- `PrivacySettings` / `PrivacySettingKey` — `lib/shared/models/privacy_settings.dart` (privacy configuration).
+- `SearchResearchMode` — `lib/shared/models/search_research_mode.dart` (enum switching search modes between trips and mates).
+
+Notes:
+- The repository is the mobile-front-end Release 1.0; several backend entities such as `User` with authentication, persistent `Trip` records, and server-side `Message` entities are represented conceptually in this RAD but are `[EM – Deferred]` and not implemented as backend models in the repository.
+- Mock catalogs (`MateCatalog`, `TripCatalog`, `TripMediaCatalog`) provide static data used by the UI; they live in `lib/shared/data/`.
+
+## 3.4.5 Dynamic Model
+
+> **Scope note:** The dynamic flows below model the **envisioned** platform. The Authentication Flow and the Chat Message Flow are `[EM – Deferred]` (they require the remote backend). Only the client-side portion of the Matching/Search Flow — local filtering over the mock catalogs — is realised in the `[R1.0 – Frozen]` baseline.
 
 ### User Authentication Flow
 ```
@@ -382,7 +388,7 @@ Notes:
    - Update sender's view
 ```
 
-## 3.4.5 UI-Navigational Paths & Screen Mockups
+## 3.4.6 UI-Navigational Paths & Screen Mockups
 
 ### Navigation Structure
 

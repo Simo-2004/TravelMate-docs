@@ -225,7 +225,9 @@ GitHub Actions
 App Store Distribution
 ```
 
-## Network Architecture (Future Backend Integration)
+## Network Architecture (Informative, Non-Binding)
+
+> This section pertains to the `[EM – Deferred]` remote backend and is **not** part of the frozen Release 1.0 mapping. See SDD Annex A.
 
 ### Communication Protocol
 

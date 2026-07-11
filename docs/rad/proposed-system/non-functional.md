@@ -1,6 +1,8 @@
 ﻿# 3.3 Non-Functional Requirements
 
-## 3.3.1 Usability
+> **Scope note:** The non-functional requirements below describe the quality attributes of the **envisioned** platform. Many of them presuppose the remote client-server architecture and therefore belong to a future Evolutionary Maintenance lifecycle. Each category is tagged with its dominant status for the **Release 1.0** baseline; where a category mixes on-device and server-side concerns it is marked `[Mixed]`, and only the on-device items are frozen. Server-dependent quality attributes (availability/failover, throughput at scale, REST/JWT interfaces, cloud packaging) are `[EM – Deferred]` and do not bind Release 1.0.
+
+## 3.3.1 Usability `[R1.0 – Frozen]`
 
 ### User Interface Design
 - **NFR-U.1.1**: The mobile app shall follow Material Design 3 guidelines for Android and Human Interface Guidelines for iOS
@@ -22,7 +24,7 @@
 - **NFR-U.3.4**: All interactive elements shall be keyboard navigable
 - **NFR-U.3.5**: The system shall support text size customization
 
-## 3.3.2 Reliability
+## 3.3.2 Reliability `[Mixed]` (on-device error/crash handling frozen; server availability & replication deferred)
 
 ### Availability
 - **NFR-R.1.1**: System shall maintain 99.5% uptime (< 3.6 hours downtime/month)
@@ -47,7 +49,7 @@
 - **NFR-R.4.2**: Unsaved user input shall be automatically recovered after crashes
 - **NFR-R.4.3**: Crash logs shall be automatically reported for analysis
 
-## 3.3.3 Performance
+## 3.3.3 Performance `[Mixed]` (mobile resource/render targets frozen; API throughput & scale deferred)
 
 ### Response Times
 - **NFR-P.1.1**: API response time (P95) shall be ≤ 500ms for read operations
@@ -74,7 +76,7 @@
 - **NFR-P.4.3**: Database queries shall be optimized and avoid N+1 problems
 - **NFR-P.4.4**: Frontend shall implement lazy loading and virtualization for lists
 
-## 3.3.4 Supportability
+## 3.3.4 Supportability `[R1.0 – Frozen]`
 
 ### Maintainability
 - **NFR-S.1.1**: Code shall follow established style guides and conventions
@@ -95,7 +97,7 @@
 - **NFR-S.3.3**: Error tracking system shall aggregate and analyze exceptions
 - **NFR-S.3.4**: Developer tools shall support local testing and staging environments
 
-## 3.3.5 Implementation
+## 3.3.5 Implementation `[Mixed]` (Flutter/Dart & local persistence frozen; backend stack deferred)
 
 ### Technology Stack
 - **NFR-I.1.1**: Mobile: Flutter (Dart language)
@@ -127,7 +129,7 @@ Planned (not present in repository):
 - **NFR-I.3.3**: Feature branches shall be used for development
 - **NFR-I.3.4**: Release tags shall document version history
 
-## 3.3.6 Interface
+## 3.3.6 Interface `[EM – Deferred]` (REST/JWT/OAuth interfaces require the remote backend)
 
 ### API Standards
 - **NFR-IF.1.1**: All APIs shall follow RESTful principles
@@ -149,7 +151,7 @@ Planned (not present in repository):
 - **NFR-IF.3.3**: Coordinates shall use WGS 84 (GPS) format
 - **NFR-IF.3.4**: Phone numbers shall support international format (E.164)
 
-## 3.3.7 Packaging
+## 3.3.7 Packaging `[Mixed]` (Android release packaging frozen; web/cloud distribution deferred)
 
 ### Mobile Distribution
 - **NFR-PK.1.1**: iOS app shall be distributed via Apple App Store
@@ -169,7 +171,7 @@ Planned (not present in repository):
 - **NFR-PK.3.3**: Beta releases shall be tested by internal teams before public release
 - **NFR-PK.3.4**: Backward compatibility shall be maintained for at least 2 previous versions
 
-## 3.3.8 Legal
+## 3.3.8 Legal `[Mixed]` (on-device data handling frozen; account/server compliance deferred)
 
 ### Privacy & Data Protection
 - **NFR-L.1.1**: System shall comply with GDPR regulations

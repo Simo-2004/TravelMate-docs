@@ -2,6 +2,8 @@
 
 > **Methodological Note:** In strict adherence to the Waterfall model, this Object Design Document (ODD) was produced during the System Design phase. The object-oriented blueprint and the UML diagrams presented below were generated only after the functional requirements (RAD) were fully frozen, serving as the definitive and unalterable guide for the subsequent Implementation (Coding) phase.
 
+> **Binding scope:** This ODD details exclusively the object design of the **Release 1.0** baseline (the `[R1.0 – Frozen]` requirements). Every class below corresponds one-to-one to a concrete Dart class in the repository, evidencing the Waterfall **design = code** principle. Object structures for `[EM – Deferred]` requirements (authentication, messaging, server-side trips, administration) are intentionally **out of scope** and would be designed in their own Evolutionary Maintenance lifecycle.
+
 ## Class Diagrams
 
 Below is the complete UML Class Diagram representing the system architecture.

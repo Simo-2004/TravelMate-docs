@@ -1,6 +1,12 @@
 ﻿# RAD - Requirements Analysis Document
 
-> **Methodological Note:** In strict adherence to the Waterfall model, this Requirements Analysis Document (RAD) represents the formal output of the Requirements Analysis phase. All functional and non-functional requirements specified herein have been reviewed, approved, and officially **frozen**. They serve as the definitive baseline and unalterable input for the subsequent System Design phase.
+> **Methodological Note:** In strict adherence to the Waterfall model, this Requirements Analysis Document (RAD) represents the formal output of the Requirements Analysis phase. It captures the complete requirement set of the envisioned TravelMate platform for traceability, while formally distinguishing the scope committed to in the present lifecycle.
+
+> **Baseline scope and requirement tagging:** As established in the Feasibility Study (§3.2), this lifecycle delivers **Release 1.0**, a local-first application. Every requirement in this document is therefore tagged:
+> - **`[R1.0 – Frozen]`** — part of the Release 1.0 baseline. These requirements are reviewed, approved, and officially **frozen**, and constitute the unalterable input for the System Design phase.
+> - **`[EM – Deferred]`** — a domain requirement recorded for completeness but **deferred to a future Evolutionary Maintenance lifecycle**. It is *not* part of the frozen baseline and does not bind the design, implementation, testing, or deployment of Release 1.0.
+>
+> This separation guarantees the Waterfall principle of **design = code**: only `[R1.0 – Frozen]` requirements are realised by the delivered software.
 
 ## Overview
 

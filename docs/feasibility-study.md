@@ -22,6 +22,26 @@ To address the outlined problem, various alternative scenarios and design option
 *   **Architecture and Data:** Evaluating the cost/benefit ratio, an initial *local-first* architecture based on local persistence (via `SharedPreferences`) was chosen. This strategy allows the application's ecosystem to be validated while completely eliminating the financial costs associated with maintaining server infrastructure or remote cloud databases.
 *   **Visual Design:** **Figma** was used for UI/UX prototyping, allowing the user experience to be defined in advance to avoid costly rework during the subsequent phases of the Waterfall model.
 
+### 3.1 Complete Product Vision
+
+Beyond the initial release, TravelMate is envisioned as a full-scale social platform for travellers. This long-term vision — documented here for completeness and to guide any future development — encompasses:
+
+*   A **remote client-server architecture** (mobile/web front-end, application backend, relational database) enabling account-based access from any device.
+*   **User authentication and identity verification**, trust and safety mechanisms, and administrative moderation tools.
+*   **Server-side matching** at scale, integrated **real-time messaging** (1-to-1 and group), notifications, and collaborative trip management.
+*   Compliance and operational requirements typical of a networked platform (privacy regulations, availability, scalability to a large user base).
+
+> *This vision represents the aspirational end-state of the product. It is intentionally kept separate from what the present lifecycle formally commits to building (see §3.2). Under the Waterfall model, realising any part of this vision constitutes **Evolutionary Maintenance** and requires a new, complete lifecycle beginning with its own Feasibility Study.*
+
+### 3.2 Release Scoping Decision (Waterfall Baseline)
+
+Given the strict constraints of this project — a **zero-cost budget** and a fixed **14-week schedule** — building the complete vision in a single lifecycle is neither feasible nor compatible with the sequential, document-driven nature of the Waterfall model. A formal scoping decision was therefore taken:
+
+*   **This lifecycle delivers Release 1.0**, a **self-contained, local-first** Flutter application realising the core discovery experience: personal profile, local search of trips and companions, saved items (bookmarks), and privacy preferences — all persisted on-device via `SharedPreferences`, with no network dependency.
+*   The remaining capabilities of the Complete Product Vision (§3.1) are recorded as **domain requirements deferred to Evolutionary Maintenance**. They are traced throughout the RAD (tagged `[EM – Deferred]`) and outlined in the informative annexes of the SDD/ODD, but they are **not part of the frozen baseline** of this lifecycle.
+
+This scoping keeps the design, implementation, testing, and deployment phases strictly aligned with a coherent, buildable baseline (**design = code**), while preserving the full analytical record of the intended product.
+
 ## 4. Time and Resource Estimation (Gantt Chart)
 Below is the estimation of the development time and working modalities required for the project. The planning strictly follows the Waterfall Model: activities are grouped into homogeneous phases and organized into sequential Work Packages (WP) spread over a 14-week timeframe (S01-S14).
 
