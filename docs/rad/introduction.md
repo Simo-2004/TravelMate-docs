@@ -42,8 +42,7 @@ The TravelMate system encompasses:
 
 - **RAD**: Requirements Analysis Document
 - **SDD**: System Design Document
-- **ODD**: Operational Design Document
-- **MVP**: Minimum Viable Product
+- **ODD**: Object Design Document
 - **API**: Application Programming Interface
 - **MVVM**: Model-View-ViewModel
 - **GDPR**: General Data Protection Regulation
@@ -56,7 +55,7 @@ The TravelMate system encompasses:
 ## 1.5 References
 
 - System Design Document (SDD)
-- Operational Design Document (ODD)
+- Object Design Document (ODD)
 - Flutter Documentation
 - PostgreSQL Documentation
 - Django REST Framework Documentation
@@ -67,7 +66,7 @@ This document outlines the complete requirements for the TravelMate application,
 
 ### Current repository snapshot
 
-The codebase available at `https://github.com/Simo-2004/TravelMate` contains a Flutter-based mobile application (MVP) with the following characteristics:
+The codebase available at `https://github.com/Simo-2004/TravelMate` contains a Flutter-based mobile application (Release 1.0) with the following characteristics:
 
 - Local-first architecture using `SharedPreferences` for persistence (see `lib/shared/data/`)
 - State management implemented with `ValueNotifier` and singleton stores (see `lib/shared/state/`)

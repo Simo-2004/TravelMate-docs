@@ -304,7 +304,7 @@ The following model classes are present in the TravelMate repository and map to 
 - `SearchResearchMode` — `lib/shared/models/search_research_mode.dart` (enum switching search modes between trips and mates).
 
 Notes:
-- The repository is currently a mobile-front-end MVP; several backend entities such as `User` with authentication, persistent `Trip` records, and server-side `Message` entities are represented conceptually in this RAD but are not implemented as backend models in the repository.
+- The repository is currently a mobile-front-end Release 1.0; several backend entities such as `User` with authentication, persistent `Trip` records, and server-side `Message` entities are represented conceptually in this RAD but are not implemented as backend models in the repository.
 - Mock catalogs (`MateCatalog`, `TripCatalog`, `TripMediaCatalog`) provide static data used by the UI; they live in `lib/shared/data/`.
 ├─ id: UUID (PK)
 ├─ user_id: UUID (FK)

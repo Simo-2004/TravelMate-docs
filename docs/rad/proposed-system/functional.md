@@ -161,7 +161,7 @@ The system implements intelligent matching algorithms, secure communication chan
 
 ## 3.2.9 Implementation status (repository snapshot)
 
-The TravelMate GitHub repository (Simo-2004/TravelMate) is a Flutter-based MVP with a local-first architecture. The following summary maps the functional requirements above to the current codebase status (implemented / partial / planned):
+The TravelMate GitHub repository (Simo-2004/TravelMate) is a Flutter-based Release 1.0 application with a local-first architecture. The following summary maps the functional requirements above to the current codebase status (implemented / partial / planned):
 
 - Implemented (client-side in the repository):
   - Saved Items (FR-C.1.x): Implemented via `SavedTripPreviewStore` and `SavedBookmarksData` (see `lib/shared/state/saved_trip_preview_store.dart` and `lib/shared/data/saved_bookmarks_data.dart`).

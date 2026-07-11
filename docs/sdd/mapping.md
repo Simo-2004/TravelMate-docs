@@ -208,7 +208,7 @@ APK/AAB --> Google Play Store
 - Beta testing programs
 - Enterprise deployment
 
-### CI/CD Pipeline
+### Build & Verification Pipeline
 
 ```
 Git Push
@@ -331,7 +331,7 @@ if (await Permission.contacts.status.isDenied) {
 
 ## Scalability Mapping
 
-### Current Architecture (MVP)
+### Current Architecture (Release 1.0)
 ```
 Single Device Instance
     ↓

@@ -36,7 +36,7 @@ features:
       width: 48
       height: 48
     title: RAD - Requirements Analysis
-    details: Requirements Analysis Document. Complete specifications, use cases, user stories, functional requirements, and project glossary.
+    details: Requirements Analysis Document. Complete specifications, use cases, functional requirements, and project glossary.
     link: /rad/overview
     linkText: Open RAD
 

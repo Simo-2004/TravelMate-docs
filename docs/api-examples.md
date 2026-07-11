@@ -6,9 +6,9 @@ outline: deep
 
 Complete API reference for TravelMate internal services and future backend integration.
 
-## Current Architecture (MVP Phase)
+## Current Architecture (Release 1.0)
 
-TravelMate MVP operates as a **local-first mobile application** using **ValueNotifier-based reactive architecture** with SharedPreferences for persistence. All services are in-memory with no remote API calls.
+TravelMate Release 1.0 operates as a **local-first mobile application** using **ValueNotifier-based reactive architecture** with SharedPreferences for persistence. All services are in-memory with no remote API calls.
 
 ### Service Layer Overview
 
@@ -234,7 +234,9 @@ ValueListenableBuilder<PersonalProfile>(
 )
 ```
 
-## Future Backend API (Phase 2+)
+## Backend API (Evolutionary Maintenance)
+
+> The following specification is **not** part of the frozen Release 1.0 baseline. It documents a possible remote backend whose adoption would constitute Evolutionary Maintenance and therefore require a new, complete lifecycle starting from a dedicated Feasibility Study.
 
 ### REST API Specification (Planned)
 
@@ -337,30 +339,32 @@ MatchScore {
 }
 ```
 
-## Integration Roadmap
+## Evolutionary Maintenance Candidates
 
-### Phase 1 (Current - MVP)
+> The items below are **not** planned iterations of the current lifecycle. Each of them introduces new functional requirements and, under the Waterfall model, would trigger a separate Evolutionary Maintenance lifecycle beginning with its own Feasibility Study.
+
+### Delivered in Release 1.0 (frozen baseline)
 - ✅ Local-first architecture with SharedPreferences
 - ✅ Mock data catalogs (MateCatalog, TripCatalog)
 - ✅ ValueNotifier state management
 - ✅ Basic search with scoring algorithm
 - ✅ Bookmark/favorites system
 
-### Phase 2 (Backend MVP)
+### Candidate evolution: Remote backend
 - Backend Django API with PostgreSQL
 - User authentication (JWT)
 - Server-side search with Elasticsearch
 - Cloud storage for profile photos
 - Basic messaging system
 
-### Phase 3 (Advanced Features)
+### Candidate evolution: Advanced features
 - Real-time messaging with WebSockets
 - Location-based matching algorithm
-- Matching AI model
+- Automated matching model
 - Trip recommendations
 - User reviews & ratings
 
-### Phase 4 (Scale)
+### Candidate evolution: Scale and distribution
 - Mobile app signing & distribution (App Store, Play Store)
 - Web platform
 - Desktop applications
@@ -431,7 +435,7 @@ testWidgets('Bookmark button updates saved items', (tester) async {
 
 ## Security Notes
 
-**Current (MVP):** No sensitive data stored; local-only processing  
+**Current (Release 1.0):** No sensitive data stored; local-only processing  
 **Future (Backend):**
 - All API calls over HTTPS
 - JWT token expiration & refresh strategy

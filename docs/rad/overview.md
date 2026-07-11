@@ -1,6 +1,6 @@
 ﻿# RAD - Requirements Analysis Document
 
-> \*\*Methodological Note:\*\* In strict adherence to the Waterfall model, this Requirements Analysis Document (RAD) represents the formal output of the Requirements Analysis phase. All functional and non-functional requirements specified herein have been reviewed, approved, and officially \*\*frozen\*\*. They serve as the definitive baseline and unalterable input for the subsequent System Design phase.
+> **Methodological Note:** In strict adherence to the Waterfall model, this Requirements Analysis Document (RAD) represents the formal output of the Requirements Analysis phase. All functional and non-functional requirements specified herein have been reviewed, approved, and officially **frozen**. They serve as the definitive baseline and unalterable input for the subsequent System Design phase.
 
 ## Overview
 

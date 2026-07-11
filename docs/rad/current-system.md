@@ -36,7 +36,7 @@ TravelMate addresses these gaps by providing:
 
 ### Current repository status
 
-The TravelMate repository is currently an MVP mobile application implemented with Flutter. The repository focuses on the discovery and local UX aspects of the product; notable points:
+The TravelMate repository is currently a Release 1.0 mobile application implemented with Flutter. The repository focuses on the discovery and local UX aspects of the product; notable points:
 
 - The current app is local-first and uses `SharedPreferences` for persistence (`lib/shared/data/*`).
 - Matching and search are implemented client-side against static catalogs (`TripCatalog`, `MateCatalog`).
