@@ -18,7 +18,7 @@ The final executable file is built in `release` mode, ensuring maximum performan
 
 
 
-👉 **[Download TravelMate APK (Release 1.0)](https://github.com/Simo-2004/TravelMate/releases/tag/v1.0.0)**
+👉 **[Download TravelMate APK (Release 1.0)](https://github.com/Simo-2004/TravelMate/releases)**
 
 
 
