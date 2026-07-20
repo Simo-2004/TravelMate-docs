@@ -16,14 +16,54 @@ const waterfallSidebar = [
     collapsed: false,
     items: [
       { text: 'Overview', link: '/rad/overview' },
-      { text: '1. Introduction', link: '/rad/introduction' },
+      {
+        text: '1. Introduction',
+        link: '/rad/introduction/',
+        collapsed: false,
+        items: [
+          { text: '1.1 Purpose of the System', link: '/rad/introduction/purpose' },
+          { text: '1.2 Scope of the System', link: '/rad/introduction/scope' },
+          { text: '1.3 Objectives & Success Criteria', link: '/rad/introduction/objectives' },
+          { text: '1.4 Definitions, Acronyms & Abbreviations', link: '/rad/introduction/definitions' },
+          { text: '1.5 References', link: '/rad/introduction/references' },
+          { text: '1.6 Overview', link: '/rad/introduction/overview' }
+        ]
+      },
       { text: '2. Current System', link: '/rad/current-system' },
       {
         text: '3. Proposed System',
+        link: '/rad/proposed-system/',
+        collapsed: false,
         items: [
-          { text: 'Overview & Functional', link: '/rad/proposed-system/functional' },
-          { text: '3.3 Non-Functional', link: '/rad/proposed-system/non-functional' },
-          { text: '3.4 System Models', link: '/rad/proposed-system/models' }
+          { text: '3.1 Overview', link: '/rad/proposed-system/overview' },
+          { text: '3.2 Functional Requirements', link: '/rad/proposed-system/functional' },
+          {
+            text: '3.3 Non-Functional Requirements',
+            link: '/rad/proposed-system/non-functional/',
+            collapsed: false,
+            items: [
+              { text: '3.3.1 Usability', link: '/rad/proposed-system/non-functional/usability' },
+              { text: '3.3.2 Reliability', link: '/rad/proposed-system/non-functional/reliability' },
+              { text: '3.3.3 Performance', link: '/rad/proposed-system/non-functional/performance' },
+              { text: '3.3.4 Supportability', link: '/rad/proposed-system/non-functional/supportability' },
+              { text: '3.3.5 Implementation', link: '/rad/proposed-system/non-functional/implementation' },
+              { text: '3.3.6 Interface', link: '/rad/proposed-system/non-functional/interface' },
+              { text: '3.3.7 Packaging', link: '/rad/proposed-system/non-functional/packaging' },
+              { text: '3.3.8 Legal', link: '/rad/proposed-system/non-functional/legal' }
+            ]
+          },
+          {
+            text: '3.4 System Models',
+            link: '/rad/proposed-system/system-models/',
+            collapsed: false,
+            items: [
+              { text: '3.4.1 Scenarios', link: '/rad/proposed-system/system-models/scenarios' },
+              { text: '3.4.2 Use Case Model', link: '/rad/proposed-system/system-models/use-case-model' },
+              { text: '3.4.3 Object Model', link: '/rad/proposed-system/system-models/object-model' },
+              { text: '3.4.4 Dynamic Model', link: '/rad/proposed-system/system-models/dynamic-model' },
+              { text: '3.4.5 UI-Navigational Paths & Screen Mockups', link: '/rad/proposed-system/system-models/ui-navigational-paths' }
+            ]
+          }
         ]
       },
       { text: '4. Glossary', link: '/rad/glossary' }
