@@ -1,24 +1,22 @@
-# 3.3.1 Usability `[R1.0 – Frozen]`
+# 3.3.1 Usability `[Mixed]`
 
-## User Interface Design
+> Verified against the repository: the mobile interface, text-scaling clamp, and navigation are `[R1.0 – Frozen]`. Dark theme, a guided onboarding flow, and a formal accessibility audit do **not** exist in the codebase and are corrected or deferred below.
 
-- **NFR-U.1.1**: The mobile app shall follow Material Design 3 guidelines for Android and Human Interface Guidelines for iOS
-- **NFR-U.1.2**: The web interface shall be responsive and functional on devices from 320px to 2560px width
-- **NFR-U.1.3**: All interactive elements shall have minimum 48x48 dp touch target size
-- **NFR-U.1.4**: The system shall support dark and light themes
+## User Interface Design `[R1.0 – Frozen]`
 
-## User Experience
+- **NFR-U.1.1**: The mobile app shall follow Material Design 3 conventions
+- **NFR-U.1.2**: The interface shall use responsive layout primitives (`LayoutBuilder`, `MediaQuery`) so content adapts to the available width
+- **NFR-U.1.3**: ~~The system shall support dark and light themes~~ — **corrected**: `AppTheme` (`lib/core/theme/app_theme.dart`) defines only a light theme; dark theme is `[EM – Deferred]`
 
-- **NFR-U.2.1**: New users shall complete onboarding in < 5 minutes
-- **NFR-U.2.2**: Core user flows shall require ≤ 3 taps/clicks to complete
-- **NFR-U.2.3**: All error messages shall be clear and provide actionable solutions
-- **NFR-U.2.4**: The system shall provide contextual help and tooltips for complex features
-- **NFR-U.2.5**: Load times for profile pages shall be ≤ 1 second (P95)
+## User Experience `[Mixed]`
 
-## Accessibility
+- **NFR-U.2.1**: ~~New users shall complete onboarding in < 5 minutes~~ — **corrected**: there is no onboarding flow; the app launches directly into the Home tab with a pre-filled default profile (`PersonalProfile.defaultProfile`). A guided onboarding flow is `[EM – Deferred]`
+- **NFR-U.2.2**: `[R1.0 – Frozen]` Core flows (search, save, edit profile, open chat) shall be reachable within 3 taps from the bottom navigation
+- **NFR-U.2.3**: `[R1.0 – Frozen]` User-facing confirmations (e.g. save/unsave, settings changes, chat history cleared) shall be surfaced via a `SnackBar`
+- **NFR-U.2.4**: `[EM – Deferred]` The system shall provide contextual help and tooltips for complex features
 
-- **NFR-U.3.1**: The application shall comply with WCAG 2.1 Level AA standards
-- **NFR-U.3.2**: All text shall have minimum contrast ratio of 4.5:1 (normal text) or 3:1 (large text)
-- **NFR-U.3.3**: The mobile app shall support screen readers (VoiceOver, TalkBack)
-- **NFR-U.3.4**: All interactive elements shall be keyboard navigable
-- **NFR-U.3.5**: The system shall support text size customization
+## Accessibility `[Mixed]`
+
+- **NFR-U.3.1**: `[R1.0 – Frozen]` The app shall clamp text scaling between 0.9x and 1.2x so user font-size preferences are respected without breaking layout (`TravelMateApp.builder`, `lib/main.dart`)
+- **NFR-U.3.2**: `[EM – Deferred]` The application shall comply with WCAG 2.1 Level AA standards — **no accessibility audit has been performed** against Release 1.0; this is a target for a future lifecycle, not a verified property
+- **NFR-U.3.3**: `[EM – Deferred]` The mobile app shall support screen readers (VoiceOver, TalkBack) with verified semantics labelling

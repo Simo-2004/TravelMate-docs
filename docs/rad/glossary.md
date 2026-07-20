@@ -2,7 +2,13 @@
 
 Definitions of technical and domain-specific terms used in this document.
 
+> **Scope note:** Most terms below describe the envisioned TravelMate platform (Feasibility Study §3.1) and are `[EM – Deferred]`. Terms realised in Release 1.0 are marked `[R1.0]`.
+
 ## General Terms
+
+**Auto-Reply** `[R1.0]`: A canned response generated locally by matching a chat message against an ordered list of keyword rules; used by the Release 1.0 simulated chat in place of a real companion's reply.
+
+**Bookmark / Saved Item** `[R1.0]`: A trip or companion profile a user has saved for later reference, identified by a `bookmarkType` ("trip" or "mate") and a `sourceId`, persisted on-device.
 
 **Avatar**: A user-selected image that represents their profile visually across the platform.
 
@@ -24,13 +30,13 @@ Definitions of technical and domain-specific terms used in this document.
 
 **Privacy Settings**: User-controlled options to determine visibility and information sharing on the platform.
 
-**Profile**: A user's account information including personal details, interests, and preferences.
+**Profile**: A user's information including personal details, interests, and preferences. `[R1.0]` In Release 1.0, the local `PersonalProfile` holds only first name, last name, description, a preset photo, and free-text tags — no age, location, or gender.
 
-**Saved Items**: Profiles or trips users have bookmarked for later reference.
+**Saved Items**: Profiles or trips users have bookmarked for later reference (see Bookmark).
 
-**Trip**: A planned travel event created by a user, with specific destination, dates, and details.
+**Trip**: A travel itinerary with a destination, description, and tags. `[R1.0]` In Release 1.0, trips are 8 fixed mock entries with no dates, budget, or participants.
 
-**User**: Any person registered on the TravelMate platform.
+**User**: Any person using the TravelMate platform. `[EM – Deferred]` Release 1.0 has no registered accounts — "the user" refers to the single local app user.
 
 **Verification**: Confirmation of user identity through email validation and profile checks.
 
@@ -60,7 +66,7 @@ Definitions of technical and domain-specific terms used in this document.
 
 **Cache/Caching**: Temporary storage of frequently accessed data for faster retrieval.
 
-**Database**: Organized collection of data stored persistently, using PostgreSQL in this project.
+**Database**: Organized collection of data stored persistently. `[EM – Deferred]` PostgreSQL is the envisioned choice for the future backend; Release 1.0 persists data locally via `SharedPreferences`, not a database.
 
 **Django**: Python web framework used for building the backend API.
 
@@ -148,9 +154,9 @@ Definitions of technical and domain-specific terms used in this document.
 
 ### Communication
 **Group Chat**: Conversation involving trip participants or multiple users.
-**Direct Message (DM)**: Private 1-on-1 conversation between two users.
+**Direct Message (DM)**: Private 1-on-1 conversation between two users. `[R1.0]` Release 1.0 offers a simulated, local version per companion — see Auto-Reply.
 **Message Status**: Indicator showing if message is sent, delivered, or read.
-**Online Status**: Real-time indicator showing if user is currently using the app.
+**Online Status / Simulated Presence** `[R1.0]`: In Release 1.0, a companion's online indicator is not real-time — it is simulated: the companion appears "online" while the local user is active in the chat, and reverts to "offline" after 5 seconds of inactivity, or always "offline" if the user's own *Offline mode* privacy preference is enabled.
 
 ### Trip Management
 **Access Code**: Unique identifier to join a private trip.

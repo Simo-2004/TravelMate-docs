@@ -1,10 +1,10 @@
 # 3.4.2 Use Case Model
 
-> **Scope note:** These scenarios and use cases depict the **envisioned** platform end-to-end. Within the **Release 1.0** baseline, only the on-device flows are realised — **UC2 (local search)**, **UC3 (save profile/trip)**, and the local portions of **UC8 (manage account/settings)** are `[R1.0 – Frozen]`. Use cases that depend on the remote backend — **UC1 (register), UC4 (send message), UC5/UC6 (create/join trip), UC7 (report user)** — are `[EM – Deferred]`.
+> **Scope note:** Verified against the repository. `[R1.0 – Frozen]` use cases below are realised by concrete screens; `[EM – Deferred]` use cases depend on the remote backend / real other users and are not implemented.
 
 ## Primary Use Cases
 
-### UC1: Register and Create Profile
+### UC1: Register and Create Profile `[EM – Deferred]`
 **Actors**: Unauthenticated User
 **Preconditions**: User has email address
 **Main Flow**:
@@ -17,82 +17,103 @@
 7. Sets privacy preferences
 **Postconditions**: User account created, profile visible on platform
 
-### UC2: Search and Filter Travelers
-**Actors**: Traveler User
-**Preconditions**: User is authenticated, has completed profile
-**Main Flow**:
-1. User navigates to "Find Companions"
-2. Applies search filters (age, interests, destination, budget)
-3. System displays ranked list of compatible profiles
-4. User scrolls through results
-5. Clicks on profile to view details
-**Postconditions**: List of matching profiles displayed
+> Release 1.0 has no such flow: the app launches directly into Home with a pre-filled default profile (`PersonalProfile.defaultProfile`) that the user may edit at any time (see UC8).
 
-### UC3: Save Profile/Trip
-**Actors**: Traveler User
-**Preconditions**: User viewing a profile or trip
+### UC2: Search Trips and Companions `[R1.0 – Frozen]`
+**Actors**: App user
+**Preconditions**: None
 **Main Flow**:
-1. User clicks "Save" button on profile/trip
-2. System adds item to user's saved list
-3. Confirmation message displayed
-**Postconditions**: Item added to saved list
+1. User opens the Search tab
+2. Toggles between "Trips" and "Mates" mode (`SearchResearchModeStore`)
+3. Types a free-text query
+4. System returns a term-ranked list of up to 5 matches (`filterMates` / `filterTrips`)
+5. User taps a result to open its detail screen
+**Postconditions**: Ranked list of matching trips or companions displayed
 
-### UC4: Send Message
+*Realised by*: `SearchScreen`, `SearchResultsScreen` (`lib/features/search/`).
+
+### UC3: Save a Trip or Companion Profile `[R1.0 – Frozen]`
+**Actors**: App user
+**Preconditions**: User viewing a trip or companion detail screen
+**Main Flow**:
+1. User taps the bookmark button
+2. System adds the item to the local saved-items list and persists it
+3. A confirmation `SnackBar` is displayed
+**Postconditions**: Item added to Saved Items, visible on the Saved tab
+
+*Realised by*: `SaveTripButton`, `SavedTripPreviewStore` (`lib/shared/state/saved_trip_preview_store.dart`).
+
+### UC4: Chat with a Companion (Simulated) `[R1.0 – Frozen]`
+**Actors**: App user
+**Preconditions**: User viewing a companion's profile screen
+**Main Flow**:
+1. User taps "Chat" to open the conversation for that companion
+2. User types and sends a message
+3. `ChatStore` matches the message against a keyword rule table and, after a short delay, appends the companion's auto-reply
+4. The companion's presence indicator shows "online" while the conversation is active, returning to "offline" after 5 seconds of inactivity
+**Postconditions**: Message and auto-reply appended to the conversation, persisted locally
+
+*Realised by*: `ChatScreen`, `ChatStore` (`lib/features/chat/`, `lib/shared/state/chat_store.dart`).
+
+### UC4b: Attach a Saved Trip to a Chat `[R1.0 – Frozen]`
+**Actors**: App user
+**Preconditions**: User is in a companion's chat and has at least one saved trip
+**Main Flow**:
+1. User taps the attachment icon to open the trip picker
+2. User selects one of their saved trips
+3. System sends an invite message carrying the trip attachment
+4. `mateLikesTrip` compares the trip's tags with the companion's interest/preferred-trip tags; the companion's auto-reply accepts or politely declines accordingly
+**Postconditions**: Invite message and companion's response appended to the conversation
+
+*Realised by*: `ChatTripAttachmentPicker`, `trip_invite.dart` (`lib/shared/widgets/chat_trip_attachment_picker.dart`, `lib/shared/utils/trip_invite.dart`).
+
+### UC4c: Send Message Between Real Users `[EM – Deferred]`
 **Actors**: Traveler User (Sender, Receiver)
-**Preconditions**: Both users are authenticated
+**Preconditions**: Both users are authenticated and connected via a real backend
 **Main Flow**:
-1. User opens another user's profile
-2. Clicks "Send Message" button
-3. Types message in chat interface
-4. Sends message
-5. Recipient receives notification
-6. Recipient opens chat and replies
-**Postconditions**: Message delivered, notification sent
+1. User opens another (real) user's profile and sends a message
+2. Recipient receives a push notification
+3. Recipient opens the chat and replies
+**Postconditions**: Message delivered over the network, notification sent
 
-### UC5: Create Trip
+### UC5: Create Trip `[EM – Deferred]`
 **Actors**: Traveler User (Trip Creator)
-**Preconditions**: User is authenticated
 **Main Flow**:
-1. User clicks "Create Trip"
-2. Enters trip title, destination, dates, budget
-3. Adds trip description and itinerary
-4. Sets max participants
-5. Publishes trip
-6. Generates shareable trip link/code
+1. User enters trip title, destination, dates, budget, and itinerary
+2. Sets max participants and publishes the trip
+3. System generates a shareable trip link/code
 **Postconditions**: Trip created, visible in search results
 
-### UC6: Join Trip
-**Actors**: Traveler User (Participant)
-**Preconditions**: Trip exists, user authenticated
-**Main Flow**:
-1. User finds trip through search
-2. Clicks "Request to Join"
-3. Trip creator receives notification
-4. Creator reviews request and approves/rejects
-5. If approved, user added to trip participants
-6. User gains access to group chat
-**Postconditions**: User is trip participant or request is pending
+> Release 1.0's 8 trips are fixed mock data; there is no trip-creation UI.
 
-### UC7: Report User
-**Actors**: Traveler User, Administrator
-**Preconditions**: User viewing reported profile/content
+### UC6: Join Trip `[EM – Deferred]`
+**Actors**: Traveler User (Participant)
 **Main Flow**:
-1. User clicks "Report" button
-2. Selects reason (Inappropriate content, Spam, Harassment, etc.)
-3. Writes description
-4. Submits report
-5. System notifies administrators
-6. Admin reviews report and takes action
+1. User finds a trip through search and requests to join
+2. Trip creator reviews and approves/rejects the request
+3. If approved, user is added as a participant and gains access to the group chat
+**Postconditions**: User is a trip participant or the request is pending
+
+### UC7: Report User `[EM – Deferred]`
+**Actors**: Traveler User, Administrator
+**Main Flow**:
+1. User selects a reason and submits a report against another user
+2. Administrators review the report and take action
 **Postconditions**: Report recorded, admin notified
 
-### UC8: Manage User Account
-**Actors**: Traveler User
-**Preconditions**: User authenticated
+> No Report or Block action exists anywhere in the Release 1.0 UI.
+
+### UC8: Manage Local Profile and Settings `[R1.0 – Frozen]`
+**Actors**: App user
+**Preconditions**: None
 **Main Flow**:
-1. User opens settings
-2. Can update profile info, interests, destinations
-3. Can change privacy settings
-4. Can view saved items
-5. Can manage blocked users
-6. Can request data export or delete account
-**Postconditions**: Settings updated
+1. User opens the Settings tab
+2. Can edit personal profile (name, description, photo, interest/trip tags) via Profile
+3. Can toggle privacy preferences via Privacy
+4. Can browse FAQ and a (simulated) "Contact support" action via Support
+5. Can view saved items via the Saved tab
+**Postconditions**: Local profile and preferences updated and persisted
+
+*Realised by*: `SettingsScreen`, `PersonalProfileScreen`, `PrivacySettingsScreen`, `SupportScreen`.
+
+> "Manage blocked users" and "request data export or delete account" do **not** exist in Release 1.0 — there is nothing to block (no other real users) and no account to delete. These remain `[EM – Deferred]`.
