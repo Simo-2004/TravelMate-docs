@@ -1,4 +1,79 @@
-# 3.4.3 Object Model (Class Diagram)
+# 3.4.3 Object Model
+
+## Release 1.0 Object Model (Class Diagram) `[R1.0 – Frozen]`
+
+The diagram below reflects the **actual** Dart classes in the repository, field-for-field, verified directly against the source. This is the object model that binds the Implementation phase.
+
+```
+MateProfile (lib/shared/models/mate_profile.dart)
+├─ id: String
+├─ name: String
+├─ description: String
+├─ profileImageAsset: String?
+├─ keywords: List<String>
+├─ interests: List<String>
+└─ preferredTrips: List<String>
+
+TripTileData (lib/shared/models/trip_tile_data.dart)
+├─ tripId: String
+├─ asset: String
+├─ label: String
+├─ scheduleImages: List<String>
+├─ tags: List<TripTag>
+├─ destinationTitle: String
+└─ description: String
+
+TripTag (lib/shared/models/trip_tag.dart)
+├─ label: String
+├─ backgroundColor: Color
+├─ textColor: Color
+└─ borderColor: Color?
+
+PersonalProfile (lib/shared/models/personal_profile.dart)
+├─ firstName: String
+├─ lastName: String
+├─ description: String
+├─ photoAsset: String
+├─ interestTags: List<String>
+└─ tripTags: List<String>
+   (no age, no location, no gender — these fields do not exist)
+
+PrivacySettings (lib/shared/models/privacy_settings.dart)
+├─ privateProfile: bool
+├─ onlyPeopleInRadius: bool
+├─ checkMessages: bool
+└─ offlineMode: bool
+
+SavedTripPreview (lib/shared/models/saved_trip_preview.dart)
+├─ tripName: String
+├─ destinationTitle: String
+├─ description: String
+├─ coverImage: String
+├─ tags: List<TripTag>
+├─ bookmarkType: String   ("trip" | "mate", see SavedBookmarkType)
+└─ sourceId: String        (id of the originating Trip or Mate)
+
+ChatMessage (lib/shared/models/chat_message.dart)
+├─ id: String
+├─ text: String
+├─ isFromMe: bool
+├─ sentAt: DateTime
+└─ attachedTripId: String?  (set when the message carries a trip invite)
+
+SearchResearchMode (lib/shared/models/search_research_mode.dart)
+└─ enum { trips, mates }
+```
+
+### Relationships (Release 1.0)
+
+- `TripTileData` **has** a list of `TripTag`
+- `SavedTripPreview` **references** either a `TripTileData` or a `MateProfile` via `sourceId` + `bookmarkType`
+- `PersonalProfile` is a singleton, held by `PersonalProfileStore`
+- `ChatMessage` instances are grouped per companion (`MateProfile.id`) inside `ChatStore`; an `attachedTripId`, when present, resolves back to a `TripTileData` via `TripCatalog.findTripById`
+
+## Envisioned Conceptual Entity Model `[EM – Deferred]`
+
+The entities below describe the envisioned backend data model (Feasibility Study §3.1). They are **not** implemented as backend models in the repository — Release 1.0 has no database and no server.
 
 ```
 USER (Entity)
@@ -18,22 +93,22 @@ USER (Entity)
 ├─ created_at: Timestamp
 ├─ updated_at: Timestamp
 ├─ last_login: Timestamp
-├─ Relationships:
-│  ├─ 1-to-N: Profile Photos
-│  ├─ M-to-N: Interests
-│  ├─ M-to-N: Favorite Destinations
-│  ├─ 1-to-N: Created Trips
-│  ├─ M-to-N: Trip Participations
-│  ├─ 1-to-N: Sent Messages
-│  ├─ 1-to-N: Received Messages
-│  ├─ 1-to-N: Saved Items
-│  ├─ M-to-N: Blocked Users
-│  └─ 1-to-N: Reports
+└─ Relationships:
+   ├─ 1-to-N: Profile Photos
+   ├─ M-to-N: Interests
+   ├─ M-to-N: Favorite Destinations
+   ├─ 1-to-N: Created Trips
+   ├─ M-to-N: Trip Participations
+   ├─ 1-to-N: Sent Messages
+   ├─ 1-to-N: Received Messages
+   ├─ 1-to-N: Saved Items
+   ├─ M-to-N: Blocked Users
+   └─ 1-to-N: Reports
 
 INTEREST (Entity)
 ├─ id: UUID (PK)
 ├─ category: String
-├─ name: String (e.g., "Adventure", "Culture")
+├─ name: String
 ├─ description: Text
 └─ Relationships:
    └─ M-to-N: Users
@@ -84,25 +159,14 @@ TRIP_ITINERARY_ITEM (Entity)
 └─ Relationships:
    └─ Many-to-1: Trip
 
-SAVED_ITEM (Entity)
-├─ id: UUID (PK)
-├─ user_id: UUID (FK)
-├─ target_id: UUID (FK)
-├─ target_type: Enum (User, Trip)
-├─ created_at: Timestamp
-└─ Relationships:
-   ├─ Many-to-1: User
-   └─ Foreign reference to User or Trip
-
 MESSAGE (Entity)
 ├─ id: UUID (PK)
 ├─ sender_id: UUID (FK)
 ├─ recipient_id: UUID (FK) [null if group]
 ├─ chat_room_id: UUID (FK) [null if 1-on-1]
-├─ text: Text (Max 5000 chars)
+├─ text: Text
 ├─ is_read: Boolean
 ├─ created_at: Timestamp
-├─ updated_at: Timestamp
 ├─ deleted_at: Timestamp [soft delete]
 └─ Relationships:
    ├─ Many-to-1: Sender (User)
@@ -114,7 +178,6 @@ CHAT_ROOM (Entity)
 ├─ type: Enum (OneToOne, Group)
 ├─ name: String [required for groups]
 ├─ trip_id: UUID (FK) [null if personal chat]
-├─ created_at: Timestamp
 └─ Relationships:
    ├─ M-to-N: Participants (Users)
    ├─ 1-to-N: Messages
@@ -148,19 +211,19 @@ NOTIFICATION (Entity)
    └─ Many-to-1: User
 ```
 
-> **Scope note:** The object model above describes the **envisioned** data model. Entities that require the remote backend — `USER` authentication fields, server-side `TRIP`, `MESSAGE`, `CHAT_ROOM`, `REPORT`, `NOTIFICATION` — are `[EM – Deferred]`. The `[R1.0 – Frozen]` baseline persists only the on-device models listed in the codebase mapping below.
+## Codebase Mapping and Traceability
 
-## Current codebase mapping (Object Model traceability)
+- `MateProfile` — `lib/shared/models/mate_profile.dart`, populated by `MateCatalog`
+- `TripTileData` / `TripTag` — `lib/shared/models/trip_tile_data.dart`, `lib/shared/models/trip_tag.dart`, populated by `TripCatalog` / `TripTagCatalog`
+- `SavedTripPreview` — `lib/shared/models/saved_trip_preview.dart`, persisted by `SavedBookmarksData`
+- `PersonalProfile` — `lib/shared/models/personal_profile.dart`, persisted by `PersonalProfileData`
+- `PrivacySettings` / `PrivacySettingKey` — `lib/shared/models/privacy_settings.dart`, persisted by `PrivacySettingsData`
+- `SearchResearchMode` — `lib/shared/models/search_research_mode.dart`, a bare 2-value enum (`trips`, `mates`) with no associated label field
+- `ChatMessage` — `lib/shared/models/chat_message.dart`, persisted per-companion by `ChatHistoryData`, orchestrated by `ChatStore`
 
-The following model classes are present in the TravelMate repository and map to the conceptual entities above (file paths indicate the concrete implementations):
-
-- `MateProfile` — `lib/shared/models/mate_profile.dart` (represents travel companion profiles used by `MateCatalog`).
-- `TripTileData` / `TripTag` — `lib/shared/models/trip_tile_data.dart` and `lib/shared/models/trip_tag.dart` (used by `TripCatalog` and UI tiles).
-- `SavedTripPreview` — `lib/shared/models/saved_trip_preview.dart` (bookmark preview model stored in `SavedBookmarksData`).
-- `PersonalProfile` / `PersonalTag` — `lib/shared/models/personal_profile.dart` and `lib/shared/models/personal_tag.dart` (user profile model with interests).
-- `PrivacySettings` / `PrivacySettingKey` — `lib/shared/models/privacy_settings.dart` (privacy configuration).
-- `SearchResearchMode` — `lib/shared/models/search_research_mode.dart` (enum switching search modes between trips and mates).
-
-Notes:
-- The repository is the mobile-front-end Release 1.0; several backend entities such as `User` with authentication, persistent `Trip` records, and server-side `Message` entities are represented conceptually in this RAD but are `[EM – Deferred]` and not implemented as backend models in the repository.
-- Mock catalogs (`MateCatalog`, `TripCatalog`, `TripMediaCatalog`) provide static data used by the UI; they live in `lib/shared/data/`.
+**Corrections from the previous edition of this document:**
+- There is **no `PersonalTag` class** in the repository — `PersonalProfile.interestTags` / `tripTags` are plain `List<String>`, not a list of colored tag objects
+- `SavedTripPreview`'s image field is `coverImage`, not `imageAsset`; its type discriminator is `bookmarkType`, not `itemType`; it also carries `tags` and `sourceId`, both previously undocumented
+- `TripTileData`'s tag field is `tags`, not `tripTags`; it has no `scheduleCount`/`tagCount` getters
+- `MateProfile` has a `preferredTrips` field that was previously undocumented
+- `ChatMessage` and the entire chat subsystem were entirely absent from earlier editions of this RAD despite being implemented

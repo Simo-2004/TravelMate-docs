@@ -1,6 +1,6 @@
 # 3.3.6 Interface `[EM – Deferred]`
 
-> The REST/JWT/OAuth interfaces below require the remote backend and are therefore deferred to a future Evolutionary Maintenance lifecycle. They do not bind Release 1.0.
+> The REST/JWT/OAuth interfaces below require the remote backend and are therefore deferred to a future Evolutionary Maintenance lifecycle. Release 1.0 exposes no external interface at all: it is a standalone client with no API surface.
 
 ## API Standards
 
@@ -20,7 +20,6 @@
 
 ## Data Format
 
-- **NFR-IF.3.1**: Timestamps shall use ISO 8601 format (UTC)
+- **NFR-IF.3.1**: Timestamps shall use ISO 8601 format (UTC) — **note**: `ChatMessage.sentAt` already serialises via `DateTime.toIso8601String()` (`lib/shared/models/chat_message.dart`) `[R1.0 – Frozen]`, so this convention is already followed locally even though no API exists yet
 - **NFR-IF.3.2**: Currencies shall be represented with ISO 4217 codes
 - **NFR-IF.3.3**: Coordinates shall use WGS 84 (GPS) format
-- **NFR-IF.3.4**: Phone numbers shall support international format (E.164)
