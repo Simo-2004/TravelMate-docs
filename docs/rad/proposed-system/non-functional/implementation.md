@@ -26,7 +26,7 @@ Deferred (not present in repository):
 
 ## Development Standards
 
-- **NFR-I.2.1**: `[R1.0 – Frozen]` Code shall follow Dart/Flutter style guides, enforced via `analysis_options.yaml` and `flutter_lints`
+- **NFR-I.2.1**: `[R1.0 – Frozen]` Code shall follow Dart/Flutter style guides, enforced via `analysis_options.yaml`. The project includes the official `flutter_lints` rule set and extends it with 6 additional lint rules not enabled by default: `prefer_single_quotes`, `prefer_final_locals`, `prefer_final_in_for_each`, `unnecessary_lambdas`, `unawaited_futures`, and `sort_pub_dependencies`
 - **NFR-I.2.2**: `[R1.0 – Frozen]` Automated testing shall run via `flutter test`; the repository includes a test suite under `test/` (`chat_store_test.dart`, `logic_test.dart`, `navigation_test.dart`, `persistence_test.dart`, `widget_test.dart`, `widgets_test.dart`, `screens_test.dart`)
 - **NFR-I.2.3**: `[R1.0 – Frozen]` Security and quality scanning shall be integrated into the automated build pipeline via SonarCloud
 - **NFR-I.2.4**: `[EM – Deferred]` Code reviews shall be mandatory before merge (process requirement, not verifiable from the codebase alone)

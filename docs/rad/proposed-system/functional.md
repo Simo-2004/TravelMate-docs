@@ -137,7 +137,7 @@
 
 ## Implementation status (baseline traceability)
 
-This section provides the formal traceability between the `[R1.0 – Frozen]` requirements and the delivered code, confirming the Waterfall **design = code** principle. It was produced by direct inspection of `Simo-2004/TravelMate`, not inferred from prior documentation.
+This section provides the formal traceability between the `[R1.0 – Frozen]` requirements and the delivered code, confirming the V-Model **design = code, verified against it** principle (see [Software Life Cycle Model Choice](/rad/overview#software-life-cycle-model-choice)). It was produced by direct inspection of `Simo-2004/TravelMate`, not inferred from prior documentation.
 
 - **Implemented (client-side, local-only):**
   - Personal Profile (A.2, A.3) — `PersonalProfileStore`, `PersonalProfileData`, `PersonalProfileScreen`
