@@ -1,25 +1,19 @@
-# 3.3.6 Interface `[EM – Deferred]`
+# 3.3.6 Interface
 
-> The REST/JWT/OAuth interfaces below require the remote backend and are therefore deferred to a future Evolutionary Maintenance lifecycle. Release 1.0 exposes no external interface at all: it is a standalone client with no API surface.
+Interface requirements define how the system communicates with anything outside itself.
 
-## API Standards
+The delivered system exposes no external interface and consumes none: it neither offers an interface to other applications nor contacts any remote service, and therefore presents no integration surface to constrain. The only external facilities it uses are those of the host operating system — secure storage for the encryption key, and access to the device's image gallery — which shall be reached through the platform's own documented mechanisms and no other means.
 
-- **NFR-IF.1.1**: All APIs shall follow RESTful principles
-- **NFR-IF.1.2**: API responses shall use JSON format
-- **NFR-IF.1.3**: API shall use standard HTTP status codes (200, 201, 400, 401, 403, 404, 500)
-- **NFR-IF.1.4**: API rate limiting: 1000 requests/hour per user
-- **NFR-IF.1.5**: API endpoints shall include pagination, filtering, and sorting
+## Deferred to future releases
 
-## Authentication & Authorization
+Once the platform acquires a server component, the following shall apply.
 
-- **NFR-IF.2.1**: APIs shall use JWT Bearer tokens for authentication
-- **NFR-IF.2.2**: Tokens shall expire after 24 hours
-- **NFR-IF.2.3**: Role-based access control (RBAC) shall enforce permissions
-- **NFR-IF.2.4**: All sensitive endpoints shall require authentication
-- **NFR-IF.2.5**: API shall support OAuth2 for third-party integrations
+**Communication protocol.** Clients and server shall communicate through a documented, versioned interface using a standard data representation and standard status semantics.
 
-## Data Format
+**Secure transport.** All communication shall be encrypted in transit, preserving the confidentiality and integrity of personal data end to end.
 
-- **NFR-IF.3.1**: Timestamps shall use ISO 8601 format (UTC) — **note**: `ChatMessage.sentAt` already serialises via `DateTime.toIso8601String()` (`lib/shared/models/chat_message.dart`) `[R1.0 – Frozen]`, so this convention is already followed locally even though no API exists yet
-- **NFR-IF.3.2**: Currencies shall be represented with ISO 4217 codes
-- **NFR-IF.3.3**: Coordinates shall use WGS 84 (GPS) format
+**Authenticated access.** Access to personal data shall require authentication, and permissions shall be enforced according to the role of the requester.
+
+**Interface consistency.** Interfaces exposed and consumed by the system shall be defined and documented consistently across modules, in order to limit integration errors and to support extending the platform with further services.
+
+**Data conventions.** Timestamps, monetary amounts, and geographic coordinates exchanged with external systems shall use recognised international representations.

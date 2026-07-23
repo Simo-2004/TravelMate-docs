@@ -1,47 +1,30 @@
 # 2. Current System
 
-## 2.1 Existing Solutions
+## 2.1 Existing solutions
 
-Currently, travelers seeking companions rely on several fragmented approaches:
+Travellers seeking companions currently rely on approaches that were not designed for the purpose:
 
-### Manual Methods
-- **Social Media Groups**: Users post in Facebook groups or Reddit communities to find travel companions
-- **Travel Forums**: Platforms like TravelBlog or BackpackerTalk facilitate connections but lack matching algorithms
-- **Word of Mouth**: Personal recommendations and referrals
-- **Travel Agencies**: Limited service focused primarily on package tours
+- **Social media groups** — posts in general-purpose groups, where announcements are quickly buried and nothing connects a traveller to the journey they are proposing
+- **Travel forums** — communities that put travellers in contact but offer no means of establishing whether their intentions actually correspond
+- **Word of mouth** — recommendations within one's own circle, which is by definition small
+- **Travel agencies** — organised group departures, in which the companions are assigned rather than chosen
 
-### Limitations of Current Approaches
+## 2.2 Problem statement
 
-1. **Inefficiency**: No structured matching based on interests and compatibility
-2. **Safety Concerns**: Difficulty verifying user identities and backgrounds
-3. **Scattered Communication**: Multiple platforms and tools required for coordination
-4. **Limited Visibility**: Hard to discover like-minded travelers
-5. **No Accountability**: Lack of review systems and community moderation
+None of these provides what the traveller actually needs, and each falls short in a distinct way.
 
-## 2.2 Problem Statement
+**Discovery is unstructured.** Interests, budget, and travel style are expressed in prose, so establishing whether two travellers are compatible requires reading and interpreting free text.
 
-There is no comprehensive platform specifically designed for:
-- Efficiently discovering travelers based on interests, style, and budget
-- Providing integrated communication for trip coordination
-- Building a trusted community through verification and ratings
-- Managing the complete journey from discovery to trip planning
+**Identity is unverified.** There is no way to establish that the person one is corresponding with is who they claim to be, which is the principal deterrent to travelling with a stranger.
+
+**Coordination is scattered.** Discovery happens on one platform, conversation on another, and the practical details of the journey on a third.
+
+**Conduct carries no consequence.** Without ratings or moderation, behaving badly costs nothing, and the traveller has no way of knowing about it in advance.
 
 ## 2.3 Opportunity
 
-The envisioned TravelMate platform addresses these gaps by providing an intelligent matching system, a unified communication platform, built-in safety and trust mechanisms, and seamless trip planning tools (`[EM – Deferred]`, see Feasibility Study §3.1).
+A platform designed for the purpose would let travellers describe themselves in structured terms, discover those whose interests correspond, and agree on a journey within a single environment where identity is verified and conduct is accountable.
 
-**Release 1.0** validates the core discovery-and-connection concept on a single device, ahead of investing in a real backend: an authenticated local account, an encrypted personal profile, a searchable catalog of trips and companions, a bookmarking system, and — as a working proof of concept for the communication experience — a **simulated, keyword-driven chat** that lets a user rehearse coordinating a trip with a companion before any real messaging infrastructure exists. Critically, it also establishes the **persistence and security foundations** (relational storage, encryption at rest, key management, password hashing) that a future networked release would build upon.
+Building that platform requires a server, a population of users, and moderation. This lifecycle therefore addresses a prior question: whether the experience is worth building at all. It delivers a self-contained application in which a single traveller can exercise the whole sequence — describing themselves, discovering trips and companions, setting aside those of interest, and corresponding about a journey — with companions supplied as catalogue data and their replies produced by the system.
 
-### Current repository status `[R1.0 – Frozen]`
-
-The TravelMate repository (`Simo-2004/TravelMate`) is the Release 1.0 Flutter mobile application. Verified against the codebase:
-
-- Persistence is a local **SQLite** database (`travelmate.db`, schema v4) with four tables — `personal_profile`, `trips`, `account`, `chat_messages` — accessed through DAO interfaces and repositories (`lib/core/database/`, `lib/shared/data/`)
-- Sensitive data is **encrypted at rest** with AES-256-GCM; the key is generated on first use and held in the OS keystore via `flutter_secure_storage` (`lib/core/security/`)
-- **Authentication is implemented**: the app opens on a login screen, supports sign-up, and verifies credentials against an encrypted username plus a PBKDF2 salted password hash (`lib/features/auth/`, `lib/shared/state/auth_service.dart`)
-- Search and discovery are implemented client-side; trips are read from SQLite (seeded once from a static catalog), while companion profiles remain a fixed in-code catalog (`MateCatalog`)
-- **Chat is implemented**, but fully simulated: a local, per-companion conversation with a keyword-matched auto-reply engine, message text encrypted at rest, and simulated online/offline presence — there is no real messaging between distinct users
-- `SharedPreferences` is still used for saved bookmarks and privacy preferences, and is retained as a one-time migration source for profile and chat history
-- A remote backend, multi-user accounts, server-side persistence, and moderation tools are **not** implemented; they are `[EM – Deferred]` to a future Evolutionary Maintenance lifecycle
-
-This RAD describes the envisioned target system alongside the Release 1.0 baseline. See the "Implementation status" section of [3.2 Functional Requirements](./proposed-system/functional) and [3.4.3 Object Model](./proposed-system/system-models/object-model) to trace which requirements and classes are implemented in the codebase today.
+What this establishes is the value of the experience and the soundness of the foundations it rests on: an account, protected storage of personal data, and a structure into which a network tier can later be introduced. What it necessarily leaves open is everything that presupposes a second real person.

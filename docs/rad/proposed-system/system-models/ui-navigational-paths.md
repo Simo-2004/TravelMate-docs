@@ -1,98 +1,52 @@
 # 3.4.5 UI-Navigational Paths & Screen Mockups
 
-## Release 1.0 Navigation Structure `[R1.0 – Frozen]`
+This section describes the paths a Traveler follows through the interface and what each screen presents. It complements the boundary objects of [3.4.3](./object-model): those state *what* is exchanged between the Traveler and the system, while this section states *where* it is exchanged and *how one arrives there*.
 
-Verified against `lib/main.dart`, `lib/features/auth/`, and `lib/features/navigation/navigation_config.dart`. The app launches on a **login screen**; the 4-tab shell is reachable only after authentication.
+## Navigational structure
+
+The application opens on the login screen. Nothing else is reachable until the Traveler is admitted, after which four principal destinations are available at all times through the bottom navigation.
 
 ```
-App Root (TravelMateApp)
-├─ Login Screen  ← entry point
-│  ├─ username / password fields → authenticate
-│  └─ → Create Account Screen
-│     └─ identity + tags + gallery photo + credentials → creates account,
-│        then opens the shell (clearing the auth stack)
-└─ NavigationShell (bottom tab bar, 4 tabs) — after successful login
-   ├─ Home Tab
-   │  ├─ Recommended trips carousel
-   │  ├─ Viewed recently carousel
-   │  └─ → Travel Schedule (on trip tap)
-   ├─ Search Tab
-   │  ├─ Trips / Mates mode switch
-   │  ├─ Inline ranked results (top 5)
-   │  ├─ → Search Results screen (on query submit)
-   │  ├─ → Travel Schedule (on trip tap)
-   │  └─ → Mate Details (on mate tap)
-   ├─ Saved Tab
-   │  ├─ Unified list of saved trips + mates
-   │  ├─ → Travel Schedule (on saved trip tap)
-   │  └─ → Mate Details (on saved mate tap)
-   └─ Settings Tab
-      ├─ Profile summary preview
-      ├─ → Personal Profile screen (edit)
-      ├─ → Privacy Settings screen
-      ├─ → Support screen (FAQ + contact)
-      └─ → Exit (signs out, returns to the Login Screen)
+Login
+├─ credentials ─────────────────────────► admitted
+└─ Create Account ──────────────────────► admitted
 
-Pushed from Mate Details:
-└─ → Chat screen (simulated conversation)
-   └─ → Trip attachment picker (from saved trips)
-      └─ → Travel Schedule (on attached-trip tap in a message bubble)
+Once admitted — four permanent destinations:
+
+Home ──────────► Trip Details
+Search ────────► Trip Details
+       └───────► Companion Profile ────► Conversation ──► Trip Details
+Saved ─────────► Trip Details
+       └───────► Companion Profile
+Settings ──────► Profile Editor
+         └─────► Privacy Preferences
+         └─────► Assistance
+         └─────► leave ──────────────────► Login
 ```
 
-### Screens not present in Release 1.0
+Trip Details is reachable from four places — the two carousels on Home, a search result, a saved item, and a trip shared inside a conversation — which is why it is presented identically in each case.
 
-The following screens are part of the envisioned platform (Feasibility Study §3.1) and are `[EM – Deferred]`: Forgot Password, Email Verification, multi-step Onboarding (Welcome / Interests / Destination Selection), a dedicated Chat tab with a conversations list and group chat, a Trips tab (My Trips / Joined Trips / Create Trip / Trip Participants), Blocked Users, Account Management (data export/deletion), and modal Report User / Block User dialogs.
+## Screens
 
-## Key Screen Descriptions (Release 1.0)
+| Screen | What it presents | Boundary object |
+|--------|------------------|-----------------|
+| **Login** | Credentials, the means to submit them, and the way to create an account instead | LoginForm |
+| **Create Account** | The fields of a travel identity, the choice of a photograph, and the credentials to be established | CreateAccountForm |
+| **Home** | Recommended trips and trips consulted recently, and a way into search | HomeView |
+| **Search** | The choice between trips and companions, a query, and the ranked results | SearchForm, SearchResultsView |
+| **Trip Details** | A trip's destination, description, illustrations, and characterising labels, with the means to save it | TripDetailsView |
+| **Companion Profile** | A companion's identity, interests, and trip preferences, with the means to save them or open a conversation | CompanionProfileView |
+| **Conversation** | The exchange with one companion, the companion's presence, and the means to write, to share a saved trip, and to discard the exchange | ChatWindow, TripAttachmentPicker |
+| **Saved** | Everything the Traveler has set aside, trips and companions together | BookmarkListView |
+| **Settings** | The profile in summary, and the way to each of the settings screens and out of the application | — |
+| **Profile Editor** | The Traveler's own identity, open to revision, with the means to confirm or abandon | ProfileEditorForm |
+| **Privacy Preferences** | The four preferences, each open to change | PrivacySettingsView |
+| **Assistance** | Frequently asked questions and the means to request help | — |
 
-### 0. Login & Create Account Screens `[R1.0 – Frozen]`
-**Purpose**: Authenticate the user, or register a new local account
-**Elements (Login)**: Brand header, username field, obscured password field, "Enter" button, link to account creation, inline error feedback on failure
-**Elements (Create Account)**: Name/surname/description fields, circular photo preview with gallery upload action, editable interest and trip tag groups, username/password fields, per-field validation errors, submit button
-*Realised by*: `LoginScreen`, `CreateAccountScreen` (`lib/features/auth/`)
+Every screen that alters stored data reports the outcome through a transient notice (ConfirmationNotice), as required by [NFR-U.4](../non-functional/usability).
 
-### 1. Home Screen `[R1.0 – Frozen]`
-**Purpose**: Landing tab showing recommended and recently viewed trips from the SQLite catalog
-**Elements**: Read-only search bar (tap to jump to Search tab), two horizontal trip carousels
-*Realised by*: `HomeScreen` (`lib/features/home/home_screen.dart`)
+## Screens of the envisioned platform
 
-### 2. Search / Search Results Screens `[R1.0 – Frozen]`
-**Purpose**: Free-text search across the trip catalog or the companion catalog
-**Elements**: Search bar, Trips/Mates mode switch button, vertical ranked result list, empty-state message
-*Realised by*: `SearchScreen`, `SearchResultsScreen`, `SearchModeView` (`lib/features/search/`)
+The following belong to the envisioned platform and have no counterpart in the delivered system: password recovery and email verification; a multi-step introduction for a first-time Traveler; a conversations list and group conversations; a section devoted to the Traveler's own trips, those they have joined, and the creation of new ones; the list of Travelers they have blocked; account management including obtaining and erasing one's data; and the dialogues for reporting or blocking another Traveler.
 
-### 3. Mate Details Screen `[R1.0 – Frozen]`
-**Purpose**: Display a companion profile from the in-code catalog
-**Elements**: Name, description, interest tags, preferred-trip tags, bookmark button, "Chat" button
-*Realised by*: `MateDetailsScreen` (`lib/features/search/mate_details_screen.dart`)
-
-### 4. Travel Schedule Screen `[R1.0 – Frozen]`
-**Purpose**: Display a trip's detail
-**Elements**: Image gallery/slider, bookmark button, tag chips, destination title and description
-*Realised by*: `TravelScheduleScreen` (`lib/features/schedule/travel_schedule_screen.dart`)
-
-### 5. Chat Screen `[R1.0 – Frozen]`
-**Purpose**: Simulated 1-on-1 conversation with a companion
-**Elements**: Companion name and simulated online/offline indicator, message list, trip-attachment picker, text input bar, clear-history action
-*Realised by*: `ChatScreen` (`lib/features/chat/chat_screen.dart`)
-
-### 6. Saved Items Screen `[R1.0 – Frozen]`
-**Purpose**: Unified list of bookmarked trips and companions
-**Elements**: Preview cards with image, name, description, and tags; tapping opens the resolved trip or companion screen
-*Realised by*: `SavedItemsScreen` (`lib/features/saved/saved_items_screen.dart`)
-
-### 7. Settings, Personal Profile, Privacy Settings, Support Screens `[R1.0 – Frozen]`
-**Purpose**: Local profile editing, privacy toggles, FAQ, (simulated) contact support, and sign-out
-**Elements**: Editable text fields, profile photo picker (device gallery plus bundled preset avatars), editable tag chips, boolean toggle switches, expandable FAQ cards, Exit action returning to the login screen
-*Realised by*: `SettingsScreen`, `PersonalProfileScreen`, `PrivacySettingsScreen`, `SupportScreen` (`lib/features/settings/`, `lib/features/profile/`)
-
-## Envisioned Screens (not implemented) `[EM – Deferred]`
-
-### Discover/Recommendation Feed (swipeable, compatibility-scored)
-**Purpose**: Show recommended compatible travelers with a Tinder-like swipeable card interface and a compatibility percentage — no swipeable card interface or compatibility score exists in Release 1.0; the closest analogue is the Home carousels and ranked Search results.
-
-### Advanced Filter Screen
-**Purpose**: Filter chips and sliders for age, interests, destination, budget, language — Release 1.0 offers only a single free-text query field.
-
-### Trip Creation, Trip Participants, Report User, Block User
-Require the `[EM – Deferred]` backend and account system described in Module D and E of [3.2 Functional Requirements](../functional).
+Two of these deserve mention because they are commonly expected of an application of this kind and are deliberately absent. A **swipeable recommendation feed** presenting one companion at a time with a compatibility percentage would require the matching described in [3.2.2](../functional); the delivered system offers instead the Home carousels and the ranked results of a search. An **advanced filter screen**, restricting results by age, budget, language, or location, would require information the delivered system does not hold about companions.

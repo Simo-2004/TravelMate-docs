@@ -1,40 +1,29 @@
 # 1.2 Scope of the System
 
-## Envisioned scope (long-term vision)
+## The envisioned platform
 
-The envisioned TravelMate platform, described in full in the Feasibility Study (§3.1), encompasses:
+TravelMate is conceived as a platform on which travellers register, describe themselves, discover one another, agree on journeys, and coordinate them by messaging, under the supervision of moderators. It comprises user management, discovery and matching, messaging, trip organisation, and administration.
 
-- **User Management**: Registration, authentication, profile creation and management
-- **Search & Discovery Engine**: Advanced filtering and matching capabilities
-- **Communication Platform**: Real-time private messaging and group chat between real users
-- **Trip Management**: Creation, joining, and coordination of travel plans
-- **Social Features**: Saved companions/trips and user rating/review system
-- **Administration**: Moderation, reporting, and user management tools
+## What this lifecycle delivers
 
-## Release 1.0 scope (this lifecycle)
+The delivered system is a self-contained application running on the Traveler's own device, with no server component. It covers:
 
-Release 1.0, the baseline delivered by this lifecycle, is a **self-contained, local-first, single-device application** backed by an encrypted SQLite database. It covers:
+- **Account** — registration and login against a single locally held account, and the ability to sign out
+- **Profile** — a travel identity comprising name, description, photograph, and freely chosen interest and trip labels
+- **Discovery** — free-text search with relevance ranking over a catalogue of trips and companions
+- **Saved items** — a collection of the trips and companions a Traveler wishes to revisit
+- **Conversation** — an exchange with a companion, including the sharing of a saved trip as a proposal
+- **Privacy** — recorded privacy preferences
+- **Data protection** — personal data and conversation content protected where they are stored, and credentials held in a form from which they cannot be recovered
 
-- **Account & Authentication**: Sign-up and login against a single locally stored account; the username is AES-encrypted and the password is kept only as a PBKDF2-HMAC-SHA256 salted hash, never reversibly
-- **Encrypted Personal Profile**: Local editing of name, surname, description, interest/trip tags, and a profile photo picked from the device gallery — all persisted as AES-256-GCM ciphertext in SQLite
-- **Trip & Companion Catalog Browsing**: Browsing trips persisted in SQLite (seeded once from a static catalog) and companion profiles served from a fixed in-code catalog
-- **Search & Discovery**: Keyword search and term-based ranking across trips and companions
-- **Saved Items**: Bookmarking trips and companion profiles, persisted on-device
-- **Simulated Chat**: A local, per-companion conversation with a keyword-matched auto-reply engine, encrypted message text at rest, and simulated online/offline presence
-- **Privacy Preferences**: Local toggles persisted on-device (see [3.2 Functional Requirements, Module A](../proposed-system/functional))
+## What it does not deliver
 
-### Out of Scope (Release 1.0)
+The following belong to the envisioned platform and are treated throughout this document as deferred:
 
-The following are part of the envisioned platform but are **not** implemented in this lifecycle — they are `[EM – Deferred]` domain requirements recorded in [3. Proposed System](../proposed-system/):
-
-- Multiple concurrent user accounts (the local account table holds a single row)
-- Email verification, social login, and password recovery
-- A remote backend, server-side database, or any network communication
-- Real-time messaging or communication between distinct real users
-- Advanced search filters (age, budget, languages, location) and a weighted compatibility-matching algorithm
-- Trip creation by users, join requests, and participant management
-- User reporting, blocking enforcement, and administrative moderation
-- Push or email notifications
-- Payment processing and booking integration
-- Real-time translation services
-- Travel insurance or liability coverage
+- several accounts on one installation, email verification, external identity providers, and password recovery
+- any server, shared database, or network communication whatsoever
+- messaging between two real Travelers, group conversations, and notifications
+- search restricted by age, budget, language, or location, and compatibility scoring between profiles
+- creating a trip, requesting to join one, and managing its participants
+- reporting, blocking, and administrative moderation
+- payment, booking, translation, and insurance

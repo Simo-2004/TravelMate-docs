@@ -1,6 +1,8 @@
 # 3.4.2 Use Case Model
 
-> **Scope note:** Use cases are written in the language of the domain; implementation classes are named only in the separate *Realised by* line, which exists for V-Model traceability and is not part of the use case itself. `[R1.0 – Frozen]` use cases are delivered by this lifecycle; `[EM – Deferred]` use cases require the remote backend or real second users.
+Each use case is specified by its name, participating actors, assumptions, entry condition, flow of events, exceptions, and exit condition. The flow separates what the actor does from what the system does. Exceptions are stated apart from the main flow rather than mixed into it.
+
+Use cases marked **(deferred)** require a server or a second real Traveler and are not delivered by this lifecycle; they are specified in outline only.
 
 ## Use Case Diagram
 
@@ -9,226 +11,190 @@ flowchart LR
     T(["Traveler"])
     A(["Administrator"])
 
-    subgraph R1["Release 1.0 — Frozen"]
+    subgraph D["Delivered"]
         UC1["UC1 Create Account"]
-        UC1b["UC1b Log In"]
-        UC2["UC2 Search Trips and Companions"]
-        UC3["UC3 Save a Trip or Companion"]
-        UC4["UC4 Converse with a Companion"]
-        UC4b["UC4b Share a Trip in a Conversation"]
-        UC8["UC8 Manage Profile and Settings"]
+        UC2["UC2 Log In"]
+        UC3["UC3 Search Trips and Companions"]
+        UC4["UC4 Save a Trip or Companion"]
+        UC5["UC5 Converse with a Companion"]
+        UC6["UC6 Share a Trip in a Conversation"]
+        UC7["UC7 Manage Profile and Settings"]
     end
 
-    subgraph EM["Evolutionary Maintenance — Deferred"]
-        UC1c["UC1c Verified Registration"]
-        UC4c["UC4c Message a Real Traveler"]
-        UC5["UC5 Create Trip"]
-        UC6["UC6 Join Trip"]
-        UC7["UC7 Report a Traveler"]
+    subgraph F["Deferred"]
+        UC8["UC8 Register a Verified Identity"]
+        UC9["UC9 Message a Real Traveler"]
+        UC10["UC10 Create Trip"]
+        UC11["UC11 Join Trip"]
+        UC12["UC12 Report a Traveler"]
     end
 
     T --- UC1
-    T --- UC1b
     T --- UC2
     T --- UC3
     T --- UC4
-    T --- UC4b
-    T --- UC8
-    T -.-> UC1c
-    T -.-> UC4c
-    T -.-> UC5
-    T -.-> UC6
-    T -.-> UC7
-    A -.-> UC7
+    T --- UC5
+    T --- UC7
+    T -.-> UC8
+    T -.-> UC9
+    T -.-> UC10
+    T -.-> UC11
+    T -.-> UC12
+    A -.-> UC12
 
-    UC4b -.->|includes| UC3
-    UC2 -.->|includes| UC3
+    UC4 -. extend .-> UC3
+    UC6 -. extend .-> UC5
+    UC5 -. include .-> UC2
 ```
 
-## Primary Use Cases
+**Relationships.** Saving (UC4) *extends* searching (UC3): a Traveler may save a result, but a search is complete without it. Sharing a trip (UC6) *extends* conversing (UC5) for the same reason. Conversing *includes* logging in, since no conversation is reachable without an admitted Traveler.
 
-### UC1: Create Account `[R1.0 – Frozen]`
+## UC1 — Create Account
 
-**Name:** CreateAccount
 **Participating actor:** Traveler
+**Assumptions:** The Traveler has the application installed and is not currently admitted.
+**Entry condition:** The Traveler is at the login screen and chooses to create an account.
 
-**Entry condition:** The Traveler is at the login screen and chooses to create a new account.
+| Traveler | System |
+|----------|--------|
+| 1. Requests to create an account. | 2. Presents a form for a travel identity — name, surname, description, interest and trip labels, photograph — together with a username and a secret. |
+| 3. Supplies the identity fields. | |
+| 4. Optionally chooses a photograph from the device. | 5. Retains the chosen photograph as part of the form. |
+| 6. Supplies a username and a secret, and submits the form. | 7. Validates every field. |
+| | 8. Records the credentials in a form from which the secret cannot be recovered, records the travel identity, and admits the Traveler. |
 
-**Flow of events:**
-1. The system presents a form requesting a travel identity — name, surname, description — together with interest and trip tags, a profile photo, and the credentials that will admit the Traveler in future.
-2. The Traveler fills in the identity fields and optionally adds interest and trip tags.
-3. The Traveler optionally chooses a profile photo from the device.
-4. The Traveler supplies a username and a secret, then submits the form.
-5. The system validates every field and, if any is unacceptable, reports the specific problem beside that field and awaits correction.
-6. On acceptance the system records the credentials in a non-recoverable form, stores the travel identity, and admits the Traveler to the application.
+**Exceptions:**
+- *A field is unacceptable.* The system reports, beside each offending field, what is wrong with it; no account is created and the values already supplied are retained for correction.
+- *The photograph cannot be obtained.* The system reports the failure and leaves the rest of the form intact; the Traveler may submit without a photograph.
 
-**Exit condition:** The Traveler is admitted to the application under the newly created identity; any previously stored account has been replaced.
+**Exit condition:** The Traveler is admitted under the newly created identity, which replaces any account previously held.
 
-*Realised by:* `CreateAccountScreen`, `AuthService.createAccount`, `AccountValidation`.
+*Realised by:* `CreateAccountScreen`, `AuthService`, `AccountValidation`.
 
-### UC1b: Log In `[R1.0 – Frozen]`
+## UC2 — Log In
 
-**Name:** LogIn
 **Participating actor:** Traveler
+**Assumptions:** An account exists; one is provided on first installation.
+**Entry condition:** The Traveler opens the application, which presents the login screen.
 
-**Entry condition:** The Traveler opens the application, which presents the login screen. An account already exists — one is provided on first installation.
+| Traveler | System |
+|----------|--------|
+| 1. Supplies a username and a secret and submits them. | 2. Compares the username with the stored account, disregarding letter case. |
+| | 3. Checks the supplied secret against the stored account without recovering the original. |
+| | 4. Admits the Traveler to the application. |
 
-**Flow of events:**
-1. The Traveler supplies a username and a secret and submits them.
-2. The system compares the username with the stored account, disregarding letter case.
-3. The system checks the supplied secret against the stored account without ever recovering the original secret.
-4. If both match, the system admits the Traveler; otherwise it reports that the credentials were not recognised and remains on the login screen.
+**Exceptions:**
+- *The username is not recognised, or the secret does not match.* The system reports that the credentials were not recognised, without indicating which of the two was at fault, and remains at the login screen.
 
-**Exit condition:** The Traveler is admitted to the application, or is informed of the failure and may retry.
+**Exit condition:** The Traveler is admitted to the application, or remains at the login screen and may try again.
 
-*Realised by:* `LoginScreen`, `AuthService.authenticate`, `AccountRepository.authenticate`.
+*Realised by:* `LoginScreen`, `AuthService`, `AccountRepository`.
 
-### UC1c: Verified and Federated Registration `[EM – Deferred]`
+## UC3 — Search Trips and Companions
 
-**Name:** VerifiedRegistration
 **Participating actor:** Traveler
+**Entry condition:** The Traveler is admitted and opens the search function.
 
-**Entry condition:** The Traveler wishes to register an identity recognised across devices.
+| Traveler | System |
+|----------|--------|
+| 1. Chooses whether to search trips or companions. | |
+| 2. Enters a query. | 3. Retains the candidates matching every term of the query. |
+| | 4. Ranks them by how closely and in which field each term matches, resolving equal ranks alphabetically. |
+| | 5. Presents the ranked results. |
+| 6. Selects a result. | 7. Presents that trip or companion in detail. |
 
-**Flow of events:** The system verifies ownership of an email address, or delegates identity to an external provider, and supports recovery of a forgotten secret.
+**Exceptions:**
+- *No candidate matches.* The system states that nothing matched, distinguishing this from an empty catalogue, and suggests what may be searched on.
+- *The query is empty.* The system presents the catalogue in its own order, so that the Traveler may browse without searching.
 
-**Exit condition:** A verified, platform-wide account exists for the Traveler.
+**Exit condition:** A ranked list is presented, and the detail of any selected result is shown.
 
-### UC2: Search Trips and Companions `[R1.0 – Frozen]`
+*Realised by:* `SearchScreen`, `SearchResultsScreen`, `filterMates`, `filterTrips`.
 
-**Name:** SearchTripsAndCompanions
+## UC4 — Save a Trip or Companion
+
 **Participating actor:** Traveler
-
-**Entry condition:** The Traveler is admitted to the application and opens the search function.
-
-**Flow of events:**
-1. The Traveler selects whether to search trips or companions.
-2. The Traveler enters a free-text query.
-3. The system retains only the candidates matching every term of the query, ranks them by how closely and where they match, and breaks ties alphabetically.
-4. The system presents the ranked results, or states that nothing matched.
-5. The Traveler selects a result to examine it in detail.
-
-**Exit condition:** A ranked list is presented and, if the Traveler selected one, its details are shown.
-
-*Realised by:* `SearchScreen`, `SearchResultsScreen`.
-
-### UC3: Save a Trip or Companion `[R1.0 – Frozen]`
-
-**Name:** SaveBookmark
-**Participating actor:** Traveler
-
 **Entry condition:** The Traveler is examining a trip or a companion.
 
-**Flow of events:**
-1. The Traveler requests that the item be saved.
-2. If the item was not already saved, the system records it among the Traveler's saved items; if it was, the system removes it.
-3. The system confirms the outcome and updates the saved indicator shown on the item.
+| Traveler | System |
+|----------|--------|
+| 1. Requests that the item be saved. | 2. Records the item among the Traveler's saved items. |
+| | 3. Confirms the outcome and marks the item as saved. |
 
-**Exit condition:** The item is present among the Traveler's saved items, or has been removed from them.
+**Exceptions:**
+- *The item is already saved.* The system removes it from the saved items instead, confirms the removal, and marks the item as not saved.
+
+**Exit condition:** The item is present among the saved items, or has been removed from them, and the indication shown on the item reflects this.
 
 *Realised by:* `SaveTripButton`, `SavedTripPreviewStore`.
 
-### UC4: Converse with a Companion `[R1.0 – Frozen]`
+## UC5 — Converse with a Companion
 
-**Name:** ConverseWithCompanion
 **Participating actor:** Traveler
+**Assumptions:** Companions are supplied by the system, not by other Travelers; their replies are produced by the system from their own recorded characteristics.
+**Entry condition:** The Traveler is examining a companion and chooses to converse.
 
-**Entry condition:** The Traveler is examining a companion and chooses to converse with them.
+| Traveler | System |
+|----------|--------|
+| 1. Opens the conversation. | 2. Presents the exchange held so far, or an invitation to begin if there is none. |
+| 3. Composes and sends a message. | 4. Records the message and shows the companion as present. |
+| | 5. Determines the companion's reply from the content of the message and, after a brief pause, records and presents it. |
+| | 6. Shows the companion as absent once the Traveler has been inactive for a short interval. |
 
-**Flow of events:**
-1. The system presents the conversation held with that companion so far, or an invitation to begin if there is none.
-2. The Traveler composes and sends a message.
-3. The system records the message and, after a brief pause, produces the companion's response based on the content of the message.
-4. The system shows the companion as present while the exchange is active, and as absent once the Traveler has been inactive for a short period.
-5. The Traveler may discard the entire conversation at any time.
+**Exceptions:**
+- *The message is empty.* The system does not record it and the conversation is unchanged.
+- *No reply corresponds to the content of the message.* The system gives a general reply rather than none.
+- *The Traveler has declared themselves absent.* The system discloses no presence for the companion.
 
-**Exit condition:** The exchange is recorded and will be presented again on a later visit, unless the Traveler discarded it.
+**Exit condition:** The exchange is recorded and will be presented again on a later visit, unless the Traveler has discarded it.
 
-> In Release 1.0 the companion is not a second real person: the response is produced by the system from the companion's own characteristics.
+*Realised by:* `ChatScreen`, `ChatStore`, `ChatAutoReplyCatalog`.
 
-*Realised by:* `ChatScreen`, `ChatStore`.
+## UC6 — Share a Trip in a Conversation
 
-### UC4b: Share a Trip in a Conversation `[R1.0 – Frozen]`
-
-**Name:** ShareTripInConversation
 **Participating actor:** Traveler
+**Entry condition:** The Traveler is conversing with a companion.
 
-**Entry condition:** The Traveler is conversing with a companion and has at least one saved trip.
+| Traveler | System |
+|----------|--------|
+| 1. Asks to share a trip. | 2. Presents the trips the Traveler has saved. |
+| 3. Chooses one. | 4. Adds it to the conversation as an invitation. |
+| | 5. Determines whether the trip's characterising labels correspond to the companion's own preferences, and records the acceptance or refusal as the companion's reply. |
 
-**Flow of events:**
-1. The Traveler asks to share a trip.
-2. The system presents the trips the Traveler has saved.
-3. The Traveler chooses one, and the system adds it to the conversation as an invitation.
-4. The companion accepts or declines according to whether the trip's character matches their own travel preferences, and the response is added to the conversation.
+**Exceptions:**
+- *The Traveler has saved no trips.* The system states that there is nothing to share and explains how a trip may be saved.
 
-**Exit condition:** The invitation and the companion's response are part of the conversation.
+**Exit condition:** The invitation and the companion's response form part of the conversation.
 
-*Realised by:* `ChatTripAttachmentPicker`, `trip_invite.dart`.
+*Realised by:* `ChatTripAttachmentPicker`, `mateLikesTrip`.
 
-### UC4c: Message a Real Traveler `[EM – Deferred]`
+## UC7 — Manage Profile and Settings
 
-**Name:** MessageRealTraveler
-**Participating actors:** Traveler (sender), Traveler (recipient)
-
-**Entry condition:** Two registered Travelers are connected through the platform.
-
-**Flow of events:** A message is delivered to the recipient, who is notified, opens it, and replies; the sender sees that it was read.
-
-**Exit condition:** The message is delivered and its reading is reflected to the sender.
-
-### UC5: Create Trip `[EM – Deferred]`
-
-**Name:** CreateTrip
 **Participating actor:** Traveler
+**Entry condition:** The Traveler is admitted and opens the settings function.
 
-**Entry condition:** The Traveler wishes to organise a journey and invite others.
+| Traveler | System |
+|----------|--------|
+| 1. Opens the settings. | 2. Presents the profile, the privacy preferences, the assistance material, and the means of leaving the application. |
+| 3. Revises the profile, or adjusts a privacy preference. | 4. Retains the change and confirms it. |
+| 5. Optionally leaves the application. | 6. Returns to the login screen. |
 
-**Flow of events:** The Traveler describes the journey — title, destination, dates, budget, itinerary, and the number of companions sought — and publishes it, obtaining a shareable reference.
+**Exceptions:**
+- *The Traveler abandons a revision before confirming it.* The system restores the values last confirmed.
+- *A replacement photograph cannot be obtained.* The system reports the failure and retains the photograph previously held.
 
-**Exit condition:** The trip is published and discoverable by other Travelers.
-
-> Release 1.0 offers a fixed catalog of trips and no means of creating one.
-
-### UC6: Join Trip `[EM – Deferred]`
-
-**Name:** JoinTrip
-**Participating actor:** Traveler
-
-**Entry condition:** The Traveler has found a published trip organised by someone else.
-
-**Flow of events:** The Traveler requests to join; the organiser reviews the request and accepts or refuses it; if accepted the Traveler joins the group and its conversation.
-
-**Exit condition:** The Traveler is a participant of the trip, or the request is pending or refused.
-
-### UC7: Report a Traveler `[EM – Deferred]`
-
-**Name:** ReportTraveler
-**Participating actors:** Traveler, Administrator
-
-**Entry condition:** A Traveler encounters behaviour that violates the community rules.
-
-**Flow of events:** The Traveler states a reason and submits a report; an Administrator examines it together with the relevant history and issues a warning or a suspension.
-
-**Exit condition:** The report is recorded and the Administrator's decision has been applied.
-
-> No reporting or blocking function exists in Release 1.0.
-
-### UC8: Manage Profile and Settings `[R1.0 – Frozen]`
-
-**Name:** ManageProfileAndSettings
-**Participating actor:** Traveler
-
-**Entry condition:** The Traveler is admitted to the application and opens the settings function.
-
-**Flow of events:**
-1. The Traveler may revise their own travel identity — name, description, photo, and tags — and confirm or abandon the changes.
-2. The Traveler may adjust their privacy preferences.
-3. The Traveler may consult the frequently asked questions or request assistance.
-4. The Traveler may review everything they have saved.
-5. The Traveler may leave the application, returning it to the login screen.
-
-**Exit condition:** The revised identity and preferences are retained and will be presented again on a later visit.
+**Exit condition:** The revised profile and preferences are retained and will be presented again on a later visit.
 
 *Realised by:* `SettingsScreen`, `PersonalProfileScreen`, `PrivacySettingsScreen`, `SupportScreen`.
 
-> Blocking other Travelers and permanently erasing one's data are not available in Release 1.0: there are no other real Travelers to block, and although registering again replaces the stored account, no explicit erasure function exists. Both remain `[EM – Deferred]`.
+## Deferred use cases
+
+**UC8 — Register a Verified Identity.** The system verifies ownership of an email address, or delegates identity to an external provider, and allows a forgotten secret to be recovered, yielding an account recognised across devices.
+
+**UC9 — Message a Real Traveler.** A message is delivered over the network to a second registered Traveler, who is notified of it; the sender is informed once it has been read.
+
+**UC10 — Create Trip.** A Traveler describes a journey — title, destination, dates, budget, itinerary, and the number of companions sought — and publishes it, obtaining a reference by which others may find it.
+
+**UC11 — Join Trip.** A Traveler requests to join a published trip; the organiser accepts or refuses, and an accepted Traveler joins the group and its conversation.
+
+**UC12 — Report a Traveler.** A Traveler states a reason and submits a report; an Administrator examines it with the relevant history and issues a warning or a suspension.

@@ -1,34 +1,22 @@
 # 3.1 Overview
 
-The **envisioned** TravelMate system is a social platform for travellers whose end-state (the Complete Product Vision, Feasibility Study §3.1) is built on a 3-tier architecture:
+The envisioned TravelMate system is a social platform for travellers: a mobile client, an application server, and a shared database, through which registered users discover one another, agree on journeys, and coordinate them by messaging. This end state is described in the Feasibility Study.
 
-- **Presentation Layer**: Flutter-based mobile app (MVVM architecture)
-- **Application Layer**: A remote backend exposing an API
-- **Data Layer**: A server-side relational database
+The present lifecycle delivers a **self-contained application running entirely on the Traveler's own device**. It is a complete two-layer client — presentation and local relational storage — but it has no network tier. The consequence, which shapes the whole of this chapter, is that there is no second real user: companions are catalogue data, and the replies they give in conversation are produced by the system itself from their recorded characteristics.
 
-The end-state implements intelligent matching algorithms, secure communication channels, and comprehensive user management to create a seamless travel companion discovery and coordination experience.
+What the delivered system does provide is the full experience of discovering, saving, and corresponding about journeys, together with the account, persistence, and data-protection foundations on which a networked release would be built.
 
-**Baseline of this lifecycle (Release 1.0):** as decided in the Feasibility Study (§3.2), the software delivered by the present lifecycle is a **self-contained, local-first** Flutter application. It is nonetheless a fully realised 2-layer client architecture — presentation/state above, and a **local relational data layer** (SQLite + DAO/repository pattern + AES-256-GCM encryption at rest) below. What it lacks is the network tier: there is no server and no second real user, so companion profiles are catalog data and their chat replies are generated on-device.
+## Scope of the delivered system
 
-Accordingly, each requirement in this chapter is tagged **`[R1.0 – Frozen]`** (part of the delivered, frozen baseline, verified against the repository) or **`[EM – Deferred]`** (domain requirement deferred to a future Evolutionary Maintenance lifecycle). Only `[R1.0 – Frozen]` requirements bind the design and the code.
+| Area | Delivered | Deferred |
+|------|-----------|----------|
+| **Account** | Registration, login, sign-out against a single local account | Email verification, external identity providers, several accounts, password recovery |
+| **Profile** | Identity, description, photograph, freely chosen interest and trip labels | — |
+| **Privacy** | Four recorded preferences, of which absence governs behaviour | Enforcement of visibility, proximity, and message acceptance |
+| **Discovery** | Free-text search over trips and companions, with ranking | Restriction by age, budget, language or location; compatibility scoring |
+| **Trips** | Browsing a fixed catalogue and its details | Creating a trip, requesting to join, managing participants |
+| **Saved items** | Saving and removing trips and companions | — |
+| **Conversations** | Exchange with a companion, presence indication, sharing a saved trip | Messaging between real Travelers, group conversations, read receipts, notifications |
+| **Administration** | — | Reporting, moderation, suspension, audit |
 
-## Baseline scope summary
-
-| Module | Area | Status |
-|--------|------|--------|
-| A.1 | Local account, sign-up & authentication | `[R1.0 – Frozen]` |
-| A.1b | Email verification, social login, multi-user accounts | `[EM – Deferred]` |
-| A.2 | Profile management (encrypted, with gallery photo) | `[R1.0 – Frozen]` |
-| A.3 | Interests & trip tags | `[R1.0 – Frozen]` |
-| A.4 | Privacy preferences (local, largely unenforced) | `[R1.0 – Frozen]` |
-| B.1 | Trip & companion search (local catalog) | `[R1.0 – Frozen]` |
-| B.2 | Weighted compatibility matching algorithm | `[EM – Deferred]` |
-| B.3 | Trip browsing (SQLite-backed catalog) | `[R1.0 – Frozen]` (creation/join deferred) |
-| C.1 | Saved items (bookmarks) | `[R1.0 – Frozen]` |
-| C.2 | Simulated 1-to-1 chat (local auto-reply engine) | `[R1.0 – Frozen]` |
-| C.2b | Real-time messaging between distinct users | `[EM – Deferred]` |
-| C.3 | Notifications | `[EM – Deferred]` |
-| D | Trip management (creation, join, server lifecycle) | `[EM – Deferred]` |
-| E | Administration & moderation | `[EM – Deferred]` |
-| F.1 | Local data persistence (SQLite) | `[R1.0 – Frozen]` |
-| F.2 | Encryption at rest & credential security | `[R1.0 – Frozen]` |
+Requirements for each area follow in [3.2](./functional); the qualities they must exhibit are stated in [3.3](./non-functional/).
