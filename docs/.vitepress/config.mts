@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
 // Definiamo un'UNICA sidebar sequenziale che mostra l'intero Ciclo di Vita a Cascata (Waterfall).
 // L'utente vedrà tutte le 5 fasi del progetto in ordine cronologico.
@@ -110,7 +111,7 @@ const waterfallSidebar = [
   }
 ];
 
-export default defineConfig({
+export default withMermaid(defineConfig({
   title: "TravelMate",
   description: "A Flutter app to find your potential travel companion",
   themeConfig: {
@@ -142,4 +143,4 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/Simo-2004/TravelMate' }
     ]
   }
-})
+}))

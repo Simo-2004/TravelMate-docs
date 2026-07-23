@@ -10,7 +10,7 @@
 
 ## User Experience `[Mixed]`
 
-- **NFR-U.2.1**: ~~New users shall complete onboarding in < 5 minutes~~ — **corrected**: there is no onboarding flow; the app launches directly into the Home tab with a pre-filled default profile (`PersonalProfile.defaultProfile`). A guided onboarding flow is `[EM – Deferred]`
+- **NFR-U.2.1**: `[R1.0 – Frozen]` New users shall be able to complete sign-up in a single screen that collects profile identity and credentials together, with per-field inline validation errors (`CreateAccountScreen`). A first-run default account is seeded so the app is also usable without signing up; a multi-step guided onboarding flow (welcome, interests, destinations) remains `[EM – Deferred]`
 - **NFR-U.2.2**: `[R1.0 – Frozen]` Core flows (search, save, edit profile, open chat) shall be reachable within 3 taps from the bottom navigation
 - **NFR-U.2.3**: `[R1.0 – Frozen]` User-facing confirmations (e.g. save/unsave, settings changes, chat history cleared) shall be surfaced via a `SnackBar`
 - **NFR-U.2.4**: `[EM – Deferred]` The system shall provide contextual help and tooltips for complex features
