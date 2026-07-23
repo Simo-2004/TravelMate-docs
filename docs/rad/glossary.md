@@ -10,6 +10,16 @@ Definitions of technical and domain-specific terms used in this document.
 
 **Bookmark / Saved Item** `[R1.0]`: A trip or companion profile a user has saved for later reference, identified by a `bookmarkType` ("trip" or "mate") and a `sourceId`, persisted on-device.
 
+**Encryption at Rest** `[R1.0]`: Protection applied to stored data (as opposed to data in transit). TravelMate encrypts sensitive database columns with AES-256-GCM so the database file is unreadable without the key held in the OS keystore.
+
+**Nonce (IV)** `[R1.0]`: A 12-byte random value generated fresh for every encryption and prepended to the ciphertext, so encrypting the same text twice never yields the same stored payload.
+
+**Password Hash** `[R1.0]`: A one-way PBKDF2-HMAC-SHA256 derivation of the user's password, stored with its random salt and iteration count. Unlike encryption it cannot be reversed — login re-derives the hash and compares it.
+
+**Salt** `[R1.0]`: Random per-password data mixed into the hash so that identical passwords produce different stored hashes, defeating precomputed (rainbow-table) attacks.
+
+**Seeded Account** `[R1.0]`: The default account written on first run so the app is usable before any sign-up. Its credentials are hard-coded constants, acceptable for a local demonstration build only.
+
 **Avatar**: A user-selected image that represents their profile visually across the platform.
 
 **Compatibility Score**: A numerical percentage (0-100%) indicating how well two travelers match based on interests, travel style, and preferences.
@@ -30,13 +40,13 @@ Definitions of technical and domain-specific terms used in this document.
 
 **Privacy Settings**: User-controlled options to determine visibility and information sharing on the platform.
 
-**Profile**: A user's information including personal details, interests, and preferences. `[R1.0]` In Release 1.0, the local `PersonalProfile` holds only first name, last name, description, a preset photo, and free-text tags — no age, location, or gender.
+**Profile**: A user's information including personal details, interests, and preferences. `[R1.0]` In Release 1.0, the local `PersonalProfile` holds first name, last name, description, a photo path, and free-text tags — no age, location, or gender — and is stored encrypted in SQLite.
 
 **Saved Items**: Profiles or trips users have bookmarked for later reference (see Bookmark).
 
-**Trip**: A travel itinerary with a destination, description, and tags. `[R1.0]` In Release 1.0, trips are 8 fixed mock entries with no dates, budget, or participants.
+**Trip**: A travel itinerary with a destination, description, and tags. `[R1.0]` In Release 1.0, trips are a fixed catalog seeded once into SQLite, with no dates, budget, or participants, and no user-facing creation flow.
 
-**User**: Any person using the TravelMate platform. `[EM – Deferred]` Release 1.0 has no registered accounts — "the user" refers to the single local app user.
+**User**: Any person using the TravelMate platform. `[R1.0]` Release 1.0 supports exactly one local account at a time — "the user" refers to the single authenticated device owner; multi-user support is `[EM – Deferred]`.
 
 **Verification**: Confirmation of user identity through email validation and profile checks.
 
@@ -66,7 +76,7 @@ Definitions of technical and domain-specific terms used in this document.
 
 **Cache/Caching**: Temporary storage of frequently accessed data for faster retrieval.
 
-**Database**: Organized collection of data stored persistently. `[EM – Deferred]` PostgreSQL is the envisioned choice for the future backend; Release 1.0 persists data locally via `SharedPreferences`, not a database.
+**Database**: Organized collection of data stored persistently. `[R1.0]` Release 1.0 uses a local **SQLite** database (`travelmate.db`) holding the personal profile, account, trip catalog, and chat history. `[EM – Deferred]` A server-side relational database (e.g. PostgreSQL) is the envisioned choice for the future backend.
 
 **Django**: Python web framework used for building the backend API.
 

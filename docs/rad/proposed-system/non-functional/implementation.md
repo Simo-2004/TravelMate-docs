@@ -1,38 +1,49 @@
 # 3.3.5 Implementation `[Mixed]`
 
-> Flutter/Dart, local persistence, and the SonarCloud build gate are verified `[R1.0 – Frozen]`; the backend stack is `[EM – Deferred]`.
+> Flutter/Dart, the SQLite persistence stack, the encryption layer, and the SonarCloud build gate are verified `[R1.0 – Frozen]`; the remote backend stack is `[EM – Deferred]`.
 
 ## Technology Stack
 
 - **NFR-I.1.1**: `[R1.0 – Frozen]` Mobile: Flutter (Dart), SDK constraint `^3.11.4` (`pubspec.yaml`)
-- **NFR-I.1.2**: `[EM – Deferred]` Backend: a server-side application framework exposing a REST API
-- **NFR-I.1.3**: `[EM – Deferred]` Database: a relational database
-- **NFR-I.1.4**: `[EM – Deferred]` Caching: a session/cache store for the remote backend
-- **NFR-I.1.5**: `[EM – Deferred]` Deployment: containerised backend deployment
-- **NFR-I.1.6**: `[R1.0 – Frozen]` Continuous static analysis: GitHub Actions runs a SonarCloud scan on every change (`.github/workflows/sonar.yml`, `sonar-project.properties`), analysing `lib/` with coverage sourced from `flutter test --coverage`
+- **NFR-I.1.2**: `[R1.0 – Frozen]` Local database: SQLite via `sqflite`, stored in the app's private documents directory resolved with `path_provider`
+- **NFR-I.1.3**: `[R1.0 – Frozen]` Encryption: AES-256-GCM via the pure-Dart `encrypt` package, keeping the full encrypt/decrypt round trip unit-testable without platform channels
+- **NFR-I.1.4**: `[R1.0 – Frozen]` Key storage: OS keystore/keychain via `flutter_secure_storage`
+- **NFR-I.1.5**: `[R1.0 – Frozen]` Password hashing: PBKDF2-HMAC-SHA256 via `pointycastle`
+- **NFR-I.1.6**: `[R1.0 – Frozen]` Media selection: device gallery access via `image_picker`; selected files are copied into app storage and referenced by path
+- **NFR-I.1.7**: `[R1.0 – Frozen]` Continuous static analysis: GitHub Actions runs a SonarCloud scan on every change (`.github/workflows/sonar.yml`, `sonar-project.properties`), analysing `lib/` with coverage sourced from `flutter test --coverage`
+- **NFR-I.1.8**: `[EM – Deferred]` Backend: a server-side application framework exposing a REST API, a server-side relational database, and a session/cache store, deployed in containers
 
-**Repository note:** The current GitHub repository (`Simo-2004/TravelMate`) is a Flutter mobile application (Release 1.0) and **does not** include a backend implementation. Its only runtime dependencies are `cupertino_icons`, `flutter_svg`, and `shared_preferences` — there is no networking package. The backend technology stack (NFR-I.1.2–I.1.5) is a planned/preferred stack for a subsequent Evolutionary Maintenance cycle and should be treated as a recommendation, not a current implementation.
+**Repository note:** The repository (`Simo-2004/TravelMate`) is a Flutter mobile application (Release 1.0) with a complete **local** persistence and security stack, but **no** backend implementation and no networking package among its dependencies. The backend technology stack (NFR-I.1.8) is a planned/preferred stack for a subsequent Evolutionary Maintenance cycle and should be treated as a recommendation, not a current implementation.
 
 Currently implemented in repository:
 
 - Mobile: Flutter (Dart) — `lib/` contains the full application
-- Local persistence: `SharedPreferences`-based repositories (`lib/shared/data/*.dart`)
-- State management: `ValueNotifier`-based singleton stores (`lib/shared/state/*.dart`)
+- Persistence: SQLite (`travelmate.db`, schema v4) with DAO interfaces and repositories (`lib/core/database/`, `lib/shared/data/`)
+- Security: AES-256-GCM field encryption, OS-keystore-held key, PBKDF2 password hashing (`lib/core/security/`)
+- State management: `ValueNotifier`-based singleton stores (`lib/shared/state/`)
+- Residual `SharedPreferences` usage: saved bookmarks and privacy preferences, plus retained legacy stores used only as one-time migration sources
 - Static analysis & coverage reporting: SonarCloud via GitHub Actions
 
 Deferred (not present in repository):
 
-- Any backend framework, relational database, cache, server-side search, or real messaging infrastructure
+- Any backend framework, server-side database, cache, server-side search, or real messaging infrastructure
+
+## Architectural Standards `[R1.0 – Frozen]`
+
+- **NFR-I.2.1**: Database access shall be isolated behind DAO interfaces, so business logic never depends directly on `sqflite`
+- **NFR-I.2.2**: Secret storage shall be isolated behind a `SecureKeyStore` interface, so the encryption layer never depends directly on a platform plugin
+- **NFR-I.2.3**: Mapping, encryption, and query-composition logic shall reside in repositories — which are unit-tested against in-memory fake DAOs — while thin platform adapters shall be excluded from coverage
+- **NFR-I.2.4**: Stores and screens shall expose test seams (injectable repositories/data sources) so flows can be exercised without live SQLite or secure-storage plugins
 
 ## Development Standards
 
-- **NFR-I.2.1**: `[R1.0 – Frozen]` Code shall follow Dart/Flutter style guides, enforced via `analysis_options.yaml`. The project includes the official `flutter_lints` rule set and extends it with 6 additional lint rules not enabled by default: `prefer_single_quotes`, `prefer_final_locals`, `prefer_final_in_for_each`, `unnecessary_lambdas`, `unawaited_futures`, and `sort_pub_dependencies`
-- **NFR-I.2.2**: `[R1.0 – Frozen]` Automated testing shall run via `flutter test`; the repository includes a test suite under `test/` (`chat_store_test.dart`, `logic_test.dart`, `navigation_test.dart`, `persistence_test.dart`, `widget_test.dart`, `widgets_test.dart`, `screens_test.dart`)
-- **NFR-I.2.3**: `[R1.0 – Frozen]` Security and quality scanning shall be integrated into the automated build pipeline via SonarCloud
-- **NFR-I.2.4**: `[EM – Deferred]` Code reviews shall be mandatory before merge (process requirement, not verifiable from the codebase alone)
+- **NFR-I.3.1**: `[R1.0 – Frozen]` Code shall follow Dart/Flutter style guides, enforced via `analysis_options.yaml`. The project includes the official `flutter_lints` rule set and extends it with 6 additional lint rules not enabled by default: `prefer_single_quotes`, `prefer_final_locals`, `prefer_final_in_for_each`, `unnecessary_lambdas`, `unawaited_futures`, and `sort_pub_dependencies`
+- **NFR-I.3.2**: `[R1.0 – Frozen]` Automated testing shall run via `flutter test`, with a test suite under `test/`
+- **NFR-I.3.3**: `[R1.0 – Frozen]` Security and quality scanning shall be integrated into the automated build pipeline via SonarCloud
+- **NFR-I.3.4**: `[EM – Deferred]` Code reviews shall be mandatory before merge (process requirement, not verifiable from the codebase alone)
 
 ## Version Control
 
-- **NFR-I.3.1**: `[R1.0 – Frozen]` Git-based version control with semantic versioning (`pubspec.yaml` declares `version: 1.0.0+1`)
-- **NFR-I.3.2**: `[R1.0 – Frozen]` Feature branches shall be used for development
-- **NFR-I.3.3**: `[R1.0 – Frozen]` Release tags/GitHub Releases shall document version history (see Deployment)
+- **NFR-I.4.1**: `[R1.0 – Frozen]` Git-based version control with semantic versioning (`pubspec.yaml` declares `version: 1.0.0+1`)
+- **NFR-I.4.2**: `[R1.0 – Frozen]` Feature branches shall be used for development
+- **NFR-I.4.3**: `[R1.0 – Frozen]` Release tags/GitHub Releases shall document version history (see Deployment)

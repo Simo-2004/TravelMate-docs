@@ -1,120 +1,219 @@
 # 3.4.4 Dynamic Model
 
-> **Scope note:** The flows below were verified against the repository. Local Search & Ranking and Simulated Chat are `[R1.0 – Frozen]`. Authentication and the weighted Matching Algorithm are `[EM – Deferred]` — they describe the envisioned backend and are not implemented.
+> **Level of abstraction:** The diagrams below distribute responsibilities among the analysis objects identified in [3.4.3](./object-model). Every sequence follows the required flow **Actor → Boundary → Control → Entity**: the actor only ever addresses a boundary, control objects orchestrate the use case, and entity objects never send messages back up to controls or boundaries.
 
-## Local Search & Ranking Flow `[R1.0 – Frozen]`
+## 3.4.4.1 Sequence Diagram — Log In (UC1b) `[R1.0 – Frozen]`
 
-```
-1. User types a query in the Search tab (trips or mates mode)
-   ↓
-2. Query is split into whitespace-separated terms and lower-cased
-   ↓
-3. For each candidate (trip or mate), every term must match at least one
-   field (name/label, description, keywords/tags) or the candidate is excluded
-   ↓
-4. Matching terms are scored and summed (prefix match > substring match,
-   name/label weighted higher than description)
-   ↓
-5. Candidates are sorted by score descending, then alphabetically
-   ↓
-6. Result list is capped to a fixed limit (5)
-   ↓
-7. UI re-renders the ranked list via ValueListenableBuilder / setState
-```
+```mermaid
+sequenceDiagram
+    actor T as Traveler
+    participant LF as LoginForm
+    participant LC as LoginControl
+    participant A as Account
+    participant CN as ConfirmationNotice
 
-*Realised by*: `filterMates` (`lib/shared/utils/mate_search.dart`), `filterTrips` (`lib/shared/utils/trip_search.dart`).
-
-## Simulated Chat Flow `[R1.0 – Frozen]`
-
-```
-1. User sends a message in ChatScreen
-   ↓
-2. ChatStore.sendMessage: rejects if blank, marks the companion "online"
-   (notifyActivity), appends the message (isFromMe: true) to local history
-   ↓
-3. History is persisted immediately via ChatHistoryData (SharedPreferences)
-   ↓
-4. resolveAutoReply matches the message text against ChatAutoReplyCatalog's
-   ordered keyword rules (whole-word, case-insensitive); falls back to a
-   generic reply if nothing matches
-   ↓
-5. After a fixed 900ms delay, the matched reply is appended (isFromMe: false)
-   and persisted
-   ↓
-6. If no further activity occurs for 5 seconds, the companion's presence
-   indicator reverts to "offline"
+    T->>LF: enterCredentials(username, secret)
+    T->>LF: submit()
+    LF->>LC: <<create>>
+    LC->>A: verifyCredentials(username, secret)
+    A-->>LC: accepted / rejected
+    alt credentials accepted
+        LC->>LF: openApplication()
+        LF-->>T: application shell shown
+    else credentials rejected
+        LC->>CN: <<create>> showFailure()
+        CN-->>T: "credentials not recognised"
+    end
+    destroy LC
+    LC-->>LF: endLoginTransaction()
 ```
 
-*Realised by*: `ChatStore` (`lib/shared/state/chat_store.dart`), `resolveAutoReply` (`lib/shared/utils/chat_auto_reply.dart`).
+**Responsibilities assigned.** `LoginForm` collects and submits; `LoginControl` owns the flow and decides the outcome; `Account` answers only the question "do these credentials match?" and never drives navigation.
 
-## Trip-Invite-in-Chat Flow `[R1.0 – Frozen]`
+## 3.4.4.2 Sequence Diagram — Create Account (UC1) `[R1.0 – Frozen]`
 
-```
-1. User opens the trip attachment picker inside a chat and selects a saved trip
-   ↓
-2. ChatStore.sendTripInvite appends an invite message carrying attachedTripId
-   ↓
-3. mateLikesTrip compares the trip's TripTag labels against the companion's
-   own interest + preferredTrips tags (case-insensitive)
-   ↓
-4. If any tag overlaps: the companion's scheduled auto-reply is an acceptance
-   If no tag overlaps: the companion's scheduled auto-reply is a decline
-   ↓
-5. Reply is appended after the standard 900ms simulated delay
-```
+```mermaid
+sequenceDiagram
+    actor T as Traveler
+    participant CF as CreateAccountForm
+    participant CC as CreateAccountControl
+    participant A as Account
+    participant TR as Traveler_Entity
+    participant CN as ConfirmationNotice
 
-*Realised by*: `mateLikesTrip` (`lib/shared/utils/trip_invite.dart`), `ChatTripAttachmentPicker`.
-
-## User Authentication Flow (Envisioned) `[EM – Deferred]`
-
-```
-1. User submits credentials
-   ↓
-2. System validates email/password
-   ↓
-3a. If valid: Generate JWT token
-3b. If invalid: Return 401 Unauthorized
-   ↓
-4. Return token and refresh token
-   ↓
-5. Client stores tokens locally
-   ↓
-6. Token expires after 24 hours; client uses refresh token to get a new one
+    T->>CF: openForm()
+    CF->>CC: <<create>>
+    T->>CF: fillIdentity(name, surname, description, tags)
+    T->>CF: choosePhoto()
+    T->>CF: fillCredentials(username, secret)
+    T->>CF: submit()
+    CF->>CC: requestCreation(identity, credentials)
+    CC->>CC: validate(identity, credentials)
+    alt validation failed
+        CC->>CF: showFieldErrors()
+        CF-->>T: inline errors per field
+    else validation passed
+        CC->>A: <<create>> storeCredentials(username, secret)
+        CC->>TR: <<create>> storeIdentity(identity)
+        CC->>CN: <<create>> showSuccess()
+        CN-->>T: profile created
+        destroy CF
+        CC->>CF: openApplication()
+    end
 ```
 
-## Compatibility Matching Algorithm Flow (Envisioned) `[EM – Deferred]`
+**Note on the model.** Validation is a responsibility of the **control**, not of the entities: it concerns the use case (is this submission acceptable?) rather than the domain concepts themselves.
 
-```
-1. User initiates search with filters
-   ↓
-2. System queries the User database with filter criteria
-   ↓
-3. For each result, calculate a compatibility score:
-   - Shared interests: 40%
-   - Destination overlap: 30%
-   - Travel style: 20%
-   - Date availability: 10%
-   ↓
-4. Exclude blocked/hidden profiles
-   ↓
-5. Sort by compatibility score descending, apply pagination
-   ↓
-6. Client renders results with a match percentage
+## 3.4.4.3 Sequence Diagram — Search Trips and Companions (UC2) `[R1.0 – Frozen]`
+
+```mermaid
+sequenceDiagram
+    actor T as Traveler
+    participant SF as SearchForm
+    participant SC as SearchControl
+    participant TR as Trip
+    participant CO as Companion
+    participant RV as SearchResultsView
+
+    T->>SF: selectMode(trips | companions)
+    T->>SF: enterQuery(text)
+    SF->>SC: <<create>>
+    SF->>SC: search(query, mode)
+    alt mode = trips
+        SC->>TR: matchAgainst(query)
+        TR-->>SC: matching trips
+    else mode = companions
+        SC->>CO: matchAgainst(query)
+        CO-->>SC: matching companions
+    end
+    SC->>SC: rankByRelevance()
+    SC->>RV: <<create>> display(rankedResults)
+    RV-->>T: ranked list
+    T->>RV: selectResult()
+    RV->>SC: openDetails(selection)
 ```
 
-> This weighted percentage model does not exist in Release 1.0; the real, local ranking is the term-based scoring described in "Local Search & Ranking Flow" above.
+## 3.4.4.4 Sequence Diagram — Save a Bookmark (UC3) `[R1.0 – Frozen]`
 
-## Real-Time Message Flow (Envisioned) `[EM – Deferred]`
+```mermaid
+sequenceDiagram
+    actor T as Traveler
+    participant DV as TripDetailsView
+    participant BC as BookmarkControl
+    participant B as Bookmark
+    participant CN as ConfirmationNotice
 
+    T->>DV: toggleBookmark()
+    DV->>BC: <<create>>
+    BC->>B: isAlreadySaved(target)
+    B-->>BC: saved / not saved
+    alt not yet saved
+        BC->>B: <<create>> save(target)
+        BC->>CN: <<create>> show("saved")
+    else already saved
+        destroy B
+        BC->>B: remove(target)
+        BC->>CN: <<create>> show("removed")
+    end
+    CN-->>T: outcome
+    DV->>DV: refreshBookmarkIndicator()
 ```
-1. User sends message in chat to a real recipient
-   ↓
-2. Client validates and encrypts the message (TLS)
-   ↓
-3. Message sent to backend API, stored in the database
-   ↓
-4. Backend sends a push notification to the recipient
-   ↓
-5. Recipient opens chat: new messages are fetched, marked read, and the
-   sender's view is updated with delivery/read status
+
+## 3.4.4.5 Sequence Diagram — Converse with a Companion (UC4) `[R1.0 – Frozen]`
+
+```mermaid
+sequenceDiagram
+    actor T as Traveler
+    participant CW as ChatWindow
+    participant CC as ChatControl
+    participant CV as Conversation
+    participant M as Message
+    participant CO as Companion
+
+    T->>CW: openConversation(companion)
+    CW->>CC: <<create>>
+    CC->>CV: retrieveHistory(companion)
+    CV-->>CC: past messages
+    CC->>CW: display(history)
+    T->>CW: composeAndSend(text)
+    CW->>CC: sendMessage(text)
+    CC->>M: <<create>> outgoing(text)
+    CC->>CV: append(message)
+    CC->>CO: determineReply(text)
+    CO-->>CC: reply text
+    CC->>M: <<create>> incoming(replyText)
+    CC->>CV: append(reply)
+    CC->>CW: display(updatedThread)
+    CW-->>T: conversation updated
 ```
+
+## 3.4.4.6 Sequence Diagram — Share a Trip in a Conversation (UC4b) `[R1.0 – Frozen]`
+
+```mermaid
+sequenceDiagram
+    actor T as Traveler
+    participant CW as ChatWindow
+    participant AP as TripAttachmentPicker
+    participant IC as TripInviteControl
+    participant B as Bookmark
+    participant TR as Trip
+    participant CO as Companion
+    participant CV as Conversation
+
+    T->>CW: requestAttachTrip()
+    CW->>IC: <<create>>
+    IC->>B: listSavedTrips()
+    B-->>IC: saved trips
+    IC->>AP: <<create>> display(savedTrips)
+    T->>AP: selectTrip()
+    destroy AP
+    AP->>IC: inviteWith(trip)
+    IC->>CV: append(inviteMessage)
+    IC->>TR: describingTags()
+    TR-->>IC: trip tags
+    IC->>CO: wouldAccept(tripTags)
+    CO-->>IC: accepts / declines
+    IC->>CV: append(companionResponse)
+    CV-->>CW: updated thread
+    CW-->>T: invite and response shown
+```
+
+**Object discovered through this diagram.** Building this sequence made explicit that the decision to accept or decline is a *domain* judgement belonging to the **Companion** (it depends on that companion's own tags), not a rule of the chat use case. The responsibility was therefore assigned to the `Companion` entity rather than to `TripInviteControl` — an example of the sequence diagram refining the object model.
+
+## 3.4.4.7 Statechart — Companion Presence `[R1.0 – Frozen]`
+
+The presence indicator shown beside a companion's name is state-dependent behaviour of a single object, and is therefore modelled as a statechart.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Offline
+    Offline --> Online : Traveler activity in conversation
+    Online --> Online : further activity (timer restarts)
+    Online --> Offline : idle timeout elapsed
+    Offline --> Hidden : Traveler enables Offline mode
+    Online --> Hidden : Traveler enables Offline mode
+    Hidden --> Offline : Traveler disables Offline mode
+    note right of Hidden
+        While the Traveler is invisible,
+        no companion presence is disclosed
+    end note
+```
+
+## 3.4.4.8 Statechart — Bookmark Lifecycle `[R1.0 – Frozen]`
+
+```mermaid
+stateDiagram-v2
+    [*] --> NotSaved
+    NotSaved --> Saved : toggleBookmark()
+    Saved --> NotSaved : toggleBookmark()
+    Saved --> Saved : reopened from BookmarkListView
+    NotSaved --> [*]
+```
+
+## 3.4.4.9 Envisioned Dynamic Behaviour `[EM – Deferred]`
+
+The following flows belong to the envisioned platform and are **not** realised in Release 1.0. They are recorded for traceability only.
+
+- **Token-based authentication**: credentials are validated by a remote service that issues a session token with a limited lifetime, refreshed transparently by the client.
+- **Compatibility matching**: candidate travellers are scored on shared interests, destination overlap, travel style, and availability, then ranked by the resulting compatibility percentage.
+- **Real-time messaging**: a message is delivered over the network to a second real Traveler, who is notified, and whose reading of the message updates the sender's view with a read receipt.

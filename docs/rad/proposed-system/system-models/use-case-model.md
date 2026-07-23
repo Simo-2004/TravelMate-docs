@@ -1,119 +1,234 @@
 # 3.4.2 Use Case Model
 
-> **Scope note:** Verified against the repository. `[R1.0 – Frozen]` use cases below are realised by concrete screens; `[EM – Deferred]` use cases depend on the remote backend / real other users and are not implemented.
+> **Scope note:** Use cases are written in the language of the domain; implementation classes are named only in the separate *Realised by* line, which exists for V-Model traceability and is not part of the use case itself. `[R1.0 – Frozen]` use cases are delivered by this lifecycle; `[EM – Deferred]` use cases require the remote backend or real second users.
+
+## Use Case Diagram
+
+```mermaid
+flowchart LR
+    T(["Traveler"])
+    A(["Administrator"])
+
+    subgraph R1["Release 1.0 — Frozen"]
+        UC1["UC1 Create Account"]
+        UC1b["UC1b Log In"]
+        UC2["UC2 Search Trips and Companions"]
+        UC3["UC3 Save a Trip or Companion"]
+        UC4["UC4 Converse with a Companion"]
+        UC4b["UC4b Share a Trip in a Conversation"]
+        UC8["UC8 Manage Profile and Settings"]
+    end
+
+    subgraph EM["Evolutionary Maintenance — Deferred"]
+        UC1c["UC1c Verified Registration"]
+        UC4c["UC4c Message a Real Traveler"]
+        UC5["UC5 Create Trip"]
+        UC6["UC6 Join Trip"]
+        UC7["UC7 Report a Traveler"]
+    end
+
+    T --- UC1
+    T --- UC1b
+    T --- UC2
+    T --- UC3
+    T --- UC4
+    T --- UC4b
+    T --- UC8
+    T -.-> UC1c
+    T -.-> UC4c
+    T -.-> UC5
+    T -.-> UC6
+    T -.-> UC7
+    A -.-> UC7
+
+    UC4b -.->|includes| UC3
+    UC2 -.->|includes| UC3
+```
 
 ## Primary Use Cases
 
-### UC1: Register and Create Profile `[EM – Deferred]`
-**Actors**: Unauthenticated User
-**Preconditions**: User has email address
-**Main Flow**:
-1. User opens app and clicks "Sign Up"
-2. Enters email and password
-3. Receives verification email
-4. Clicks verification link
-5. Creates profile with name, photo, bio
-6. Selects interests and favorite destinations
-7. Sets privacy preferences
-**Postconditions**: User account created, profile visible on platform
+### UC1: Create Account `[R1.0 – Frozen]`
 
-> Release 1.0 has no such flow: the app launches directly into Home with a pre-filled default profile (`PersonalProfile.defaultProfile`) that the user may edit at any time (see UC8).
+**Name:** CreateAccount
+**Participating actor:** Traveler
+
+**Entry condition:** The Traveler is at the login screen and chooses to create a new account.
+
+**Flow of events:**
+1. The system presents a form requesting a travel identity — name, surname, description — together with interest and trip tags, a profile photo, and the credentials that will admit the Traveler in future.
+2. The Traveler fills in the identity fields and optionally adds interest and trip tags.
+3. The Traveler optionally chooses a profile photo from the device.
+4. The Traveler supplies a username and a secret, then submits the form.
+5. The system validates every field and, if any is unacceptable, reports the specific problem beside that field and awaits correction.
+6. On acceptance the system records the credentials in a non-recoverable form, stores the travel identity, and admits the Traveler to the application.
+
+**Exit condition:** The Traveler is admitted to the application under the newly created identity; any previously stored account has been replaced.
+
+*Realised by:* `CreateAccountScreen`, `AuthService.createAccount`, `AccountValidation`.
+
+### UC1b: Log In `[R1.0 – Frozen]`
+
+**Name:** LogIn
+**Participating actor:** Traveler
+
+**Entry condition:** The Traveler opens the application, which presents the login screen. An account already exists — one is provided on first installation.
+
+**Flow of events:**
+1. The Traveler supplies a username and a secret and submits them.
+2. The system compares the username with the stored account, disregarding letter case.
+3. The system checks the supplied secret against the stored account without ever recovering the original secret.
+4. If both match, the system admits the Traveler; otherwise it reports that the credentials were not recognised and remains on the login screen.
+
+**Exit condition:** The Traveler is admitted to the application, or is informed of the failure and may retry.
+
+*Realised by:* `LoginScreen`, `AuthService.authenticate`, `AccountRepository.authenticate`.
+
+### UC1c: Verified and Federated Registration `[EM – Deferred]`
+
+**Name:** VerifiedRegistration
+**Participating actor:** Traveler
+
+**Entry condition:** The Traveler wishes to register an identity recognised across devices.
+
+**Flow of events:** The system verifies ownership of an email address, or delegates identity to an external provider, and supports recovery of a forgotten secret.
+
+**Exit condition:** A verified, platform-wide account exists for the Traveler.
 
 ### UC2: Search Trips and Companions `[R1.0 – Frozen]`
-**Actors**: App user
-**Preconditions**: None
-**Main Flow**:
-1. User opens the Search tab
-2. Toggles between "Trips" and "Mates" mode (`SearchResearchModeStore`)
-3. Types a free-text query
-4. System returns a term-ranked list of up to 5 matches (`filterMates` / `filterTrips`)
-5. User taps a result to open its detail screen
-**Postconditions**: Ranked list of matching trips or companions displayed
 
-*Realised by*: `SearchScreen`, `SearchResultsScreen` (`lib/features/search/`).
+**Name:** SearchTripsAndCompanions
+**Participating actor:** Traveler
 
-### UC3: Save a Trip or Companion Profile `[R1.0 – Frozen]`
-**Actors**: App user
-**Preconditions**: User viewing a trip or companion detail screen
-**Main Flow**:
-1. User taps the bookmark button
-2. System adds the item to the local saved-items list and persists it
-3. A confirmation `SnackBar` is displayed
-**Postconditions**: Item added to Saved Items, visible on the Saved tab
+**Entry condition:** The Traveler is admitted to the application and opens the search function.
 
-*Realised by*: `SaveTripButton`, `SavedTripPreviewStore` (`lib/shared/state/saved_trip_preview_store.dart`).
+**Flow of events:**
+1. The Traveler selects whether to search trips or companions.
+2. The Traveler enters a free-text query.
+3. The system retains only the candidates matching every term of the query, ranks them by how closely and where they match, and breaks ties alphabetically.
+4. The system presents the ranked results, or states that nothing matched.
+5. The Traveler selects a result to examine it in detail.
 
-### UC4: Chat with a Companion (Simulated) `[R1.0 – Frozen]`
-**Actors**: App user
-**Preconditions**: User viewing a companion's profile screen
-**Main Flow**:
-1. User taps "Chat" to open the conversation for that companion
-2. User types and sends a message
-3. `ChatStore` matches the message against a keyword rule table and, after a short delay, appends the companion's auto-reply
-4. The companion's presence indicator shows "online" while the conversation is active, returning to "offline" after 5 seconds of inactivity
-**Postconditions**: Message and auto-reply appended to the conversation, persisted locally
+**Exit condition:** A ranked list is presented and, if the Traveler selected one, its details are shown.
 
-*Realised by*: `ChatScreen`, `ChatStore` (`lib/features/chat/`, `lib/shared/state/chat_store.dart`).
+*Realised by:* `SearchScreen`, `SearchResultsScreen`.
 
-### UC4b: Attach a Saved Trip to a Chat `[R1.0 – Frozen]`
-**Actors**: App user
-**Preconditions**: User is in a companion's chat and has at least one saved trip
-**Main Flow**:
-1. User taps the attachment icon to open the trip picker
-2. User selects one of their saved trips
-3. System sends an invite message carrying the trip attachment
-4. `mateLikesTrip` compares the trip's tags with the companion's interest/preferred-trip tags; the companion's auto-reply accepts or politely declines accordingly
-**Postconditions**: Invite message and companion's response appended to the conversation
+### UC3: Save a Trip or Companion `[R1.0 – Frozen]`
 
-*Realised by*: `ChatTripAttachmentPicker`, `trip_invite.dart` (`lib/shared/widgets/chat_trip_attachment_picker.dart`, `lib/shared/utils/trip_invite.dart`).
+**Name:** SaveBookmark
+**Participating actor:** Traveler
 
-### UC4c: Send Message Between Real Users `[EM – Deferred]`
-**Actors**: Traveler User (Sender, Receiver)
-**Preconditions**: Both users are authenticated and connected via a real backend
-**Main Flow**:
-1. User opens another (real) user's profile and sends a message
-2. Recipient receives a push notification
-3. Recipient opens the chat and replies
-**Postconditions**: Message delivered over the network, notification sent
+**Entry condition:** The Traveler is examining a trip or a companion.
+
+**Flow of events:**
+1. The Traveler requests that the item be saved.
+2. If the item was not already saved, the system records it among the Traveler's saved items; if it was, the system removes it.
+3. The system confirms the outcome and updates the saved indicator shown on the item.
+
+**Exit condition:** The item is present among the Traveler's saved items, or has been removed from them.
+
+*Realised by:* `SaveTripButton`, `SavedTripPreviewStore`.
+
+### UC4: Converse with a Companion `[R1.0 – Frozen]`
+
+**Name:** ConverseWithCompanion
+**Participating actor:** Traveler
+
+**Entry condition:** The Traveler is examining a companion and chooses to converse with them.
+
+**Flow of events:**
+1. The system presents the conversation held with that companion so far, or an invitation to begin if there is none.
+2. The Traveler composes and sends a message.
+3. The system records the message and, after a brief pause, produces the companion's response based on the content of the message.
+4. The system shows the companion as present while the exchange is active, and as absent once the Traveler has been inactive for a short period.
+5. The Traveler may discard the entire conversation at any time.
+
+**Exit condition:** The exchange is recorded and will be presented again on a later visit, unless the Traveler discarded it.
+
+> In Release 1.0 the companion is not a second real person: the response is produced by the system from the companion's own characteristics.
+
+*Realised by:* `ChatScreen`, `ChatStore`.
+
+### UC4b: Share a Trip in a Conversation `[R1.0 – Frozen]`
+
+**Name:** ShareTripInConversation
+**Participating actor:** Traveler
+
+**Entry condition:** The Traveler is conversing with a companion and has at least one saved trip.
+
+**Flow of events:**
+1. The Traveler asks to share a trip.
+2. The system presents the trips the Traveler has saved.
+3. The Traveler chooses one, and the system adds it to the conversation as an invitation.
+4. The companion accepts or declines according to whether the trip's character matches their own travel preferences, and the response is added to the conversation.
+
+**Exit condition:** The invitation and the companion's response are part of the conversation.
+
+*Realised by:* `ChatTripAttachmentPicker`, `trip_invite.dart`.
+
+### UC4c: Message a Real Traveler `[EM – Deferred]`
+
+**Name:** MessageRealTraveler
+**Participating actors:** Traveler (sender), Traveler (recipient)
+
+**Entry condition:** Two registered Travelers are connected through the platform.
+
+**Flow of events:** A message is delivered to the recipient, who is notified, opens it, and replies; the sender sees that it was read.
+
+**Exit condition:** The message is delivered and its reading is reflected to the sender.
 
 ### UC5: Create Trip `[EM – Deferred]`
-**Actors**: Traveler User (Trip Creator)
-**Main Flow**:
-1. User enters trip title, destination, dates, budget, and itinerary
-2. Sets max participants and publishes the trip
-3. System generates a shareable trip link/code
-**Postconditions**: Trip created, visible in search results
 
-> Release 1.0's 8 trips are fixed mock data; there is no trip-creation UI.
+**Name:** CreateTrip
+**Participating actor:** Traveler
+
+**Entry condition:** The Traveler wishes to organise a journey and invite others.
+
+**Flow of events:** The Traveler describes the journey — title, destination, dates, budget, itinerary, and the number of companions sought — and publishes it, obtaining a shareable reference.
+
+**Exit condition:** The trip is published and discoverable by other Travelers.
+
+> Release 1.0 offers a fixed catalog of trips and no means of creating one.
 
 ### UC6: Join Trip `[EM – Deferred]`
-**Actors**: Traveler User (Participant)
-**Main Flow**:
-1. User finds a trip through search and requests to join
-2. Trip creator reviews and approves/rejects the request
-3. If approved, user is added as a participant and gains access to the group chat
-**Postconditions**: User is a trip participant or the request is pending
 
-### UC7: Report User `[EM – Deferred]`
-**Actors**: Traveler User, Administrator
-**Main Flow**:
-1. User selects a reason and submits a report against another user
-2. Administrators review the report and take action
-**Postconditions**: Report recorded, admin notified
+**Name:** JoinTrip
+**Participating actor:** Traveler
 
-> No Report or Block action exists anywhere in the Release 1.0 UI.
+**Entry condition:** The Traveler has found a published trip organised by someone else.
 
-### UC8: Manage Local Profile and Settings `[R1.0 – Frozen]`
-**Actors**: App user
-**Preconditions**: None
-**Main Flow**:
-1. User opens the Settings tab
-2. Can edit personal profile (name, description, photo, interest/trip tags) via Profile
-3. Can toggle privacy preferences via Privacy
-4. Can browse FAQ and a (simulated) "Contact support" action via Support
-5. Can view saved items via the Saved tab
-**Postconditions**: Local profile and preferences updated and persisted
+**Flow of events:** The Traveler requests to join; the organiser reviews the request and accepts or refuses it; if accepted the Traveler joins the group and its conversation.
 
-*Realised by*: `SettingsScreen`, `PersonalProfileScreen`, `PrivacySettingsScreen`, `SupportScreen`.
+**Exit condition:** The Traveler is a participant of the trip, or the request is pending or refused.
 
-> "Manage blocked users" and "request data export or delete account" do **not** exist in Release 1.0 — there is nothing to block (no other real users) and no account to delete. These remain `[EM – Deferred]`.
+### UC7: Report a Traveler `[EM – Deferred]`
+
+**Name:** ReportTraveler
+**Participating actors:** Traveler, Administrator
+
+**Entry condition:** A Traveler encounters behaviour that violates the community rules.
+
+**Flow of events:** The Traveler states a reason and submits a report; an Administrator examines it together with the relevant history and issues a warning or a suspension.
+
+**Exit condition:** The report is recorded and the Administrator's decision has been applied.
+
+> No reporting or blocking function exists in Release 1.0.
+
+### UC8: Manage Profile and Settings `[R1.0 – Frozen]`
+
+**Name:** ManageProfileAndSettings
+**Participating actor:** Traveler
+
+**Entry condition:** The Traveler is admitted to the application and opens the settings function.
+
+**Flow of events:**
+1. The Traveler may revise their own travel identity — name, description, photo, and tags — and confirm or abandon the changes.
+2. The Traveler may adjust their privacy preferences.
+3. The Traveler may consult the frequently asked questions or request assistance.
+4. The Traveler may review everything they have saved.
+5. The Traveler may leave the application, returning it to the login screen.
+
+**Exit condition:** The revised identity and preferences are retained and will be presented again on a later visit.
+
+*Realised by:* `SettingsScreen`, `PersonalProfileScreen`, `PrivacySettingsScreen`, `SupportScreen`.
+
+> Blocking other Travelers and permanently erasing one's data are not available in Release 1.0: there are no other real Travelers to block, and although registering again replaces the stored account, no explicit erasure function exists. Both remain `[EM – Deferred]`.

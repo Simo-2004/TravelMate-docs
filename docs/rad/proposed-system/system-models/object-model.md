@@ -1,229 +1,177 @@
 # 3.4.3 Object Model
 
-## Release 1.0 Object Model (Class Diagram) `[R1.0 – Frozen]`
+> **Level of abstraction:** This analysis object model describes the system from the perspective of the **application domain**, not of the software implementation. Storage mechanisms, encryption components, and data-access classes are deliberately **excluded** — they are design decisions and belong to the SDD/ODD. Objects are classified using the **Entity–Boundary–Control (EBC)** pattern and labelled with the corresponding UML stereotypes.
 
-The diagram below reflects the **actual** Dart classes in the repository, field-for-field, verified directly against the source. This is the object model that binds the Implementation phase.
+## 3.4.3.1 Actors
 
-```
-MateProfile (lib/shared/models/mate_profile.dart)
-├─ id: String
-├─ name: String
-├─ description: String
-├─ profileImageAsset: String?
-├─ keywords: List<String>
-├─ interests: List<String>
-└─ preferredTrips: List<String>
+| Actor | Description | Lifecycle scope |
+|-------|-------------|-----------------|
+| **Traveler** | The person using the application: browses trips and companions, saves them, edits their own profile, and converses with companions. The only actor in Release 1.0. | `[R1.0 – Frozen]` |
+| **Administrator** | Staff member who reviews reports, moderates content, and suspends accounts. | `[EM – Deferred]` |
+| **Companion (as a real user)** | A second real Traveler on the other end of a conversation. In Release 1.0 companions are catalog data and are **not** actors — their replies are produced by the system itself. | `[EM – Deferred]` |
 
-TripTileData (lib/shared/models/trip_tile_data.dart)
-├─ tripId: String
-├─ asset: String
-├─ label: String
-├─ scheduleImages: List<String>
-├─ tags: List<TripTag>
-├─ destinationTitle: String
-└─ description: String
+## 3.4.3.2 Entity Objects
 
-TripTag (lib/shared/models/trip_tag.dart)
-├─ label: String
-├─ backgroundColor: Color
-├─ textColor: Color
-└─ borderColor: Color?
+Identified by applying **Abbott's heuristic** to the scenarios and use cases (common nouns → candidate classes), then retaining only those that represent domain concepts or persistent data.
 
-PersonalProfile (lib/shared/models/personal_profile.dart)
-├─ firstName: String
-├─ lastName: String
-├─ description: String
-├─ photoAsset: String
-├─ interestTags: List<String>
-└─ tripTags: List<String>
-   (no age, no location, no gender — these fields do not exist)
+| `<<entity>>` | Domain meaning | Key attributes |
+|--------------|----------------|----------------|
+| **Person** *(abstract)* | Generalisation of anyone with a travel identity | name, description, interests |
+| **Traveler** | The account holder's own travel identity | surname, photo, tripTags |
+| **Companion** | A potential travel mate offered by the system | preferredTrips, keywords |
+| **Account** | The credentials that admit the Traveler to the application | username, secret |
+| **Trip** | A travel itinerary that can be browsed and shared | title, destination, description, schedule |
+| **TripTag** | A reusable category label describing a trip's character | label |
+| **Bookmark** | A Traveler's saved reference to a trip or a companion | savedOn |
+| **Conversation** | The exchange between the Traveler and one Companion | — |
+| **Message** | A single utterance within a conversation | text, sentAt, fromTraveler |
+| **PrivacyPreferences** | The Traveler's visibility choices | privateProfile, radiusOnly, checkMessages, offlineMode |
 
-PrivacySettings (lib/shared/models/privacy_settings.dart)
-├─ privateProfile: bool
-├─ onlyPeopleInRadius: bool
-├─ checkMessages: bool
-└─ offlineMode: bool
+**Candidate nouns deliberately rejected** (following the guidance that not every noun is an entity): *system*, *application*, *database*, *screen*, *button*, *catalog*, *key* — these denote either the system itself, presentation artefacts, or implementation mechanisms.
 
-SavedTripPreview (lib/shared/models/saved_trip_preview.dart)
-├─ tripName: String
-├─ destinationTitle: String
-├─ description: String
-├─ coverImage: String
-├─ tags: List<TripTag>
-├─ bookmarkType: String   ("trip" | "mate", see SavedBookmarkType)
-└─ sourceId: String        (id of the originating Trip or Mate)
+## 3.4.3.3 Boundary Objects
 
-ChatMessage (lib/shared/models/chat_message.dart)
-├─ id: String
-├─ text: String
-├─ isFromMe: bool
-├─ sentAt: DateTime
-└─ attachedTripId: String?  (set when the message carries a trip invite)
+Boundary objects model the **interaction** between the Traveler and the system, expressed in the user's language. They deliberately say nothing about layout, colours, or widget positioning, which are covered by the mock-ups in [3.4.5](./ui-navigational-paths).
 
-SearchResearchMode (lib/shared/models/search_research_mode.dart)
-└─ enum { trips, mates }
-```
+| `<<boundary>>` | Purpose |
+|----------------|---------|
+| **LoginForm** | Collects credentials to enter the application |
+| **CreateAccountForm** | Collects a new identity and its credentials |
+| **HomeView** | Presents recommended and recently viewed trips |
+| **SearchForm** | Accepts a search query and the trips/companions mode |
+| **SearchResultsView** | Presents ranked results |
+| **CompanionProfileView** | Presents a companion's identity and tags |
+| **TripDetailsView** | Presents a trip's schedule, tags, and description |
+| **BookmarkListView** | Presents everything the Traveler has saved |
+| **ChatWindow** | Presents a conversation and accepts new messages |
+| **TripAttachmentPicker** | Lets the Traveler choose a saved trip to share |
+| **ProfileEditorForm** | Accepts changes to the Traveler's own identity |
+| **PrivacySettingsView** | Presents and toggles privacy preferences |
+| **ConfirmationNotice** | Communicates the outcome of an action back to the Traveler |
 
-### Relationships (Release 1.0)
+## 3.4.3.4 Control Objects
 
-- `TripTileData` **has** a list of `TripTag`
-- `SavedTripPreview` **references** either a `TripTileData` or a `MateProfile` via `sourceId` + `bookmarkType`
-- `PersonalProfile` is a singleton, held by `PersonalProfileStore`
-- `ChatMessage` instances are grouped per companion (`MateProfile.id`) inside `ChatStore`; an `attachedTripId`, when present, resolves back to a `TripTileData` via `TripCatalog.findTripById`
+Following the heuristic of **one control object per use case**, each control coordinates boundaries and entities for the duration of its use case and holds no domain data of its own.
 
-## Envisioned Conceptual Entity Model `[EM – Deferred]`
+| `<<control>>` | Coordinates the use case |
+|---------------|--------------------------|
+| **LoginControl** | UC1b — Log In |
+| **CreateAccountControl** | UC1 — Create Account |
+| **SearchControl** | UC2 — Search Trips and Companions |
+| **BookmarkControl** | UC3 — Save a Trip or Companion |
+| **ChatControl** | UC4 — Chat with a Companion |
+| **TripInviteControl** | UC4b — Attach a Saved Trip to a Chat |
+| **ProfileEditControl** | UC8 — Manage Profile and Settings |
 
-The entities below describe the envisioned backend data model (Feasibility Study §3.1). They are **not** implemented as backend models in the repository — Release 1.0 has no database and no server.
+## 3.4.3.5 Analysis Class Diagram
 
-```
-USER (Entity)
-├─ id: UUID (PK)
-├─ email: String (Unique, Not Null)
-├─ password_hash: String (Encrypted)
-├─ first_name: String
-├─ last_name: String
-├─ date_of_birth: Date
-├─ bio: Text
-├─ profile_photo_url: String
-├─ gender: Enum (M, F, Other, Prefer Not to Say)
-├─ location: String
-├─ privacy_setting: Enum (Public, Friends Only, Hidden)
-├─ is_verified: Boolean
-├─ is_active: Boolean
-├─ created_at: Timestamp
-├─ updated_at: Timestamp
-├─ last_login: Timestamp
-└─ Relationships:
-   ├─ 1-to-N: Profile Photos
-   ├─ M-to-N: Interests
-   ├─ M-to-N: Favorite Destinations
-   ├─ 1-to-N: Created Trips
-   ├─ M-to-N: Trip Participations
-   ├─ 1-to-N: Sent Messages
-   ├─ 1-to-N: Received Messages
-   ├─ 1-to-N: Saved Items
-   ├─ M-to-N: Blocked Users
-   └─ 1-to-N: Reports
+```mermaid
+classDiagram
+    class Person {
+        <<entity>>
+        +name
+        +description
+        +interests
+    }
+    class Traveler {
+        <<entity>>
+        +surname
+        +photo
+        +tripTags
+    }
+    class Companion {
+        <<entity>>
+        +preferredTrips
+        +keywords
+    }
+    class Account {
+        <<entity>>
+        +username
+        +secret
+    }
+    class Trip {
+        <<entity>>
+        +title
+        +destination
+        +description
+        +schedule
+    }
+    class TripTag {
+        <<entity>>
+        +label
+    }
+    class Bookmark {
+        <<entity>>
+        +savedOn
+    }
+    class Conversation {
+        <<entity>>
+    }
+    class Message {
+        <<entity>>
+        +text
+        +sentAt
+        +fromTraveler
+    }
+    class PrivacyPreferences {
+        <<entity>>
+        +privateProfile
+        +radiusOnly
+        +checkMessages
+        +offlineMode
+    }
 
-INTEREST (Entity)
-├─ id: UUID (PK)
-├─ category: String
-├─ name: String
-├─ description: Text
-└─ Relationships:
-   └─ M-to-N: Users
+    Person <|-- Traveler
+    Person <|-- Companion
 
-DESTINATION (Entity)
-├─ id: UUID (PK)
-├─ name: String
-├─ country: String
-├─ continent: String
-├─ latitude: Float
-├─ longitude: Float
-├─ description: Text
-└─ Relationships:
-   ├─ M-to-N: Users (Favorites)
-   └─ 1-to-N: Trips
-
-TRIP (Entity)
-├─ id: UUID (PK)
-├─ title: String
-├─ description: Text
-├─ destination_id: UUID (FK)
-├─ creator_id: UUID (FK)
-├─ start_date: Date
-├─ end_date: Date
-├─ budget_min: Decimal
-├─ budget_max: Decimal
-├─ max_participants: Integer
-├─ access_code: String (Unique)
-├─ status: Enum (Draft, Published, Cancelled, Completed)
-├─ created_at: Timestamp
-├─ updated_at: Timestamp
-└─ Relationships:
-   ├─ Many-to-1: Destination
-   ├─ Many-to-1: Creator (User)
-   ├─ M-to-N: Participants (Users)
-   ├─ 1-to-N: Trip Itinerary Items
-   └─ 1-to-N: Group Messages
-
-TRIP_ITINERARY_ITEM (Entity)
-├─ id: UUID (PK)
-├─ trip_id: UUID (FK)
-├─ day: Integer
-├─ title: String
-├─ description: Text
-├─ location: String
-├─ start_time: Time
-├─ end_time: Time
-└─ Relationships:
-   └─ Many-to-1: Trip
-
-MESSAGE (Entity)
-├─ id: UUID (PK)
-├─ sender_id: UUID (FK)
-├─ recipient_id: UUID (FK) [null if group]
-├─ chat_room_id: UUID (FK) [null if 1-on-1]
-├─ text: Text
-├─ is_read: Boolean
-├─ created_at: Timestamp
-├─ deleted_at: Timestamp [soft delete]
-└─ Relationships:
-   ├─ Many-to-1: Sender (User)
-   ├─ Many-to-1: Recipient (User)
-   └─ Many-to-1: Chat Room
-
-CHAT_ROOM (Entity)
-├─ id: UUID (PK)
-├─ type: Enum (OneToOne, Group)
-├─ name: String [required for groups]
-├─ trip_id: UUID (FK) [null if personal chat]
-└─ Relationships:
-   ├─ M-to-N: Participants (Users)
-   ├─ 1-to-N: Messages
-   └─ Many-to-1: Trip [if group chat]
-
-REPORT (Entity)
-├─ id: UUID (PK)
-├─ reporter_id: UUID (FK)
-├─ reported_user_id: UUID (FK)
-├─ reason: String
-├─ description: Text
-├─ status: Enum (Pending, Under Review, Resolved, Dismissed)
-├─ admin_response: Text
-├─ created_at: Timestamp
-├─ resolved_at: Timestamp
-└─ Relationships:
-   ├─ Many-to-1: Reporter (User)
-   ├─ Many-to-1: Reported User
-   └─ Many-to-1: Administrator (User)
-
-NOTIFICATION (Entity)
-├─ id: UUID (PK)
-├─ user_id: UUID (FK)
-├─ type: String (NewMessage, MatchRecommendation, etc.)
-├─ title: String
-├─ body: Text
-├─ data: JSON
-├─ is_read: Boolean
-├─ created_at: Timestamp
-└─ Relationships:
-   └─ Many-to-1: User
+    Account "1" -- "1" Traveler : admits
+    Traveler "1" *-- "1" PrivacyPreferences : governed by
+    Traveler "1" -- "0..*" Bookmark : saves
+    Bookmark "0..*" --> "1" Trip : refers to
+    Bookmark "0..*" --> "1" Companion : refers to
+    Trip "0..*" o-- "1..*" TripTag : categorised by
+    Traveler "1" -- "0..*" Conversation : holds
+    Conversation "1" -- "1" Companion : with
+    Conversation "1" *-- "0..*" Message : contains
+    Message "0..*" --> "0..1" Trip : shares
 ```
 
-## Codebase Mapping and Traceability
+### Associations, roles and multiplicities
 
-- `MateProfile` — `lib/shared/models/mate_profile.dart`, populated by `MateCatalog`
-- `TripTileData` / `TripTag` — `lib/shared/models/trip_tile_data.dart`, `lib/shared/models/trip_tag.dart`, populated by `TripCatalog` / `TripTagCatalog`
-- `SavedTripPreview` — `lib/shared/models/saved_trip_preview.dart`, persisted by `SavedBookmarksData`
-- `PersonalProfile` — `lib/shared/models/personal_profile.dart`, persisted by `PersonalProfileData`
-- `PrivacySettings` / `PrivacySettingKey` — `lib/shared/models/privacy_settings.dart`, persisted by `PrivacySettingsData`
-- `SearchResearchMode` — `lib/shared/models/search_research_mode.dart`, a bare 2-value enum (`trips`, `mates`) with no associated label field
-- `ChatMessage` — `lib/shared/models/chat_message.dart`, persisted per-companion by `ChatHistoryData`, orchestrated by `ChatStore`
+| Association | Roles | Multiplicity | Rationale |
+|-------------|-------|--------------|-----------|
+| Account **admits** Traveler | credentials / holder | 1 – 1 | One local identity per installation |
+| Traveler **saves** Bookmark | owner / saved item | 1 – 0..* | A Traveler may save any number of items |
+| Bookmark **refers to** Trip \| Companion | reference / target | 0..* – 1 | Each bookmark points at exactly one target |
+| Trip **categorised by** TripTag | trip / category | 0..* – 1..* | Tags are shared across trips |
+| Traveler **holds** Conversation | participant / thread | 1 – 0..* | One conversation per companion contacted |
+| Conversation **with** Companion | thread / counterpart | 1 – 1 | Conversations are one-to-one |
+| Conversation **contains** Message | thread / utterance | 1 – 0..* | Messages belong to exactly one thread |
+| Message **shares** Trip | invite / subject | 0..* – 0..1 | A message optionally carries a trip invite |
 
-**Corrections from the previous edition of this document:**
-- There is **no `PersonalTag` class** in the repository — `PersonalProfile.interestTags` / `tripTags` are plain `List<String>`, not a list of colored tag objects
-- `SavedTripPreview`'s image field is `coverImage`, not `imageAsset`; its type discriminator is `bookmarkType`, not `itemType`; it also carries `tags` and `sourceId`, both previously undocumented
-- `TripTileData`'s tag field is `tags`, not `tripTags`; it has no `scheduleCount`/`tagCount` getters
-- `MateProfile` has a `preferredTrips` field that was previously undocumented
-- `ChatMessage` and the entire chat subsystem were entirely absent from earlier editions of this RAD despite being implemented
+### Aggregation vs composition
+
+- **Composition** (filled diamond) — `Conversation ◆— Message` and `Traveler ◆— PrivacyPreferences`: the parts have no independent existence. Clearing a conversation destroys its messages; privacy preferences are meaningless without their owner.
+- **Aggregation** (hollow diamond) — `Trip ◇— TripTag`: tags belong to a shared vocabulary, exist independently of any single trip, and are reused across many trips.
+
+### Generalisation
+
+`Person` factors out what a **Traveler** and a **Companion** have in common — a name, a description, and a set of interests — removing duplication from the model. The specialisations add only what distinguishes them: a Traveler additionally owns a surname, a photo and trip tags, while a Companion carries the preferred-trip and keyword information used to rank it in searches.
+
+### Redundant associations removed
+
+`Traveler → Trip` ("has saved trips") is **not** modelled: it is already derivable from the chain `Traveler → Bookmark → Trip`. Likewise `Traveler → Message` is derivable from `Traveler → Conversation → Message`. Modelling them explicitly would add complexity without adding information.
+
+## 3.4.3.6 Traceability to the implementation
+
+> Provided for V-Model verification only; it is **not** part of the analysis model. Design-level structures (persistence schema, data-access objects, cryptographic components) are specified in the SDD and ODD.
+
+| Analysis entity | Realised by |
+|-----------------|-------------|
+| Traveler | `PersonalProfile` |
+| Companion | `MateProfile` |
+| Account | `account` record managed by `AccountRepository` |
+| Trip / TripTag | `TripTileData` / `TripTag` |
+| Bookmark | `SavedTripPreview` |
+| Conversation / Message | conversation map in `ChatStore` / `ChatMessage` |
+| PrivacyPreferences | `PrivacySettings` |

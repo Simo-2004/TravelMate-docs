@@ -1,53 +1,104 @@
 ﻿# Persistent Data Management
 
-> **Binding scope:** This document designs the **Release 1.0** on-device persistence. The SQL/relational schema at the end is *informative only* (Evolutionary Maintenance) and does not bind the frozen baseline.
+> **Binding scope:** This document designs the **Release 1.0** on-device persistence. It realises the domain concepts specified in [RAD §3.4.3](/rad/proposed-system/system-models/object-model) — the analysis model deliberately says nothing about storage mechanisms, which are decided here.
+
+> ⚠️ **Alignment status:** the sections from *Data Models & Storage* onwards still describe the earlier `SharedPreferences`-only design and have **not** yet been revised for the SQLite migration. Only the sections above that point are current.
 
 ## Overview
 
-TravelMate uses a **local-first data management strategy** with SharedPreferences for persistent storage. This section details how data is structured, stored, retrieved, and managed.
+TravelMate uses a **local-first data management strategy** built on an embedded **SQLite** database, with field-level encryption applied to sensitive content. A residual amount of low-sensitivity data is still held in `SharedPreferences`.
 
 ## Data Storage Strategy
 
-### Primary Storage Mechanism: SharedPreferences
+### Primary Storage Mechanism: SQLite
 
-SharedPreferences is used for all persistent data due to:
-- Simple key-value interface
-- Native platform support (iOS, Android, Web)
-- Automatic serialization
-- No external database dependency
-- Suitable for small to medium data
+All principal data is persisted in a single SQLite database file, `travelmate.db` (schema version 4), opened from the application's private documents directory. SQLite was chosen because it provides:
+
+- A relational schema with indexes, enabling conversations to be retrieved without scanning every message
+- Transactional, single-file storage that is trivially backed up with the app sandbox
+- Idempotent schema creation (`CREATE TABLE IF NOT EXISTS`), making both fresh installs and upgrades safe
+- No server or network dependency, consistent with the local-first constraint
+
+### Database Schema
+
+Columns marked 🔒 hold AES-256-GCM base64 payloads rather than plain text.
+
+```sql
+personal_profile            -- single row, pinned to id = 1
+├─ id                INTEGER PRIMARY KEY
+├─ first_name        TEXT NOT NULL   🔒
+├─ last_name         TEXT NOT NULL   🔒
+├─ description       TEXT NOT NULL   🔒
+├─ photo_path        TEXT NOT NULL   🔒   (file path, never image bytes)
+├─ interest_tags     TEXT NOT NULL   🔒   (JSON array, encrypted)
+└─ trip_tags         TEXT NOT NULL   🔒   (JSON array, encrypted)
+
+account                     -- single row: one local user
+├─ id                  INTEGER PRIMARY KEY
+├─ username            TEXT NOT NULL   🔒
+├─ password_salt       TEXT NOT NULL        (base64 random salt)
+├─ password_hash       TEXT NOT NULL        (base64 PBKDF2 hash — one-way)
+└─ password_iterations INTEGER NOT NULL
+
+trips                       -- public read-only catalog, plain text by design
+├─ id                INTEGER PRIMARY KEY AUTOINCREMENT
+├─ trip_id           TEXT NOT NULL
+├─ collection        TEXT NOT NULL        ('trips' | 'recents')
+├─ position          INTEGER NOT NULL     (preserves catalog order)
+├─ asset             TEXT NOT NULL
+├─ label             TEXT NOT NULL
+├─ schedule_images   TEXT NOT NULL        (JSON array)
+├─ tags              TEXT NOT NULL        (JSON array)
+├─ destination_title TEXT NOT NULL
+└─ description       TEXT NOT NULL
+
+chat_messages               -- indexed by mate_id
+├─ id                INTEGER PRIMARY KEY AUTOINCREMENT
+├─ mate_id           TEXT NOT NULL        (plain: needed for querying)
+├─ message_id        TEXT NOT NULL
+├─ text              TEXT NOT NULL   🔒   (conversation content)
+├─ is_from_me        INTEGER NOT NULL     (plain: structural)
+├─ sent_at           TEXT NOT NULL        (plain ISO-8601: needed for ordering)
+└─ attached_trip_id  TEXT                 (nullable trip reference)
+
+INDEX idx_chat_messages_mate_id ON chat_messages (mate_id)
+```
+
+**Encryption rationale.** Identifiers, flags, and timestamps remain in plain text because they are structural — required to query and order rows — and are not sensitive in isolation. Only readable user content is encrypted. Trip rows are public catalog content and are not encrypted at all.
 
 ### Storage Architecture
 
 ```
-┌──────────────────────────────────────────────────┐
-│        Application Layer (Dart Code)             │
-│                                                  │
-│  PersonalProfileStore (ValueNotifier<Profile>)   │
-│  SavedTripPreviewStore (ValueNotifier<List>)     │
-│  PrivacySettingsStore (ValueNotifier<Settings>)  │
-└──────────────────────────────────────────────────┘
-                    ↑ read/write
-┌──────────────────────────────────────────────────┐
-│    Data Access Layer (Repositories)              │
-│                                                  │
-│  PersonalProfileData                             │
-│  SavedBookmarksData                              │
-│  PrivacySettingsData                             │
-└──────────────────────────────────────────────────┘
-                    ↑ serialize/deserialize
-┌──────────────────────────────────────────────────┐
-│  SharedPreferences (Platform Bridge)             │
-└──────────────────────────────────────────────────┘
-                    ↑ platform-specific
-┌──────────────────────────────────────────────────┐
-│     Persistent Storage (Device Storage)          │
-│                                                  │
-│  Android: SharedPreferences XML files            │
-│  iOS: NSUserDefaults (plist)                     │
-│  Web: Browser LocalStorage                       │
-└──────────────────────────────────────────────────┘
+Screens / Stores  (PersonalProfileStore, TripStore, ChatStore, AuthService)
+        ↓
+Data sources      (SqliteProfileData, SqliteChatData)  — migration from legacy store
+        ↓
+Repositories      (ProfileRepository, TripRepository, AccountRepository, ChatRepository)
+        ↓            ← owns mapping + encryption; unit-tested against fake DAOs
+DAO interfaces    (ProfileDao, TripDao, AccountDao, ChatDao)
+        ↓            ← sqflite adapters; thin, excluded from coverage
+DatabaseHelper    (single shared sqflite connection)
+
+Security          AesCipher ← ProfileKeyProvider ← SecureKeyStore (OS keystore)
+                  PasswordHasher (PBKDF2, independent of the AES key)
 ```
+
+The layering exists so that all mapping and cryptographic logic sits in the repositories, which depend only on DAO *interfaces* and can therefore be unit-tested against in-memory fakes; the `sqflite` adapters remain thin enough to be excluded from coverage.
+
+### Residual SharedPreferences usage
+
+Saved bookmarks and privacy preferences are still written as plain JSON to `SharedPreferences`. The legacy profile and chat stores are retained solely as one-time migration sources into the database.
+
+### Cryptographic design
+
+| Concern | Mechanism |
+|---------|-----------|
+| Field encryption | AES-256-GCM, fresh 12-byte nonce per value, payload stored as `base64(nonce ‖ ciphertext+tag)` |
+| Tamper detection | GCM authentication tag — decryption fails on alteration or wrong key |
+| Key generation | 256-bit key from a cryptographically secure RNG, created on first use |
+| Key storage | OS keystore/keychain, never in the database or source |
+| Password storage | PBKDF2-HMAC-SHA256, 100,000 iterations, 32-byte key, 16-byte random salt |
+| Password verification | Constant-time comparison of derived hashes |
 
 ## Data Models & Storage
 
@@ -410,36 +461,10 @@ Future<void> addMultipleBookmarks(List<SavedTripPreview> items) async {
 - Cache computed values
 - Clear unused references
 
-## Annex — Relational Schema (Informative, Non-Binding)
+## Annex — Server-Side Schema (Informative, Non-Binding)
 
-> This schema pertains to a future networked/SQLite persistence layer under Evolutionary Maintenance. It is **not** part of the frozen Release 1.0 design.
+> The on-device schema is **not** here — it is specified in *Data Storage Strategy* above and is part of the frozen Release 1.0 design. This annex concerns only the **multi-user, server-side** database of the envisioned platform, which would be introduced by a future Evolutionary Maintenance lifecycle.
 
-### SQL Schema (candidate, when migrating to SQLite/PostgreSQL)
+A networked release would replace the single-row `account` and `personal_profile` tables with a multi-tenant schema in which every row is scoped to a user identifier, and would move the conversation tables server-side so that messages are exchanged between two real accounts rather than generated locally. The conceptual entities such a schema would have to represent (`USER`, `TRIP`, `MESSAGE`, `CHAT_ROOM`, `REPORT`, `NOTIFICATION`) are catalogued in the deferred portion of [RAD §3.4.3](/rad/proposed-system/system-models/object-model).
 
-```sql
-CREATE TABLE users (
-  id INTEGER PRIMARY KEY,
-  firstName TEXT NOT NULL,
-  lastName TEXT NOT NULL,
-  age INTEGER,
-  location TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE interests (
-  id INTEGER PRIMARY KEY,
-  user_id INTEGER FOREIGN KEY,
-  label TEXT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE TABLE saved_trips (
-  id INTEGER PRIMARY KEY,
-  user_id INTEGER FOREIGN KEY,
-  trip_name TEXT NOT NULL,
-  destination TEXT NOT NULL,
-  saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
-);
-```
+Designing that schema is outside the scope of this document, since the corresponding requirements are `[EM – Deferred]` and therefore not frozen.

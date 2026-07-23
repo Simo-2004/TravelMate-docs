@@ -13,4 +13,4 @@
 | [3.3.5](./implementation) | Implementation | `[Mixed]` |
 | [3.3.6](./interface) | Interface | `[EM – Deferred]` |
 | [3.3.7](./packaging) | Packaging | `[Mixed]` |
-| [3.3.8](./legal) | Legal | `[EM – Deferred]` |
+| [3.3.8](./legal) | Legal | `[Mixed]` |
