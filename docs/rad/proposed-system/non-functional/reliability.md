@@ -1,38 +1,19 @@
-# 3.3.2 Reliability `[Mixed]`
+# 3.3.2 Reliability
 
-> On-device error handling, database integrity, and data migration are `[R1.0 – Frozen]`; server availability, replication, and automated failover are `[EM – Deferred]`.
+Reliability requirements concern the system's ability to preserve the Traveler's data and to behave predictably when something goes wrong.
 
-## Availability `[EM – Deferred]`
+**NFR-R.1 — Tolerance of unreadable data.** If stored data cannot be read or interpreted, the system shall fall back to a documented default state rather than fail, so that a damaged record can never prevent the application from starting.
 
-- **NFR-R.1.1**: System shall maintain 99.5% uptime (< 3.6 hours downtime/month)
-- **NFR-R.1.2**: All critical features shall have automatic failover mechanisms
-- **NFR-R.1.3**: Database shall be replicated across at least 2 geographic regions
-- **NFR-R.1.4**: API servers shall be load-balanced with auto-scaling
+**NFR-R.2 — Integrity of unique records.** Records that exist in a single instance — the account and the personal profile — shall be written so that an update replaces the existing record rather than creating a second one.
 
-> Not applicable to a single-device application with no server component.
+**NFR-R.3 — Detection of alteration.** Encrypted content shall be stored in a form that makes alteration detectable, so that corruption surfaces as an explicit failure rather than as silently incorrect data.
 
-## Error Handling `[R1.0 – Frozen]`
+**NFR-R.4 — Preservation of data across upgrades.** When the application is updated, data written by a previous version shall be carried forward exactly once, without loss and without duplication.
 
-- **NFR-R.2.1**: Data sources shall fail safe: malformed or missing persisted values shall fall back to a documented default rather than crash the app (e.g. `PrivacySettingsData.read()` returns `PrivacySettings.defaults` on a decode error; `SqliteProfileData.read()` falls back to `PersonalProfile.defaultProfile` when neither the database nor the legacy store holds a profile)
-- **NFR-R.2.2**: Legacy saved-item records written under an earlier field schema shall still resolve correctly via a documented fallback matching strategy (`SavedTripPreviewStore`)
-- **NFR-R.2.3**: A failed profile-photo pick shall surface a user-facing error message rather than propagate an exception (`CreateAccountScreen._uploadPhoto`)
+**NFR-R.5 — Containment of failures.** The failure of an optional operation, such as selecting a photograph, shall be reported to the Traveler and shall leave the surrounding task usable.
 
-## Data Integrity `[R1.0 – Frozen]`
+**NFR-R.6 — Single point of access to storage.** Concurrent access to the local store shall be coordinated through a single connection, so that simultaneous operations cannot leave data in an inconsistent state.
 
-- **NFR-R.3.1**: Single-row tables (`personal_profile`, `account`) shall be written with a pinned primary key and replace-on-conflict semantics, so an update can never produce duplicate rows
-- **NFR-R.3.2**: Schema creation shall be idempotent (`CREATE TABLE IF NOT EXISTS`) and safe to run on both fresh installs and upgrades from an earlier schema version
-- **NFR-R.3.3**: A single shared database connection shall prevent concurrent open handles to the same database file
-- **NFR-R.3.4**: Encrypted payloads shall be integrity-protected by the AES-GCM authentication tag, so silent corruption or tampering surfaces as a decryption failure rather than as corrupted data
-- **NFR-R.3.5**: `[EM – Deferred]` The server-side database shall support ACID transactions and point-in-time backup
+## Deferred to future releases
 
-## Data Migration `[R1.0 – Frozen]`
-
-- **NFR-R.4.1**: On upgrade from a previous app version, personal profile and chat history saved in `SharedPreferences` shall be imported into the encrypted database exactly once, so upgrading users do not lose data
-- **NFR-R.4.2**: The migration shall be idempotent: it runs only when the destination table is empty, and the legacy store is never written to again
-
-*Realised by*: `SqliteProfileData`, `SqliteChatData`, `PersonalProfileData.readStored()`.
-
-## Crash Recovery `[Mixed]`
-
-- **NFR-R.5.1**: `[EM – Deferred]` Mobile app shall not crash under normal operating conditions — no crash-reporting infrastructure exists in Release 1.0 to substantiate this as a measured property
-- **NFR-R.5.2**: `[EM – Deferred]` Crash logs shall be automatically reported for analysis
+Service availability targets, automatic failover, geographic replication, and scheduled backup all presuppose a server component and belong to a networked release. The same applies to automatic crash reporting, which requires a service to receive the reports.

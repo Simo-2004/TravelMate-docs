@@ -1,14 +1,14 @@
 # 3.4.3 Object Model
 
-> **Level of abstraction:** This analysis object model describes the system from the perspective of the **application domain**, not of the software implementation. Storage mechanisms, encryption components, and data-access classes are deliberately **excluded** — they are design decisions and belong to the SDD/ODD. Objects are classified using the **Entity–Boundary–Control (EBC)** pattern and labelled with the corresponding UML stereotypes.
+Objects are classified with the Entity–Boundary–Control pattern and carry the corresponding UML stereotypes.
 
 ## 3.4.3.1 Actors
 
-| Actor | Description | Lifecycle scope |
-|-------|-------------|-----------------|
-| **Traveler** | The person using the application: browses trips and companions, saves them, edits their own profile, and converses with companions. The only actor in Release 1.0. | `[R1.0 – Frozen]` |
-| **Administrator** | Staff member who reviews reports, moderates content, and suspends accounts. | `[EM – Deferred]` |
-| **Companion (as a real user)** | A second real Traveler on the other end of a conversation. In Release 1.0 companions are catalog data and are **not** actors — their replies are produced by the system itself. | `[EM – Deferred]` |
+| Actor | Description |
+|-------|-------------|
+| **Traveler** | The person using the application: browses trips and companions, saves them, maintains their own profile, and converses with companions. The only actor of the delivered system. |
+| **Administrator** *(deferred)* | Reviews reports, moderates content, and suspends accounts. |
+| **Companion as a real user** *(deferred)* | A second real Traveler at the other end of a conversation. In the delivered system companions are catalogue data and are **not** actors: their replies are produced by the system. |
 
 ## 3.4.3.2 Entity Objects
 
@@ -55,13 +55,13 @@ Following the heuristic of **one control object per use case**, each control coo
 
 | `<<control>>` | Coordinates the use case |
 |---------------|--------------------------|
-| **LoginControl** | UC1b — Log In |
 | **CreateAccountControl** | UC1 — Create Account |
-| **SearchControl** | UC2 — Search Trips and Companions |
-| **BookmarkControl** | UC3 — Save a Trip or Companion |
-| **ChatControl** | UC4 — Chat with a Companion |
-| **TripInviteControl** | UC4b — Attach a Saved Trip to a Chat |
-| **ProfileEditControl** | UC8 — Manage Profile and Settings |
+| **LoginControl** | UC2 — Log In |
+| **SearchControl** | UC3 — Search Trips and Companions |
+| **BookmarkControl** | UC4 — Save a Trip or Companion |
+| **ChatControl** | UC5 — Converse with a Companion |
+| **TripInviteControl** | UC6 — Share a Trip in a Conversation |
+| **ProfileEditControl** | UC7 — Manage Profile and Settings |
 
 ## 3.4.3.5 Analysis Class Diagram
 

@@ -1,207 +1,110 @@
 # 3.2 Functional Requirements
 
-> Requirements are tagged `[R1.0 – Frozen]` or `[EM – Deferred]` as defined in [3.1 Overview](./overview). `[R1.0 – Frozen]` requirements below were verified directly against the repository at `Simo-2004/TravelMate`; each cites the class or screen that realises it.
+Functional requirements state what the system must do. They are grouped into modules corresponding to the areas of the application.
 
-## Module A: User Management and Profiling
+Each module lists first the requirements satisfied by the delivered system, then — under **Deferred to future releases** — those belonging to the envisioned platform that a later evolution would have to meet. A consolidated mapping from requirements to the components that realise them appears in [3.2.7](#_3-2-7-traceability).
 
-### A.1 Local Account, Sign-Up and Authentication `[R1.0 – Frozen]`
-- **FR-A.1.1**: The application shall open on a login screen requiring a username and password before any other feature is reachable
-- **FR-A.1.2**: Users shall be able to create an account, supplying profile identity (name, surname, description, tags, photo) together with login credentials in a single sign-up form
-- **FR-A.1.3**: The system shall validate credentials on sign-up: username 3–20 characters restricted to letters, digits, `.` and `_`; password 8–64 characters; name/surname required and at most 40 characters; description at most 300 characters
-- **FR-A.1.4**: The stored username shall be AES-encrypted, and matched case-insensitively on login
-- **FR-A.1.5**: The password shall never be stored reversibly — only a PBKDF2-HMAC-SHA256 salted hash (100,000 iterations, 32-byte derived key, 16-byte random salt) shall be persisted, and login shall re-derive the hash and compare it in constant time
-- **FR-A.1.6**: A default account shall be seeded on first run so the application is usable before any sign-up
-- **FR-A.1.7**: Users shall be able to sign out, returning to the login screen
+## 3.2.1 Module A — Account and Profile
 
-*Realised by*: `LoginScreen`, `CreateAccountScreen` (`lib/features/auth/`), `AuthService` (`lib/shared/state/auth_service.dart`), `AccountRepository` (`lib/shared/data/account_repository.dart`), `PasswordHasher` (`lib/core/security/password_hasher.dart`), `AccountValidation` (`lib/shared/utils/account_validation.dart`), `SettingsScreen._handleExit`.
+### A.1 Account and authentication
 
-> **Honesty note:** the `account` table holds a **single row** — creating an account overwrites the previous one. This is a single-user local application, not a multi-tenant system. The seeded default credentials are hard-coded constants in `AuthService` (`defaultUsername` / `defaultPassword`), acceptable for a local demonstration build but unsuitable for any networked deployment.
+- **FR-A.1.1** The application shall require a username and a secret before any other function becomes reachable.
+- **FR-A.1.2** A Traveler shall be able to register, supplying a travel identity and the credentials that will admit them subsequently, within a single form.
+- **FR-A.1.3** The system shall validate every field of the registration form and shall report each unacceptable value beside the field concerned, indicating what is wrong with it.
+- **FR-A.1.4** The stored username shall be compared disregarding letter case.
+- **FR-A.1.5** The secret shall never be stored in a recoverable form; verification shall re-derive the stored value from the supplied secret rather than decrypt it.
+- **FR-A.1.6** An account shall be available on first installation, so that the application is usable before any registration takes place.
+- **FR-A.1.7** A Traveler shall be able to leave the application, which shall return to the login screen.
 
-### A.1b Federated and Verified Identity `[EM – Deferred]`
-- **FR-A.1b.1**: System shall support social login (Google, Facebook)
-- **FR-A.1b.2**: System shall send email verification on registration
-- **FR-A.1b.3**: System shall support multiple concurrent user accounts and password recovery
-- **FR-A.1b.4**: System shall implement JWT-based authentication for secure API access
+> The system holds a single account: registering replaces any account already present. Supporting several Travelers on one installation is deferred.
 
-### A.2 Profile Management `[R1.0 – Frozen]`
-- **FR-A.2.1**: Users shall be able to edit their profile: first name, last name, and a free-text description
-- **FR-A.2.2**: Users shall be able to set a profile photo by picking an image from the device gallery, or by choosing one of the bundled preset avatars
-- **FR-A.2.3**: A picked photo shall be copied into the application's private documents directory under a unique filename, and only its file path shall be persisted — image bytes shall never be stored in the database
-- **FR-A.2.4**: System shall allow users to view and edit their profile information, with edits reversible before saving (cancel restores the last saved values)
-- **FR-A.2.5**: The profile shall be persisted in SQLite with every text column encrypted (see F.2) and restored on app restart
+### A.2 Personal profile
 
-*Realised by*: `PersonalProfile` (`lib/shared/models/personal_profile.dart`), `PersonalProfileStore`, `SqliteProfileData` / `ProfileRepository` (`lib/shared/data/`), `PersonalProfileScreen` (`lib/features/profile/personal_profile_screen.dart`), `ProfileImageStorage` / `ProfileImagePicker` (`lib/features/profile/image/`).
+- **FR-A.2.1** A Traveler shall be able to record and revise their own name, surname, and description.
+- **FR-A.2.2** A Traveler shall be able to choose a profile photograph from the device, or one of the illustrations supplied with the application.
+- **FR-A.2.3** A chosen photograph shall be copied into the application's own storage and referred to by reference; the image itself shall not be held in the database.
+- **FR-A.2.4** Revisions to the profile shall be abandonable before confirmation, restoring the values last confirmed.
+- **FR-A.2.5** The profile shall be retained between uses of the application and shall be protected as required by [NFR-I.3](./non-functional/implementation).
 
-> The profile has **no** date of birth, age, gender, pronouns, or location field, and no profile-completion percentage.
+### A.3 Interests and trip preferences
 
-### A.3 Interests and Trip Tags `[R1.0 – Frozen]`
-- **FR-A.3.1**: Users shall add free-text interest tags and trip-preference tags to their profile (not selected from a predefined category list)
-- **FR-A.3.2**: System shall de-duplicate tags case-insensitively and normalise whitespace
-- **FR-A.3.3**: Users shall be able to add or remove tags both at sign-up and while editing their profile
-- **FR-A.3.4**: Tag lists shall be JSON-encoded and encrypted before storage
+- **FR-A.3.1** A Traveler shall be able to describe their interests and trip preferences as freely chosen labels.
+- **FR-A.3.2** The system shall disregard differences of spacing and letter case when determining whether a label has already been recorded.
+- **FR-A.3.3** Labels shall be addable and removable both at registration and when revising the profile.
 
-*Realised by*: `PersonalProfile.interestTags` / `tripTags`, `TagInput` (`lib/shared/utils/tag_input.dart`), `EditablePersonalTagGroup`.
+### A.4 Privacy preferences
 
-> Tags are not used for any automated matching in Release 1.0 (see B.2); they do influence whether a companion accepts a trip invite in chat (see C.2).
+- **FR-A.4.1** A Traveler shall be able to state four privacy preferences: whether their profile is private, whether they are visible only to nearby Travelers, whether they accept messages, and whether they appear absent.
+- **FR-A.4.2** Each preference shall be retained between uses of the application.
+- **FR-A.4.3** Declaring oneself absent shall suppress the presence indication of companions, so that a Traveler who is invisible is not shown the presence of others.
 
-### A.4 Privacy Preferences `[R1.0 – Frozen]`
-- **FR-A.4.1**: Users shall be able to toggle four local privacy preferences: *Private Profile*, *Only people in your radius*, *Check messages*, and *Offline mode*
-- **FR-A.4.2**: System shall persist each toggle locally and restore it on app restart
-- **FR-A.4.3**: Toggling *Offline mode* shall hide companions' presence indicators in the simulated chat (see C.2)
+> Of the four preferences, only absence governs behaviour in the delivered system; the remaining three are recorded but not yet enforced, as the conditions they describe — search visibility, proximity, unsolicited messages — presuppose other Travelers. Enforcing them is deferred.
 
-*Realised by*: `PrivacySettings`, `PrivacySettingsStore`, `PrivacySettingsData`, `PrivacySettingsScreen`.
+### Deferred to future releases
 
-> **Honesty note (also stated in-app):** only *Offline mode* has an observable behavioural effect. The other three are persisted preferences with **no enforcement** — the Privacy screen itself displays: *"These toggles are ready for future integrations. Right now each action shows a click confirmation."* Enforcing them, along with blocking, reporting, GDPR data export, and account deletion, is `[EM – Deferred]`. Privacy preferences are also the one dataset still stored as **plain JSON in `SharedPreferences`**, not in the encrypted database.
+Verification of ownership of an email address, delegation of identity to an external provider, recovery of a forgotten secret, several accounts on one installation, blocking another Traveler, reporting an abusive profile, obtaining a copy of one's data, and erasing one's account.
 
-## Module B: Search and Discovery
+## 3.2.2 Module B — Search and Discovery
 
-### B.1 Companion Search `[R1.0 – Frozen]`
-- **FR-B.1.1**: System shall provide a single free-text search field over the companion catalog
-- **FR-B.1.2**: Results shall be ranked by a term-based scoring algorithm: each search term must match at least one of the companion's name, description, or keywords to be included; matches are weighted (name prefix highest, then name substring, keyword prefix/substring, then description substring) and summed across all terms
-- **FR-B.1.3**: Results with equal score shall be sorted alphabetically by name
-- **FR-B.1.4**: The result list shall be capped to a fixed limit (5)
-- **FR-B.1.5**: An empty query shall return the catalog unranked, in its original order
+- **FR-B.1.1** A Traveler shall be able to search either trips or companions, choosing between the two.
+- **FR-B.1.2** The system shall retain only those candidates matching every term of the query, and shall rank them according to how closely and in which field each term matches, preferring matches at the beginning of a name to matches within it, and matches in a name to matches in a description.
+- **FR-B.1.3** Candidates of equal rank shall be ordered alphabetically.
+- **FR-B.1.4** An empty query shall return the catalogue in its own order, so that the Traveler may browse before searching.
+- **FR-B.1.5** The system shall state explicitly when nothing matches, distinguishing this from an empty catalogue.
+- **FR-B.2.1** The system shall present a trip's destination, description, illustrations, and characterising labels.
+- **FR-B.2.2** The main view shall present recommended trips and trips consulted recently.
 
-*Realised by*: `filterMates` (`lib/shared/utils/mate_search.dart`), `SearchScreen` / `SearchResultsScreen`.
+### Deferred to future releases
 
-> There are **no** advanced filters (age range, gender, languages, budget level, location) and **no** pagination. Companion profiles remain a fixed in-code catalog of 3 entries (`MateCatalog`) — unlike trips, they were not migrated to SQLite.
+Restricting a search by age, budget, spoken language, or location; a compatibility score computed from shared interests, overlapping destinations, travel style, and availability; recommendations that improve as the system observes the Traveler's choices; and the exclusion from results of Travelers who have been blocked.
 
-### B.2 Compatibility Matching Algorithm `[EM – Deferred]`
-- **FR-B.2.1**: System shall calculate a compatibility score based on shared interests (40% weight), destination overlap (30% weight), travel style compatibility (20% weight), and availability overlap (10% weight)
-- **FR-B.2.2**: System shall recommend compatible travelers in a discover feed driven by this score
-- **FR-B.2.3**: Matching shall exclude blocked users and hidden profiles
-- **FR-B.2.4**: System shall learn from user interactions to improve recommendations
+## 3.2.3 Module C — Saved Items
 
-> No weighted compatibility scoring exists in Release 1.0; the term-based ranking in B.1 is a search-relevance heuristic, not a compatibility algorithm, and produces no percentage score.
+- **FR-C.1.1** A Traveler shall be able to save a trip or a companion while examining it.
+- **FR-C.1.2** Saving an item already saved shall remove it, and the indication shown on the item shall reflect its current state at all times.
+- **FR-C.1.3** The system shall keep a single collection of saved items, holding trips and companions together.
+- **FR-C.1.4** Selecting a saved item shall reopen the trip or companion it refers to.
+- **FR-C.1.5** An item shall not appear twice in the collection, however many times it is saved.
 
-### B.3 Trip Browsing and Search `[R1.0 – Frozen]` (creation/join deferred)
-- **FR-B.3.1**: System shall allow searching the trip catalog by a single free-text query matched against trip label, destination title, description, and tags, using the same term-based ranking as B.1
-- **FR-B.3.2**: System shall display trip details: label, destination title, description, an image gallery/schedule, and a set of styled trip tags
-- **FR-B.3.3**: The Home tab shall display a "Recommended trips" carousel and a "Viewed recently" carousel
-- **FR-B.3.4**: Trips shall be persisted in SQLite as two ordered collections (`trips`, `recents`), seeded once on first run from the bundled static catalog; thereafter the database is the source of truth
+## 3.2.4 Module D — Conversations
 
-*Realised by*: `filterTrips` (`lib/shared/utils/trip_search.dart`), `TripRepository` (`lib/shared/data/trip_repository.dart`), `TripStore` (`lib/shared/state/trip_store.dart`), `TravelScheduleScreen`, `HomeScreen`.
+- **FR-D.1.1** A Traveler shall be able to open a conversation with any companion, from that companion's profile.
+- **FR-D.1.2** A message sent by the Traveler shall receive a reply determined by the content of the message; where no specific reply applies, a general one shall be given.
+- **FR-D.1.3** Each conversation shall be retained between uses of the application until the Traveler discards it.
+- **FR-D.1.4** Conversation content shall be protected as required by [NFR-I.3](./non-functional/implementation), while the information needed to retrieve and order conversations may remain unprotected.
+- **FR-D.1.5** A companion shall be shown as present while the exchange is active, and as absent once the Traveler has been inactive for a short interval.
+- **FR-D.1.6** A Traveler shall be able to propose one of their saved trips within a conversation; the companion shall accept or decline according to whether the trip's characterising labels correspond to their own preferences.
+- **FR-D.1.7** A Traveler shall be able to discard an entire conversation.
 
-> Trip rows are stored **in plain text** — they are public, read-only catalog content, not user data, so no encryption is applied. Trips have no date range, budget, or participant fields, and there is no trip-creation UI.
+> Companions are not other Travelers: their replies are produced by the system from their own recorded characteristics. Exchanges between two real Travelers are deferred.
 
-## Module C: Interaction and Saving
+### Deferred to future releases
 
-### C.1 Saved Items `[R1.0 – Frozen]`
-- **FR-C.1.1**: Users shall be able to bookmark a companion profile or a trip from its detail screen
-- **FR-C.1.2**: System shall maintain a single saved-items list per device, mixing both bookmark types, persisted locally
-- **FR-C.1.3**: Users shall be able to view all saved items on the Saved tab, and tap one to reopen the corresponding trip or companion screen
-- **FR-C.1.4**: Users shall be able to unsave an item; the bookmark button shall reflect the current saved state
-- **FR-C.1.5**: Bookmarks shall be de-duplicated by source identifier, with a fallback match by name for legacy records
+Messages exchanged between two registered Travelers over a network, conversations among the participants of a trip, indication that a message has been read, searching within a conversation history, and notification of a Traveler who is not currently using the application.
 
-*Realised by*: `SavedTripPreview`, `SavedTripPreviewStore`, `SavedBookmarksData`, `SavedItemsScreen`.
+## 3.2.5 Module E — Trip Organisation
 
-> Bookmarks are stored as plain JSON in `SharedPreferences`, not in the encrypted database.
+Entirely deferred. The delivered system offers a fixed catalogue of trips and no means of creating one.
 
-### C.2 Simulated Companion Chat `[R1.0 – Frozen]`
-- **FR-C.2.1**: Users shall be able to open a private, 1-to-1 conversation with any companion from that companion's profile screen
-- **FR-C.2.2**: Sent messages shall receive an automated reply, chosen by matching the message text (whole-word, case-insensitive) against an ordered list of keyword rules; if no rule matches, a fallback reply is returned
-- **FR-C.2.3**: Each companion's conversation history shall persist in SQLite and be restored on app restart, until explicitly cleared by the user
-- **FR-C.2.4**: Message text shall be encrypted at rest; structural columns (`mate_id`, `is_from_me`, `sent_at`, `attached_trip_id`) shall remain in plain text so conversations can be queried and ordered
-- **FR-C.2.5**: System shall simulate the companion's online/offline presence: the companion appears online while the user is actively typing or has just sent a message, and returns to offline after 5 seconds of inactivity
-- **FR-C.2.6**: Users shall be able to attach a previously saved trip to the conversation as an invite; the companion's reply (accept or decline) shall be determined by whether any of the trip's tags match the companion's own interest/preferred-trip tags
-- **FR-C.2.7**: Users shall be able to clear a companion's entire conversation history
+A later release shall allow a Traveler to describe a journey — title, destination, dates, budget, itinerary, and the number of companions sought — and publish it; shall allow other Travelers to request to join; shall allow the organiser to accept or refuse those requests and shall prevent the stated number of participants from being exceeded.
 
-*Realised by*: `ChatMessage`, `ChatStore` (`lib/shared/state/chat_store.dart`), `ChatRepository` (`lib/shared/data/chat_repository.dart`), `SqliteChatData`, `ChatAutoReplyCatalog` / `resolveAutoReply`, `mateLikesTrip`, `ChatScreen`.
+## 3.2.6 Module F — Administration
 
-> This is a **fully local simulation**: there is no other real user on the other end, no network transport, no message length limit, no read/unread status, and no message search.
+Entirely deferred. A later release shall allow an Administrator to examine reports submitted by Travelers, to issue warnings, to suspend accounts, to remove content that violates the community rules, and shall retain an auditable record of these interventions.
 
-### C.2b Real-Time Messaging Between Users `[EM – Deferred]`
-- **FR-C.2b.1**: System shall support 1-on-1 and group messaging between distinct, authenticated real users over a network connection
-- **FR-C.2b.2**: Messages shall carry read/unread status and be encrypted in transit as well as at rest
-- **FR-C.2b.3**: Users shall be able to search message history and block another user from initiating a chat
+## 3.2.7 Traceability
 
-### C.3 Notifications `[EM – Deferred]`
-- **FR-C.3.1**: System shall send notifications for new messages, match recommendations, trip join requests, connection requests, and profile views
-- **FR-C.3.2**: Users shall be able to control notification preferences
-- **FR-C.3.3**: System shall support push notifications on mobile
-- **FR-C.3.4**: System shall support email notifications
+The delivered system realises the requirements above as follows. This mapping supports verification and is not itself a requirement.
 
-## Module D: Trip Management `[EM – Deferred]`
+| Requirements | Realised by |
+|--------------|-------------|
+| A.1 Account and authentication | `LoginScreen`, `CreateAccountScreen`, `AuthService`, `AccountRepository`, `AccountValidation` |
+| A.2 Personal profile | `PersonalProfileScreen`, `PersonalProfileStore`, `ProfileRepository`, `ProfileImageStorage` |
+| A.3 Interests and trip preferences | `TagInput`, `EditablePersonalTagGroup` |
+| A.4 Privacy preferences | `PrivacySettingsScreen`, `PrivacySettingsStore` |
+| B.1 Search | `filterMates`, `filterTrips`, `SearchScreen`, `SearchResultsScreen` |
+| B.2 Trip presentation | `TravelScheduleScreen`, `HomeScreen`, `TripRepository`, `TripStore` |
+| C.1 Saved items | `SavedTripPreviewStore`, `SavedBookmarksData`, `SavedItemsScreen` |
+| D.1 Conversations | `ChatScreen`, `ChatStore`, `ChatRepository`, `ChatAutoReplyCatalog`, `mateLikesTrip` |
 
-### D.1 Trip Creation
-- **FR-D.1.1**: Users shall be able to create trips with title, description, destination, start/end dates, budget estimate, max participants, and itinerary items
-- **FR-D.1.2**: System shall validate date ranges (start before end)
-- **FR-D.1.3**: Trip creator shall be marked as organizer
-- **FR-D.1.4**: System shall generate a trip ID and access code
-
-### D.2 Trip Participation
-- **FR-D.2.1**: Users shall be able to request to join trips
-- **FR-D.2.2**: Trip creators shall approve or reject join requests
-- **FR-D.2.3**: System shall prevent exceeding max participants
-- **FR-D.2.4**: System shall track all participants and their status
-
-## Module E: Administration `[EM – Deferred]`
-
-### E.1 User Moderation
-- **FR-E.1.1**: Administrators shall be able to view all user reports
-- **FR-E.1.2**: Administrators shall be able to suspend/ban users
-- **FR-E.1.3**: Administrators shall be able to delete inappropriate content
-- **FR-E.1.4**: Administrators shall be able to send warnings to users
-- **FR-E.1.5**: System shall maintain audit logs of all admin actions
-
-### E.2 System Monitoring
-- **FR-E.2.1**: Administrators shall have access to a system analytics dashboard
-- **FR-E.2.2**: Administrators shall view user statistics and engagement metrics
-- **FR-E.2.3**: Administrators shall monitor system performance metrics
-
-## Module F: Data Persistence and Security
-
-### F.1 Local Relational Persistence `[R1.0 – Frozen]`
-- **FR-F.1.1**: The application shall persist data in a local SQLite database file (`travelmate.db`) stored in the application's private documents directory
-- **FR-F.1.2**: The database shall expose four tables: `personal_profile` (single row), `trips` (ordered catalog rows), `account` (single row), and `chat_messages` (indexed by `mate_id`)
-- **FR-F.1.3**: Table creation shall be idempotent (`CREATE TABLE IF NOT EXISTS`), and schema growth shall be handled by incrementing the database version and creating any missing tables on upgrade
-- **FR-F.1.4**: A single lazily-opened database connection shall be shared application-wide to prevent multiple open handles to the same file
-- **FR-F.1.5**: All database access shall pass through DAO interfaces, with mapping and encryption logic residing in repositories, so that persistence logic is testable against in-memory fakes
-- **FR-F.1.6**: On first run after upgrading from a previous version, any personal profile and chat history previously saved in `SharedPreferences` shall be transparently migrated into the database
-
-*Realised by*: `DatabaseHelper` (`lib/core/database/database_helper.dart`), `ProfileDao`/`TripDao`/`AccountDao`/`ChatDao` and their `sqflite` adapters, `ProfileRepository`, `TripRepository`, `AccountRepository`, `ChatRepository`, `SqliteProfileData`, `SqliteChatData`.
-
-### F.2 Encryption at Rest and Credential Security `[R1.0 – Frozen]`
-- **FR-F.2.1**: Sensitive text columns shall be encrypted with AES-256-GCM before being written to the database, and decrypted on read
-- **FR-F.2.2**: Each encryption operation shall use a freshly generated 12-byte random nonce, stored alongside the ciphertext as a single base64 payload (`nonce || ciphertext+tag`)
-- **FR-F.2.3**: The GCM authentication tag shall make tampering detectable: decryption shall fail if the payload was altered or a different key is used
-- **FR-F.2.4**: The 256-bit AES key shall be generated with a cryptographically secure random source on first use and persisted in the operating system's keystore/keychain, never in the application database
-- **FR-F.2.5**: The following data shall be encrypted at rest: all personal-profile text columns and tag lists, the account username, and chat message text
-- **FR-F.2.6**: The following data shall remain in plain text, by design: trip catalog rows (public content), and chat structural columns needed for querying and ordering
-- **FR-F.2.7**: Login passwords shall be protected by one-way PBKDF2-HMAC-SHA256 hashing with a per-password random salt, and verified by constant-time comparison
-
-*Realised by*: `AesCipher` (`lib/core/security/aes_cipher.dart`), `ProfileKeyProvider`, `SecureKeyStore` / `FlutterSecureKeyStore`, `PasswordHasher`.
-
-### F.3 Networked Data Protection `[EM – Deferred]`
-- **FR-F.3.1**: Data shall be encrypted in transit using TLS 1.3+
-- **FR-F.3.2**: The server-side database shall support ACID transactions, replication, and point-in-time backup
-- **FR-F.3.3**: Users shall be able to export and permanently erase their data (GDPR compliance)
-
-## Implementation status (baseline traceability)
-
-This section provides the formal traceability between the `[R1.0 – Frozen]` requirements and the delivered code, confirming the V-Model **design = code, verified against it** principle (see [Software Life Cycle Model Choice](/rad/overview#software-life-cycle-model-choice)). It was produced by direct inspection of `Simo-2004/TravelMate`.
-
-- **Implemented (local, no network):**
-  - Account, sign-up, login, logout (A.1) — `AuthService`, `AccountRepository`, `LoginScreen`, `CreateAccountScreen`
-  - Encrypted personal profile with gallery photo (A.2, A.3) — `ProfileRepository`, `SqliteProfileData`, `ProfileImageStorage`
-  - Privacy preferences (A.4) — `PrivacySettingsStore`; only *Offline mode* is behaviourally enforced
-  - Companion & trip search (B.1, B.3) — `filterMates`, `filterTrips`, `TripRepository`, `TripStore`
-  - Saved items (C.1) — `SavedTripPreviewStore`, `SavedBookmarksData`
-  - Simulated chat with encrypted history (C.2) — `ChatStore`, `ChatRepository`, `SqliteChatData`
-  - SQLite persistence and encryption stack (F.1, F.2) — `DatabaseHelper`, DAOs, repositories, `AesCipher`, `ProfileKeyProvider`, `PasswordHasher`
-
-- **Static / catalog data:**
-  - Companion profiles remain a fixed in-code catalog of 3 entries (`MateCatalog`), not database-backed
-  - Trip content originates from a bundled static catalog, seeded once into SQLite on first run
-
-- **Stored unencrypted in `SharedPreferences`:**
-  - Saved bookmarks (C.1) and privacy preferences (A.4)
-
-- **Not implemented (no code in repository), `[EM – Deferred]`:**
-  - Social login, email verification, multi-user accounts, JWT (A.1b)
-  - Compatibility matching algorithm (B.2)
-  - Real-time messaging between real users (C.2b)
-  - Notifications (C.3)
-  - Trip creation and server-side trip lifecycle (D)
-  - Administration and moderation tooling (E)
-  - Transport-level protection and server-side data governance (F.3)
+Companion profiles are supplied as a fixed catalogue held in the source (`MateCatalog`) rather than in the database; trips are seeded into the database once from an equivalent catalogue and read from it thereafter.

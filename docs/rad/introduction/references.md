@@ -1,11 +1,15 @@
 # 1.5 References
 
-- System Design Document (SDD)
-- Object Design Document (ODD)
-- Flutter Documentation
-- Source repository: [`Simo-2004/TravelMate`](https://github.com/Simo-2004/TravelMate)
+**Project documents**
 
-The following references pertain only to the envisioned, `[EM – Deferred]` backend architecture (Feasibility Study §3.1) and are not used by the Release 1.0 codebase:
+- Feasibility Study — the product vision and the decision to scope this lifecycle
+- System Design Document (SDD) — the architecture and the technical choices realising these requirements
+- Object Design Document (ODD) — the classes and interfaces of the delivered system
 
-- PostgreSQL Documentation
-- Django REST Framework Documentation
+**Source**
+
+- Repository: [`Simo-2004/TravelMate`](https://github.com/Simo-2004/TravelMate)
+
+**External**
+
+- Flutter documentation, for the framework on which the application is built

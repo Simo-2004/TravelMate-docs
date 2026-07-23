@@ -8,7 +8,7 @@ The analysis model describes the system through three complementary views, deriv
 | **Structural model** | What is the system made of? | Analysis class diagram (Entity–Boundary–Control) |
 | **Dynamic model** | How does it behave over time? | Sequence diagrams, statecharts |
 
-> **Level of abstraction.** These models describe the **application domain** as seen by the user, not the software implementation. Storage mechanisms, data-access components, and cryptographic machinery are design decisions and are specified in the SDD and ODD, not here. Objects are classified with the **Entity–Boundary–Control** pattern and carry the corresponding UML stereotypes.
+These models describe the application domain as seen by the user, not the software that implements it: the storage mechanism, the data-access components, and the cryptographic machinery are design decisions, specified in the System Design Document and the Object Design Document rather than here.
 
 ## Contents
 

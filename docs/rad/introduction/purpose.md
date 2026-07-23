@@ -1,12 +1,12 @@
 # 1.1 Purpose of the System
 
-TravelMate is designed to address the challenge of finding travel companions with compatible interests and travel styles. The envisioned system provides:
+TravelMate addresses the difficulty of finding travel companions with compatible interests, travel styles, and budgets. The envisioned system provides:
 
-- A platform for travelers to create profiles highlighting their interests and preferred destinations
-- Search and discovery tools to browse compatible travelers and trips
-- A conversational channel for coordination and planning between travelers
-- A safe, moderated environment for interaction between users
+- a place for travellers to describe themselves and the journeys they are drawn to;
+- means of discovering others whose interests correspond;
+- a channel through which to agree on a journey;
+- a moderated environment in which those exchanges can take place safely.
 
-**Release 1.0** realises a self-contained demonstration of this experience on a single device, backed by a real local persistence and security stack: the user signs up or logs in against an account stored in a local **SQLite** database (username AES-encrypted, password stored only as a **PBKDF2** salted hash), then browses a catalog of trips and companion profiles, ranks them by a free-text search query, bookmarks favourites, maintains an **encrypted** personal profile with a photo picked from the device gallery, and can hold a **simulated conversation** with a companion through a local, keyword-based auto-reply engine whose message text is encrypted at rest.
+The application delivered by this lifecycle realises this experience on a single device. A Traveler is admitted through a local account, browses a catalogue of trips and companion profiles, searches both, saves those of interest, maintains a personal profile, and converses with a companion about a possible journey.
 
-No remote server is involved and there are no other real users: companion profiles are catalog data, and their replies are generated on-device. Multi-user accounts, real matching between distinct people, real-time messaging, and moderation are part of the long-term vision but are **not** realised in this lifecycle (see [1.2 Scope](./scope)).
+Because there is no server, there is no second real user: companions are catalogue entries, and their replies are produced by the system from their own recorded characteristics. Discovery between real people, messaging across a network, and moderation belong to the envisioned platform and are described in [1.2 Scope](./scope) as deferred.

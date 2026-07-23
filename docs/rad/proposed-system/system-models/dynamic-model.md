@@ -1,8 +1,8 @@
 # 3.4.4 Dynamic Model
 
-> **Level of abstraction:** The diagrams below distribute responsibilities among the analysis objects identified in [3.4.3](./object-model). Every sequence follows the required flow **Actor → Boundary → Control → Entity**: the actor only ever addresses a boundary, control objects orchestrate the use case, and entity objects never send messages back up to controls or boundaries.
+The diagrams distribute responsibilities among the analysis objects identified in [3.4.3](./object-model). Every sequence follows the flow **Actor → Boundary → Control → Entity**: the actor addresses only a boundary, controls orchestrate the use case, and entities never send messages back to controls or boundaries.
 
-## 3.4.4.1 Sequence Diagram — Log In (UC1b) `[R1.0 – Frozen]`
+## 3.4.4.1 Sequence Diagram — Log In (UC2)
 
 ```mermaid
 sequenceDiagram
@@ -30,7 +30,7 @@ sequenceDiagram
 
 **Responsibilities assigned.** `LoginForm` collects and submits; `LoginControl` owns the flow and decides the outcome; `Account` answers only the question "do these credentials match?" and never drives navigation.
 
-## 3.4.4.2 Sequence Diagram — Create Account (UC1) `[R1.0 – Frozen]`
+## 3.4.4.2 Sequence Diagram — Create Account (UC1)
 
 ```mermaid
 sequenceDiagram
@@ -64,7 +64,7 @@ sequenceDiagram
 
 **Note on the model.** Validation is a responsibility of the **control**, not of the entities: it concerns the use case (is this submission acceptable?) rather than the domain concepts themselves.
 
-## 3.4.4.3 Sequence Diagram — Search Trips and Companions (UC2) `[R1.0 – Frozen]`
+## 3.4.4.3 Sequence Diagram — Search Trips and Companions (UC3)
 
 ```mermaid
 sequenceDiagram
@@ -93,7 +93,7 @@ sequenceDiagram
     RV->>SC: openDetails(selection)
 ```
 
-## 3.4.4.4 Sequence Diagram — Save a Bookmark (UC3) `[R1.0 – Frozen]`
+## 3.4.4.4 Sequence Diagram — Save a Bookmark (UC4)
 
 ```mermaid
 sequenceDiagram
@@ -119,7 +119,7 @@ sequenceDiagram
     DV->>DV: refreshBookmarkIndicator()
 ```
 
-## 3.4.4.5 Sequence Diagram — Converse with a Companion (UC4) `[R1.0 – Frozen]`
+## 3.4.4.5 Sequence Diagram — Converse with a Companion (UC5)
 
 ```mermaid
 sequenceDiagram
@@ -147,7 +147,7 @@ sequenceDiagram
     CW-->>T: conversation updated
 ```
 
-## 3.4.4.6 Sequence Diagram — Share a Trip in a Conversation (UC4b) `[R1.0 – Frozen]`
+## 3.4.4.6 Sequence Diagram — Share a Trip in a Conversation (UC6)
 
 ```mermaid
 sequenceDiagram
@@ -180,7 +180,7 @@ sequenceDiagram
 
 **Object discovered through this diagram.** Building this sequence made explicit that the decision to accept or decline is a *domain* judgement belonging to the **Companion** (it depends on that companion's own tags), not a rule of the chat use case. The responsibility was therefore assigned to the `Companion` entity rather than to `TripInviteControl` — an example of the sequence diagram refining the object model.
 
-## 3.4.4.7 Statechart — Companion Presence `[R1.0 – Frozen]`
+## 3.4.4.7 Statechart — Companion Presence
 
 The presence indicator shown beside a companion's name is state-dependent behaviour of a single object, and is therefore modelled as a statechart.
 
@@ -199,7 +199,7 @@ stateDiagram-v2
     end note
 ```
 
-## 3.4.4.8 Statechart — Bookmark Lifecycle `[R1.0 – Frozen]`
+## 3.4.4.8 Statechart — Bookmark Lifecycle
 
 ```mermaid
 stateDiagram-v2
@@ -210,9 +210,9 @@ stateDiagram-v2
     NotSaved --> [*]
 ```
 
-## 3.4.4.9 Envisioned Dynamic Behaviour `[EM – Deferred]`
+## 3.4.4.9 Envisioned Dynamic Behaviour (deferred)
 
-The following flows belong to the envisioned platform and are **not** realised in Release 1.0. They are recorded for traceability only.
+The following flows belong to the envisioned platform and are not realised by the delivered system.
 
 - **Token-based authentication**: credentials are validated by a remote service that issues a session token with a limited lifetime, refreshed transparently by the client.
 - **Compatibility matching**: candidate travellers are scored on shared interests, destination overlap, travel style, and availability, then ranked by the resulting compatibility percentage.

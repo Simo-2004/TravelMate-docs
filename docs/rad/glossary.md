@@ -1,182 +1,77 @@
-﻿# 4. Glossary
+# 4. Glossary
 
-Definitions of technical and domain-specific terms used in this document.
+Definitions of the domain, business, and technical terms used in this document. Where a term denotes something belonging to the envisioned platform rather than to the delivered system, this is stated.
 
-> **Scope note:** Most terms below describe the envisioned TravelMate platform (Feasibility Study §3.1) and are `[EM – Deferred]`. Terms realised in Release 1.0 are marked `[R1.0]`.
+## Actors and people
 
-## General Terms
+**Traveler** — The person using the application: the only actor of the delivered system.
 
-**Auto-Reply** `[R1.0]`: A canned response generated locally by matching a chat message against an ordered list of keyword rules; used by the Release 1.0 simulated chat in place of a real companion's reply.
+**Companion** — A potential travel mate presented by the system. In the delivered system companions are catalogue entries, not other users; their replies in conversation are produced by the system from their recorded characteristics.
 
-**Bookmark / Saved Item** `[R1.0]`: A trip or companion profile a user has saved for later reference, identified by a `bookmarkType` ("trip" or "mate") and a `sourceId`, persisted on-device.
+**Administrator** — A moderator who reviews reports and sanctions misconduct. Envisioned only.
 
-**Encryption at Rest** `[R1.0]`: Protection applied to stored data (as opposed to data in transit). TravelMate encrypts sensitive database columns with AES-256-GCM so the database file is unreadable without the key held in the OS keystore.
+**Trip Creator / Trip Participant** — The organiser of a journey and those who join it. Envisioned only.
 
-**Nonce (IV)** `[R1.0]`: A 12-byte random value generated fresh for every encryption and prepended to the ciphertext, so encrypting the same text twice never yields the same stored payload.
+## Domain concepts
 
-**Password Hash** `[R1.0]`: A one-way PBKDF2-HMAC-SHA256 derivation of the user's password, stored with its random salt and iteration count. Unlike encryption it cannot be reversed — login re-derives the hash and compares it.
+**Account** — The credentials admitting the Traveler to the application. The delivered system holds one.
 
-**Salt** `[R1.0]`: Random per-password data mixed into the hash so that identical passwords produce different stored hashes, defeating precomputed (rainbow-table) attacks.
+**Profile** — A Traveler's travel identity: name, description, photograph, and the labels describing their interests and trip preferences.
 
-**Seeded Account** `[R1.0]`: The default account written on first run so the app is usable before any sign-up. Its credentials are hard-coded constants, acceptable for a local demonstration build only.
+**Trip** — A travel itinerary with a destination, a description, illustrations, and characterising labels. The delivered system offers a fixed catalogue; creating one is envisioned only.
 
-**Avatar**: A user-selected image that represents their profile visually across the platform.
+**Trip Tag** — A reusable label describing the character of a trip, drawn from a shared vocabulary and used both to describe trips and to express a Traveler's preferences.
 
-**Compatibility Score**: A numerical percentage (0-100%) indicating how well two travelers match based on interests, travel style, and preferences.
+**Bookmark / Saved Item** — A saved reference to a trip or a companion, kept in a single collection.
 
-**Community Guidelines**: Rules and policies that users must follow to maintain a safe, respectful platform.
+**Conversation** — The exchange between the Traveler and one companion.
 
-**Destination**: A geographic location (city, region, country) that users can visit and select as favorites.
+**Message** — A single utterance within a conversation, optionally carrying a trip as a proposal.
 
-**Discovery/Feed**: A personalized list of recommended travelers or trips based on user preferences and matching algorithms.
+**Auto-reply** — The response a companion gives, determined by the system from the content of the Traveler's message.
 
-**GDPR (General Data Protection Regulation)**: European privacy regulation ensuring user data protection rights.
+**Presence** — The indication of whether a companion appears available. In the delivered system it is simulated: a companion appears present while the exchange is active and absent after a short period of inactivity.
 
-**Itinerary**: A detailed plan of activities and schedule for a trip, including dates, times, and locations.
+**Privacy Preferences** — The Traveler's stated choices about visibility and messages.
 
-**Match**: A potential travel companion identified by the system as compatible based on criteria.
+**Compatibility Score** — A measure of how well two travellers match. Envisioned only.
 
-**Onboarding**: The process new users go through to set up their account and complete their profile.
+**Itinerary** — A detailed plan of activities and timings within a trip. Envisioned only.
 
-**Privacy Settings**: User-controlled options to determine visibility and information sharing on the platform.
+**Moderation** — Review of user-generated content against the community rules. Envisioned only.
 
-**Profile**: A user's information including personal details, interests, and preferences. `[R1.0]` In Release 1.0, the local `PersonalProfile` holds first name, last name, description, a photo path, and free-text tags — no age, location, or gender — and is stored encrypted in SQLite.
+**Report** — A submission flagging another Traveler's conduct. Envisioned only.
 
-**Saved Items**: Profiles or trips users have bookmarked for later reference (see Bookmark).
+## Analysis and modelling
 
-**Trip**: A travel itinerary with a destination, description, and tags. `[R1.0]` In Release 1.0, trips are a fixed catalog seeded once into SQLite, with no dates, budget, or participants, and no user-facing creation flow.
+**Entity object** — An analysis object representing a concept of the domain and the information the system retains about it.
 
-**User**: Any person using the TravelMate platform. `[R1.0]` Release 1.0 supports exactly one local account at a time — "the user" refers to the single authenticated device owner; multi-user support is `[EM – Deferred]`.
+**Boundary object** — An analysis object representing the interaction between an actor and the system, in the user's terms rather than in terms of a visual interface.
 
-**Verification**: Confirmation of user identity through email validation and profile checks.
+**Control object** — An analysis object coordinating boundaries and entities for the duration of one use case, holding no domain data of its own.
 
-## User Roles
+**Use case** — A description of what an actor obtains from the system, stated as an entry condition, a flow of events, and an exit condition.
 
-**Unauthenticated User/Guest**: A person who can view public content but hasn't registered or logged in.
+**Scenario** — A concrete narrative instance of a use case, used to elicit and to illustrate requirements.
 
-**Administrator**: A staff member with elevated permissions to moderate content, handle reports, and manage platform operations.
+**Association / Aggregation / Composition** — Structural relationships between entities: a plain connection; a whole–part relationship whose parts exist independently; and a whole–part relationship whose parts do not.
 
-**Traveler User**: Authenticated users who can search for companions, create trips, and interact with other travelers.
+**Generalisation** — The factoring of attributes common to several entities into a shared parent.
 
-**Trip Creator**: A traveler who initiates and organizes a specific trip.
+## Technical terms
 
-**Trip Participant**: A traveler who has joined an existing trip created by another user.
+**Encryption at rest** — Protection applied to data as stored, so that it cannot be read by someone inspecting the stored data without the key.
 
-## Technical Terms
+**Authenticated encryption** — Encryption that additionally makes alteration of the stored data detectable.
 
-**API (Application Programming Interface)**: Set of protocols allowing communication between frontend and backend systems.
+**Non-reversible storage** — Storage of a credential in a form from which the original cannot be recovered; verification re-derives the stored value from what the user supplies.
 
-**Authentication**: Process of verifying a user's identity, typically through login credentials.
+**Cross-platform framework** — A framework allowing one body of logic to serve several target platforms.
 
-**Authorization**: Process of determining what authenticated users are allowed to do.
+**Relational store** — A store organising data into tables with defined relationships, queried rather than read whole.
 
-**Bcrypt**: A password hashing algorithm used to securely store passwords.
+**Version control / Semantic versioning** — The recording of successive states of the source, and the numbering convention conveying the nature of each change.
 
-**Backend**: Server-side infrastructure handling business logic and data management.
+**Continuous integration** — Automatic building, testing, and analysis of every change.
 
-**Cache/Caching**: Temporary storage of frequently accessed data for faster retrieval.
-
-**Database**: Organized collection of data stored persistently. `[R1.0]` Release 1.0 uses a local **SQLite** database (`travelmate.db`) holding the personal profile, account, trip catalog, and chat history. `[EM – Deferred]` A server-side relational database (e.g. PostgreSQL) is the envisioned choice for the future backend.
-
-**Django**: Python web framework used for building the backend API.
-
-**Django REST Framework**: Extension for Django enabling RESTful API development.
-
-**Encryption**: Conversion of data into coded form to prevent unauthorized access.
-
-**Endpoint**: Specific URL path in an API that clients can request.
-
-**Flutter**: Google's mobile app development framework used for iOS and Android apps.
-
-**Frontend**: Client-side user interface and application logic.
-
-**JSON (JavaScript Object Notation)**: Lightweight data format used for API responses.
-
-**JWT (JSON Web Token)**: Token-based authentication method for APIs.
-
-**Load Balancing**: Distribution of traffic across multiple servers for scalability.
-
-**Middleware**: Software layer handling cross-cutting concerns (logging, auth, etc.).
-
-**MVC/MVVM**: Architectural patterns separating concerns (Model, View, Controller/ViewModel).
-
-**ORM (Object-Relational Mapping)**: Technology mapping database records to application objects.
-
-**PostgreSQL**: Open-source relational database management system.
-
-**Python**: Programming language used for backend development.
-
-**Rate Limiting**: Restricting number of requests a user can make in a time period.
-
-**Redis**: In-memory data store used for caching and session management.
-
-**REST (Representational State Transfer)**: Architectural style for API design using HTTP methods.
-
-**Scalability**: System's ability to handle increasing load and users.
-
-**Schema**: Definition of database structure including tables and relationships.
-
-**SSL/TLS**: Security protocols for encrypted communication over networks.
-
-**Token**: Authentication credential issued after successful login, used to access APIs.
-
-**Validation**: Process of checking user input for correctness and safety.
-
-**Webhook**: Automatic callback mechanism triggering external systems on events.
-
-## Business Terms
-
-**Budget Range**: The estimated cost per person for a trip (Budget/Mid-range/Luxury).
-
-**Companion Search**: Process of finding compatible travel partners through the platform.
-
-**Flexibility Level**: How willing a traveler is to adapt plans (Very Flexible/Moderately Flexible/Set Plans).
-
-**Interest Category**: Classification of hobbies and preferences (e.g., Adventure, Culture, Food).
-
-**Language Preference**: Languages a user speaks and prefers for communication.
-
-**Matching Algorithm**: System logic determining compatibility between travelers.
-
-**Moderation**: Process of reviewing and managing user-generated content for compliance.
-
-**Notification**: Automatic message alerting users to important events or messages.
-
-**Report**: User submission flagging inappropriate content or behavior.
-
-**Review/Rating**: User feedback about another traveler's compatibility and experience.
-
-**Saved Profile**: A traveler has bookmarked another user's profile for later reference.
-
-**Search Filter**: Criteria used to narrow down available options (age, interests, location, etc.).
-
-**Travel Companion**: A fellow traveler selected or matched for a journey.
-
-**Travel Style**: The approach to travel reflecting preferences and values (adventurous, relaxed, cultural, etc.).
-
-## Functional Area Terms
-
-### User Management
-**Account**: User's registered identity in the system.
-**Profile Completion**: Percentage of profile information filled out.
-**Session**: Active login period for a user.
-**Two-Factor Authentication (2FA)**: Enhanced security requiring secondary verification method.
-
-### Communication
-**Group Chat**: Conversation involving trip participants or multiple users.
-**Direct Message (DM)**: Private 1-on-1 conversation between two users. `[R1.0]` Release 1.0 offers a simulated, local version per companion — see Auto-Reply.
-**Message Status**: Indicator showing if message is sent, delivered, or read.
-**Online Status / Simulated Presence** `[R1.0]`: In Release 1.0, a companion's online indicator is not real-time — it is simulated: the companion appears "online" while the local user is active in the chat, and reverts to "offline" after 5 seconds of inactivity, or always "offline" if the user's own *Offline mode* privacy preference is enabled.
-
-### Trip Management
-**Access Code**: Unique identifier to join a private trip.
-**Itinerary Item**: Individual activity/event in a trip schedule.
-**Max Participants**: Maximum number of people allowed to join a trip.
-**Trip Status**: Current state of a trip (Draft, Published, Ongoing, Completed, Cancelled).
-
-### Safety & Moderation
-**Block**: Action preventing another user from contacting or viewing profile.
-**Inappropriate Content**: Material violating community guidelines.
-**Moderation Queue**: Administrative system for reviewing flagged content.
-**Suspension**: Temporary restriction of account access.
-**Warning**: First-step notice to user about guideline violation.
+**Code coverage** — The proportion of the source exercised by the automated tests.
