@@ -111,7 +111,15 @@ const waterfallSidebar = [
   }
 ];
 
-export default withMermaid(defineConfig({
+export default withMermaid({
+  // Render diagram labels as native SVG <text> instead of HTML in <foreignObject>.
+  // The foreignObject path clips class-diagram multiplicity labels ("0..*", "1..*")
+  // into unreadable slivers; SVG text is not clipped and sizes correctly.
+  mermaid: {
+    htmlLabels: false,
+    flowchart: { htmlLabels: false },
+  },
+  ...defineConfig({
   title: "TravelMate",
   description: "A Flutter app to find your potential travel companion",
   themeConfig: {
@@ -143,4 +151,5 @@ export default withMermaid(defineConfig({
       { icon: 'github', link: 'https://github.com/Simo-2004/TravelMate' }
     ]
   }
-}))
+  }),
+})

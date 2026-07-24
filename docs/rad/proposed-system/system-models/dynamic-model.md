@@ -187,18 +187,19 @@ The presence indicator shown beside a companion's name is state-dependent behavi
 ```mermaid
 stateDiagram-v2
     direction LR
-    [*] --> Offline
-    Offline --> Online : activity
-    Online --> Offline : idle 5s
-    Online --> Online : activity
-    Offline --> Hidden : Offline mode on
-    Online --> Hidden : Offline mode on
-    Hidden --> Offline : Offline mode off
+    state Visible {
+        direction LR
+        [*] --> Offline
+        Offline --> Online : activity
+        Online --> Offline : idle 5s
+    }
+    Visible --> Hidden : Offline mode on
+    Hidden --> Visible : Offline mode off
 ```
 
-- **Offline** — the companion appears absent. This is the initial state.
-- **Online** — the companion appears present. Entered on any activity (the Traveler typing or sending); each further activity restarts the idle timer, and the state returns to **Offline** after five seconds without activity.
-- **Hidden** — entered whenever the Traveler enables *Offline mode*. While in this state no presence is disclosed for any companion; disabling *Offline mode* returns to **Offline** until activity resumes.
+While the Traveler is **Visible**, the companion's presence is shown, and switches between two substates: **Offline** (appears absent, the initial substate) and **Online** (appears present). Activity — the Traveler typing or sending — moves it to Online and restarts a timer; five seconds without activity returns it to Offline.
+
+Enabling *Offline mode* moves the whole diagram to **Hidden**, in which no presence is disclosed for any companion, regardless of the substate it came from. Disabling *Offline mode* returns to Visible, re-entering at Offline until activity resumes.
 
 ## 3.4.4.8 Statechart — Bookmark Lifecycle
 
@@ -208,11 +209,9 @@ stateDiagram-v2
     [*] --> NotSaved
     NotSaved --> Saved : save
     Saved --> NotSaved : unsave
-    Saved --> Saved : reopen
-    NotSaved --> [*]
 ```
 
-A trip or companion begins **NotSaved**. Saving it moves it to **Saved** and unsaving it moves it back; a saved item may be reopened from the saved-items list without changing state. The single toggle control performs *save* or *unsave* according to the current state.
+A trip or companion begins **NotSaved**. The single toggle control moves it to **Saved**, and pressing the same control again moves it back — the control performs *save* or *unsave* according to the current state. Reopening a saved item from the saved-items list only displays it again and does not change its state, which is why it appears as no transition here.
 
 ## 3.4.4.9 Envisioned Dynamic Behaviour (deferred)
 
