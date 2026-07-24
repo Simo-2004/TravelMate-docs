@@ -186,29 +186,33 @@ The presence indicator shown beside a companion's name is state-dependent behavi
 
 ```mermaid
 stateDiagram-v2
+    direction LR
     [*] --> Offline
-    Offline --> Online : Traveler activity in conversation
-    Online --> Online : further activity (timer restarts)
-    Online --> Offline : idle timeout elapsed
-    Offline --> Hidden : Traveler enables Offline mode
-    Online --> Hidden : Traveler enables Offline mode
-    Hidden --> Offline : Traveler disables Offline mode
-    note right of Hidden
-        While the Traveler is invisible,
-        no companion presence is disclosed
-    end note
+    Offline --> Online : activity
+    Online --> Offline : idle 5s
+    Online --> Online : activity
+    Offline --> Hidden : Offline mode on
+    Online --> Hidden : Offline mode on
+    Hidden --> Offline : Offline mode off
 ```
+
+- **Offline** — the companion appears absent. This is the initial state.
+- **Online** — the companion appears present. Entered on any activity (the Traveler typing or sending); each further activity restarts the idle timer, and the state returns to **Offline** after five seconds without activity.
+- **Hidden** — entered whenever the Traveler enables *Offline mode*. While in this state no presence is disclosed for any companion; disabling *Offline mode* returns to **Offline** until activity resumes.
 
 ## 3.4.4.8 Statechart — Bookmark Lifecycle
 
 ```mermaid
 stateDiagram-v2
+    direction LR
     [*] --> NotSaved
-    NotSaved --> Saved : toggleBookmark()
-    Saved --> NotSaved : toggleBookmark()
-    Saved --> Saved : reopened from BookmarkListView
+    NotSaved --> Saved : save
+    Saved --> NotSaved : unsave
+    Saved --> Saved : reopen
     NotSaved --> [*]
 ```
+
+A trip or companion begins **NotSaved**. Saving it moves it to **Saved** and unsaving it moves it back; a saved item may be reopened from the saved-items list without changing state. The single toggle control performs *save* or *unsave* according to the current state.
 
 ## 3.4.4.9 Envisioned Dynamic Behaviour (deferred)
 
