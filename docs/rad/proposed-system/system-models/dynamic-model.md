@@ -1,6 +1,11 @@
 # 3.4.4 Dynamic Model
 
-The diagrams distribute responsibilities among the analysis objects identified in [3.4.3](./object-model). Every sequence follows the flow **Actor → Boundary → Control → Entity**: the actor addresses only a boundary, controls orchestrate the use case, and entities never send messages back to controls or boundaries.
+The diagrams distribute responsibilities among the analysis objects identified in [3.4.3](./object-model). Every sequence follows the flow **Actor → Boundary → Control → Entity**, in which each layer addresses only the one adjacent to it:
+
+- the actor addresses a boundary, never a control or an entity directly;
+- a boundary addresses the control of its use case, never an entity;
+- a control is the only object that addresses entities, and the only one that decides what happens next;
+- an **entity never initiates an interaction**. Where a dashed arrow leaves an entity it is a reply to the interrogation it has just received, returning to the control that asked — never to a boundary and never as a new message.
 
 ## 3.4.4.1 Sequence Diagram — Log In (UC2)
 
@@ -153,8 +158,8 @@ sequenceDiagram
 sequenceDiagram
     actor T as Traveler
     participant CW as ChatWindow
-    participant AP as TripAttachmentPicker
     participant IC as TripInviteControl
+    participant AP as TripAttachmentPicker
     participant B as Bookmark
     participant TR as Trip
     participant CO as Companion
@@ -174,7 +179,7 @@ sequenceDiagram
     IC->>CO: wouldAccept(tripTags)
     CO-->>IC: accepts / declines
     IC->>CV: append(companionResponse)
-    CV-->>CW: updated thread
+    IC->>CW: display(updatedThread)
     CW-->>T: invite and response shown
 ```
 

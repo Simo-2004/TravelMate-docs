@@ -127,13 +127,15 @@ classDiagram
     Account "1" -- "1" Traveler : admits
     Traveler "1" *-- "1" PrivacyPreferences : governed by
     Traveler "1" -- "0..*" Bookmark : saves
-    Bookmark "0..*" --> "1" Trip : refers to
-    Bookmark "0..*" --> "1" Companion : refers to
+    Bookmark "0..*" --> "0..1" Trip : refers to
+    Bookmark "0..*" --> "0..1" Companion : refers to
     Trip "0..*" o-- "1..*" TripTag : categorised by
     Traveler "1" -- "0..*" Conversation : holds
     Conversation "1" -- "1" Companion : with
     Conversation "1" *-- "0..*" Message : contains
     Message "0..*" --> "0..1" Trip : shares
+
+    note for Bookmark "xor: a Bookmark refers either to a Trip or to a Companion, never to both and never to neither"
 ```
 
 ### Associations, roles and multiplicities
@@ -142,12 +144,21 @@ classDiagram
 |-------------|-------|--------------|-----------|
 | Account **admits** Traveler | credentials / holder | 1 – 1 | One local identity per installation |
 | Traveler **saves** Bookmark | owner / saved item | 1 – 0..* | A Traveler may save any number of items |
-| Bookmark **refers to** Trip \| Companion | reference / target | 0..* – 1 | Each bookmark points at exactly one target |
+| Bookmark **refers to** Trip | reference / target | 0..* – 0..1 | A bookmark whose target is a companion holds no trip |
+| Bookmark **refers to** Companion | reference / target | 0..* – 0..1 | A bookmark whose target is a trip holds no companion |
 | Trip **categorised by** TripTag | trip / category | 0..* – 1..* | Tags are shared across trips |
 | Traveler **holds** Conversation | participant / thread | 1 – 0..* | One conversation per companion contacted |
 | Conversation **with** Companion | thread / counterpart | 1 – 1 | Conversations are one-to-one |
 | Conversation **contains** Message | thread / utterance | 1 – 0..* | Messages belong to exactly one thread |
 | Message **shares** Trip | invite / subject | 0..* – 0..1 | A message optionally carries a trip invite |
+
+### Constraint on the bookmark target
+
+The two `refers to` associations are each `0..1` because a bookmark holds a trip **or** a companion, not one of each. Multiplicities alone would still admit a bookmark holding both, or neither; the `{xor}` constraint shown on the diagram excludes both cases and states the rule the multiplicities cannot:
+
+> **{xor}** — for every `Bookmark`, exactly one of the two associations is instantiated.
+
+This is what makes a single saved-items collection ([FR-C.1.3](../functional)) coherent: every entry has one target, and its kind determines what selecting it reopens.
 
 ### Aggregation vs composition
 

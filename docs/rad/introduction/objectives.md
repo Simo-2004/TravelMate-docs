@@ -17,7 +17,7 @@
 - Credentials cannot be recovered from the stored data by anyone holding it.
 - Personal data and conversation content are unreadable to anyone inspecting the stored data without the key held by the operating system.
 - Data written by an earlier version of the application is carried forward without loss when the application is updated.
-- Search returns results without perceptible delay and without any network connection.
+- Search returns results within 100 ms and without any network connection.
 - The interface remains usable across the range of supported screen sizes.
 
 ## Criteria for the envisioned platform
