@@ -1,6 +1,11 @@
 # 3.4.4 Dynamic Model
 
-The diagrams distribute responsibilities among the analysis objects identified in [3.4.3](./object-model). Every sequence follows the flow **Actor → Boundary → Control → Entity**: the actor addresses only a boundary, controls orchestrate the use case, and entities never send messages back to controls or boundaries.
+The diagrams distribute responsibilities among the analysis objects identified in [3.4.3](./object-model). Every sequence follows the flow **Actor → Boundary → Control → Entity**, in which each layer addresses only the one adjacent to it:
+
+- the actor addresses a boundary, never a control or an entity directly;
+- a boundary addresses the control of its use case, never an entity;
+- a control is the only object that addresses entities, and the only one that decides what happens next;
+- an **entity never initiates an interaction**. Where a dashed arrow leaves an entity it is a reply to the interrogation it has just received, returning to the control that asked — never to a boundary and never as a new message.
 
 ## 3.4.4.1 Sequence Diagram — Log In (UC2)
 
@@ -153,8 +158,8 @@ sequenceDiagram
 sequenceDiagram
     actor T as Traveler
     participant CW as ChatWindow
-    participant AP as TripAttachmentPicker
     participant IC as TripInviteControl
+    participant AP as TripAttachmentPicker
     participant B as Bookmark
     participant TR as Trip
     participant CO as Companion
@@ -174,7 +179,7 @@ sequenceDiagram
     IC->>CO: wouldAccept(tripTags)
     CO-->>IC: accepts / declines
     IC->>CV: append(companionResponse)
-    CV-->>CW: updated thread
+    IC->>CW: display(updatedThread)
     CW-->>T: invite and response shown
 ```
 
@@ -186,29 +191,32 @@ The presence indicator shown beside a companion's name is state-dependent behavi
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Offline
-    Offline --> Online : Traveler activity in conversation
-    Online --> Online : further activity (timer restarts)
-    Online --> Offline : idle timeout elapsed
-    Offline --> Hidden : Traveler enables Offline mode
-    Online --> Hidden : Traveler enables Offline mode
-    Hidden --> Offline : Traveler disables Offline mode
-    note right of Hidden
-        While the Traveler is invisible,
-        no companion presence is disclosed
-    end note
+    direction LR
+    state Visible {
+        direction LR
+        [*] --> Offline
+        Offline --> Online : activity
+        Online --> Offline : idle 5s
+    }
+    Visible --> Hidden : Offline mode on
+    Hidden --> Visible : Offline mode off
 ```
+
+While the Traveler is **Visible**, the companion's presence is shown, and switches between two substates: **Offline** (appears absent, the initial substate) and **Online** (appears present). Activity — the Traveler typing or sending — moves it to Online and restarts a timer; five seconds without activity returns it to Offline.
+
+Enabling *Offline mode* moves the whole diagram to **Hidden**, in which no presence is disclosed for any companion, regardless of the substate it came from. Disabling *Offline mode* returns to Visible, re-entering at Offline until activity resumes.
 
 ## 3.4.4.8 Statechart — Bookmark Lifecycle
 
 ```mermaid
 stateDiagram-v2
+    direction LR
     [*] --> NotSaved
-    NotSaved --> Saved : toggleBookmark()
-    Saved --> NotSaved : toggleBookmark()
-    Saved --> Saved : reopened from BookmarkListView
-    NotSaved --> [*]
+    NotSaved --> Saved : save
+    Saved --> NotSaved : unsave
 ```
+
+A trip or companion begins **NotSaved**. The single toggle control moves it to **Saved**, and pressing the same control again moves it back — the control performs *save* or *unsave* according to the current state. Reopening a saved item from the saved-items list only displays it again and does not change its state, which is why it appears as no transition here.
 
 ## 3.4.4.9 Envisioned Dynamic Behaviour (deferred)
 

@@ -69,10 +69,10 @@ Restricting a search by age, budget, spoken language, or location; a compatibili
 ## 3.2.4 Module D — Conversations
 
 - **FR-D.1.1** A Traveler shall be able to open a conversation with any companion, from that companion's profile.
-- **FR-D.1.2** A message sent by the Traveler shall receive a reply determined by the content of the message; where no specific reply applies, a general one shall be given.
+- **FR-D.1.2** A message sent by the Traveler shall receive a reply determined by the content of the message; where no specific reply applies, a general one shall be given. The reply shall be presented within **1 s** of the message being sent.
 - **FR-D.1.3** Each conversation shall be retained between uses of the application until the Traveler discards it.
 - **FR-D.1.4** Conversation content shall be protected as required by [NFR-I.3](./non-functional/implementation), while the information needed to retrieve and order conversations may remain unprotected.
-- **FR-D.1.5** A companion shall be shown as present while the exchange is active, and as absent once the Traveler has been inactive for a short interval.
+- **FR-D.1.5** A companion shall be shown as present while the exchange is active, and as absent once the Traveler has been inactive for **5 seconds**.
 - **FR-D.1.6** A Traveler shall be able to propose one of their saved trips within a conversation; the companion shall accept or decline according to whether the trip's characterising labels correspond to their own preferences.
 - **FR-D.1.7** A Traveler shall be able to discard an entire conversation.
 

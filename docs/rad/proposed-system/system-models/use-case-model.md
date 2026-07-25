@@ -1,6 +1,8 @@
 # 3.4.2 Use Case Model
 
-Each use case is specified by its name, participating actors, assumptions, entry condition, flow of events, exceptions, and exit condition. The flow separates what the actor does from what the system does. Exceptions are stated apart from the main flow rather than mixed into it.
+Each use case is specified by its name, participating actors, assumptions, entry condition, flow of events, exceptions, exit condition, and special requirements. The flow separates what the actor does from what the system does. Exceptions are stated apart from the main flow rather than mixed into it.
+
+**Special requirements** name the non-functional constraints that bear on the use case in particular. They do not restate [3.3](../non-functional/); they identify which of its requirements must hold for this use case to be considered correctly realised, and are the point at which the qualities of [3.3](../non-functional/) attach to the functions of [3.2](../functional).
 
 Use cases marked **(deferred)** require a server or a second real Traveler and are not delivered by this lifecycle; they are specified in outline only.
 
@@ -69,6 +71,12 @@ flowchart LR
 
 **Exit condition:** The Traveler is admitted under the newly created identity, which replaces any account previously held.
 
+**Special requirements:**
+- [NFR-U.5](../non-functional/usability) — the whole identity and its credentials are supplied within a single form, and a rejected submission need not be composed again from the beginning.
+- [NFR-I.4](../non-functional/implementation) — the secret is retained only in non-reversible form, derived with a deliberately costly function and a value unique to it.
+- [NFR-P.3](../non-functional/performance) — that derivation completes within 1 s.
+- [NFR-U.4](../non-functional/usability) — the outcome is confirmed visibly within 300 ms.
+
 *Realised by:* `CreateAccountScreen`, `AuthService`, `AccountValidation`.
 
 ## UC2 — Log In
@@ -87,6 +95,11 @@ flowchart LR
 - *The username is not recognised, or the secret does not match.* The system reports that the credentials were not recognised, without indicating which of the two was at fault, and remains at the login screen.
 
 **Exit condition:** The Traveler is admitted to the application, or remains at the login screen and may try again.
+
+**Special requirements:**
+- [NFR-I.4](../non-functional/implementation) — verification re-derives the stored value rather than recovering the secret, and its duration does not reveal how much of the supplied secret was correct.
+- [NFR-P.3](../non-functional/performance) — verification completes within 1 s, and its cost falls on no other operation.
+- [NFR-R.2](../non-functional/reliability) — the account is read as a single record, an update replacing it rather than creating a second one.
 
 *Realised by:* `LoginScreen`, `AuthService`, `AccountRepository`.
 
@@ -109,6 +122,11 @@ flowchart LR
 
 **Exit condition:** A ranked list is presented, and the detail of any selected result is shown.
 
+**Special requirements:**
+- [NFR-P.1](../non-functional/performance) — results are presented within 100 ms of submission, over the whole catalogue.
+- [NFR-I.2](../non-functional/implementation) — the search is served entirely from the device, with no network exchange whatsoever.
+- [NFR-U.3](../non-functional/usability) — the search is reachable within three interactions from the main navigation.
+
 *Realised by:* `SearchScreen`, `SearchResultsScreen`, `filterMates`, `filterTrips`.
 
 ## UC4 — Save a Trip or Companion
@@ -126,6 +144,11 @@ flowchart LR
 
 **Exit condition:** The item is present among the saved items, or has been removed from them, and the indication shown on the item reflects this.
 
+**Special requirements:**
+- [NFR-P.2](../non-functional/performance) — the indication on the item changes within one frame (16 ms), the write to storage proceeding in the background.
+- [NFR-U.4](../non-functional/usability) — the outcome is confirmed within 300 ms and stays legible for at least 1.5 s.
+- [FR-C.1.5](../functional) — the item appears once in the collection however many times it is saved.
+
 *Realised by:* `SaveTripButton`, `SavedTripPreviewStore`.
 
 ## UC5 — Converse with a Companion
@@ -138,8 +161,8 @@ flowchart LR
 |----------|--------|
 | 1. Opens the conversation. | 2. Presents the exchange held so far, or an invitation to begin if there is none. |
 | 3. Composes and sends a message. | 4. Records the message and shows the companion as present. |
-| | 5. Determines the companion's reply from the content of the message and, after a brief pause, records and presents it. |
-| | 6. Shows the companion as absent once the Traveler has been inactive for a short interval. |
+| | 5. Determines the companion's reply from the content of the message and, within one second, records and presents it. |
+| | 6. Shows the companion as absent once the Traveler has been inactive for five seconds. |
 
 **Exceptions:**
 - *The message is empty.* The system does not record it and the conversation is unchanged.
@@ -147,6 +170,12 @@ flowchart LR
 - *The Traveler has declared themselves absent.* The system discloses no presence for the companion.
 
 **Exit condition:** The exchange is recorded and will be presented again on a later visit, unless the Traveler has discarded it.
+
+**Special requirements:**
+- [NFR-I.3](../non-functional/implementation) — the content of the exchange is encrypted at rest with an authenticated algorithm, under a key held by the operating system.
+- [NFR-P.4](../non-functional/performance) — the exchange is retrieved within 100 ms for up to 500 messages, without examining the messages of other conversations.
+- [FR-D.1.2](../functional) — the reply is presented within 1 s of the message being sent.
+- [FR-D.1.5](../functional) — the companion is shown as absent after 5 seconds of inactivity.
 
 *Realised by:* `ChatScreen`, `ChatStore`, `ChatAutoReplyCatalog`.
 
@@ -166,6 +195,11 @@ flowchart LR
 
 **Exit condition:** The invitation and the companion's response form part of the conversation.
 
+**Special requirements:**
+- [FR-C.1.1](../functional) — only trips already among the Traveler's saved items may be proposed; the picker offers no other source.
+- [NFR-P.2](../non-functional/performance) — the invitation appears in the exchange without blocking the interface.
+- [NFR-I.3](../non-functional/implementation) — the invitation and the response are protected as any other conversation content.
+
 *Realised by:* `ChatTripAttachmentPicker`, `mateLikesTrip`.
 
 ## UC7 — Manage Profile and Settings
@@ -184,6 +218,12 @@ flowchart LR
 - *A replacement photograph cannot be obtained.* The system reports the failure and retains the photograph previously held.
 
 **Exit condition:** The revised profile and preferences are retained and will be presented again on a later visit.
+
+**Special requirements:**
+- [NFR-I.3](../non-functional/implementation) — the personal data of the profile is encrypted at rest with an authenticated algorithm.
+- [NFR-P.5](../non-functional/performance) — a chosen photograph is stored as a file and referred to by reference, never embedded in the database.
+- [NFR-R.2](../non-functional/reliability) — the profile is written as a single record, an update replacing it rather than creating a second one.
+- [NFR-U.6](../non-functional/usability) — the editable fields remain legible across the text-scaling range 0.9×–1.2×.
 
 *Realised by:* `SettingsScreen`, `PersonalProfileScreen`, `PrivacySettingsScreen`, `SupportScreen`.
 
