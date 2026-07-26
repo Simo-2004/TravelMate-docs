@@ -75,9 +75,36 @@ const waterfallSidebar = [
     collapsed: false,
     items: [
       // SDD
-      { text: 'SDD - Architecture & Subsystems', link: '/sdd/architecture' },
-      { text: 'SDD - Hardware & Software Mapping', link: '/sdd/mapping' },
-      { text: 'SDD - Persistent Data', link: '/sdd/data' },
+      { text: 'SDD - Overview', link: '/sdd/overview' },
+      {
+        text: '1. Introduction',
+        link: '/sdd/introduction/',
+        collapsed: false,
+        items: [
+          { text: '1.1 Purpose of the System', link: '/sdd/introduction/purpose' },
+          { text: '1.2 Design Goals', link: '/sdd/introduction/design-goals' },
+          { text: '1.3 Definitions, Acronyms & Abbreviations', link: '/sdd/introduction/definitions' },
+          { text: '1.4 References', link: '/sdd/introduction/references' },
+          { text: '1.5 Overview', link: '/sdd/introduction/overview' }
+        ]
+      },
+      { text: '2. Current Software Architecture', link: '/sdd/current-architecture' },
+      {
+        text: '3. Proposed Software Architecture',
+        link: '/sdd/proposed-architecture/',
+        collapsed: false,
+        items: [
+          { text: '3.1 Overview', link: '/sdd/proposed-architecture/overview' },
+          { text: '3.2 Subsystem Decomposition', link: '/sdd/proposed-architecture/subsystem-decomposition' },
+          { text: '3.3 Hardware/Software Mapping', link: '/sdd/proposed-architecture/hardware-software-mapping' },
+          { text: '3.4 Persistent Data Management', link: '/sdd/proposed-architecture/persistent-data' },
+          { text: '3.5 Access Control & Security', link: '/sdd/proposed-architecture/access-control' },
+          { text: '3.6 Global Software Control', link: '/sdd/proposed-architecture/global-control-flow' },
+          { text: '3.7 Boundary Conditions', link: '/sdd/proposed-architecture/boundary-conditions' }
+        ]
+      },
+      { text: '4. Subsystems & Services', link: '/sdd/subsystem-services' },
+      { text: '5. Glossary', link: '/sdd/glossary' },
       // ODD
       { text: 'ODD - Class Diagrams (UML)', link: '/odd/classes' },
       { text: 'ODD - Object Interfaces', link: '/odd/interfaces' }
