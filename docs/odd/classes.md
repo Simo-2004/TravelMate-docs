@@ -14,7 +14,7 @@ Below is the complete UML Class Diagram representing the system architecture.
 
 ### Project Overview
 
-TravelMate is a Flutter-based mobile application implementing a layered architecture with clear separation between presentation, business logic, and data layers. The design follows MVVM pattern with reactive state management using `ValueNotifier`.
+TravelMate is a Flutter-based mobile application implementing a layered architecture with clear separation between presentation, business logic, and data layers. The design follows the MVC pattern, with the model realised as observable stores based on `ValueNotifier` to which the views subscribe directly.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -24,7 +24,7 @@ TravelMate is a Flutter-based mobile application implementing a layered architec
                         ↓
 ┌─────────────────────────────────────────────────────────┐
 │         BUSINESS LOGIC LAYER (State Management)              │
-│  ViewModels | Stores | Controllers | Services             │
+│  Stores (model) | Controllers | Services | Domain logic   │
 └─────────────────────────────────────────────────────────┘
                         ↓
 ┌─────────────────────────────────────────────────────────┐

@@ -9,30 +9,30 @@ Identifiers name the **category**, not the priority: `D` dependability, `M` main
 ### Dependability
 
 **DG-D1 — Confidentiality of stored data.** Personal data and conversation content are unreadable, and credentials unrecoverable, to anyone holding the stored files without the key held by the operating system.
-*Derived from NFR-I.3, NFR-I.4, NFR-L.2, NFR-L.3.*
+*Derived from [NFR-I.3, NFR-I.4](../../rad/proposed-system/non-functional/implementation), [NFR-L.2, NFR-L.3](../../rad/proposed-system/non-functional/legal).*
 
 **DG-D2 — Survival of data.** Stored data survives restarts and application upgrades without loss or duplication, and a damaged record never prevents the application from starting.
-*Derived from NFR-R.1, NFR-R.2, NFR-R.4.*
+*Derived from [NFR-R.1, NFR-R.2, NFR-R.4](../../rad/proposed-system/non-functional/reliability).*
 
 ### Maintenance
 
 **DG-M1 — Testability without a device.** The logic of the system can be exercised in automated tests without a database engine, an operating-system key store, or a physical device, so that coverage above 80% is both attainable and meaningful.
-*Derived from NFR-S.3, NFR-S.4.*
+*Derived from [NFR-S.3, NFR-S.4](../../rad/proposed-system/non-functional/supportability).*
 
 **DG-M2 — Isolation of the storage mechanism.** A change in how data is stored does not propagate into the logic or the presentation.
-*Derived from NFR-S.2, NFR-S.7.*
+*Derived from [NFR-S.2, NFR-S.7](../../rad/proposed-system/non-functional/supportability).*
 
 **DG-M3 — Openness to a network tier.** Introducing a server later is an addition beneath the existing logic, not a rewrite of it.
-*Derived from RAD objective 6.*
+*Derived from [RAD objective 6](../../rad/introduction/objectives).*
 
 ### Performance
 
-**DG-P1 — Responsiveness.** Every interaction respects the bounds of RAD 3.3.3: search within 100 ms, visible state within one frame, credential verification within 1 s.
+**DG-P1 — Responsiveness.** Every interaction respects the bounds of [RAD 3.3.3](../../rad/proposed-system/non-functional/performance): search within 100 ms, visible state within one frame, credential verification within 1 s.
 
 ### End user
 
 **DG-U1 — Directness of interaction.** Every principal function is reachable within three interactions, and every action that alters stored data is visibly confirmed.
-*Derived from NFR-U.3, NFR-U.4.*
+*Derived from [NFR-U.3, NFR-U.4](../../rad/proposed-system/non-functional/usability).*
 
 ### Cost
 

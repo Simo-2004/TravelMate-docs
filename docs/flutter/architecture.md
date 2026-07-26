@@ -4,7 +4,7 @@
 
 ## Overview of the Flutter Application Structure
 
-TravelMate implements the **local-first, layered on-device architecture (MVVM)** defined in the SDD and ODD, with clear separation of concerns across layers. The application is organized into logical modules within the `lib` directory. This document is the code-level view of the frozen Release 1.0 design.
+TravelMate implements the **local-first, layered on-device architecture (MVC)** defined in the SDD and ODD, with clear separation of concerns across layers. The application is organized into logical modules within the `lib` directory. This document is the code-level view of the frozen Release 1.0 design.
 
 ## Directory Structure
 
@@ -182,10 +182,12 @@ Each feature in `/features` is self-contained with its own screens and logic:
 
 ## Design Patterns Used
 
-### 1. **MVVM Pattern**
-- **Model**: Data classes in `/models`
-- **View**: Flutter widgets in `/features`
-- **ViewModel**: Stores in `/shared/state`
+### 1. **MVC Pattern**
+- **Model**: Observable stores in `/shared/state`, holding the domain objects of `/models`
+- **View**: Flutter widgets in `/features`, subscribing to a store through `ValueListenableBuilder`
+- **Controller**: the event handlers of those widgets, which call operations on the store
+
+The views subscribe to the stores directly — there is no intervening per-view object, and a store exposes its domain object without reshaping it for presentation.
 
 ### 2. **Repository Pattern**
 ```dart

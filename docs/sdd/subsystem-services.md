@@ -47,11 +47,11 @@ This is the subsystem in which the rules of the domain live. It offers the wides
 
 Called by Application State. Offers two kinds of service, at two levels.
 
-**Data sources** decide *where* a kind of data lives, and perform migration when that decision changes. This is the interface Application State depends on.
+**Data sources** decide *where* a kind of data lives, and perform store fallback when that decision changes. This is the interface Application State depends on.
 
 | Service | Operations offered |
 |---------|--------------------|
-| **Profile data source** | Read the stored profile, falling back to the previous mechanism and then to the default; write the profile |
+| **Profile data source** | Read the stored profile, falling back to the secondary store and then to the default; write the profile |
 | **Conversation data source** | Read every exchange; append a message; discard an exchange |
 | **Saved items store** | Read the collection; write it |
 | **Privacy preferences store** | Read the preferences; write them |

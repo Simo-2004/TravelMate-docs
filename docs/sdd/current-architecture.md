@@ -1,15 +1,59 @@
 # 2. Current Software Architecture
 
-TravelMate is **greenfield**: it replaces no existing software system. There is no prior architecture to describe, no legacy interface to preserve, and no data belonging to another system to migrate. The alternatives travellers use today — social media groups, forums, agencies — are examined in [RAD 2](../rad/current-system) as a problem domain, not as systems this design must interoperate with.
+## Overview
 
-The design therefore starts from the analysis model rather than from an existing structure, and is free in every architectural choice it makes.
+Travellers currently coordinate journeys through general-purpose software not designed for the purpose: social platforms, travel forums, messaging applications, and agency booking systems.
 
-## The one exception
+[RAD 2](../rad/current-system) examines these from the standpoint of the traveller's needs. This section examines them as **software systems** — their architecture, the interfaces they expose, and the data they hold — in order to establish whether any of them can be integrated with, extended, or built upon, and what constraints their properties place on the architecture of TravelMate.
 
-Greenfield does not mean there is nothing to carry forward. An earlier state of the application persisted the personal profile and the chat history through the platform's simple key–value preference store. The current design stores both in an encrypted relational database instead.
+## Existing Systems
 
-This is not project history: it is a **live obligation on the design**. Copies of the application holding data in the earlier form exist on devices, and [NFR-R.4](../rad/proposed-system/non-functional/reliability) requires that an upgrade carry that data forward exactly once, without loss and without duplication.
+| System category | Architecture | Interface exposed to third parties | Data relevant to companion finding |
+|-----------------|--------------|------------------------------------|-----------------------------------|
+| **Social platforms** | Centralised client/server over a closed social graph | Programmatic interfaces oriented to publishing on the authenticated user's own behalf; group membership and third-party content not exposed | Travel intentions appear as unstructured prose inside general-purpose posts |
+| **Travel forums** | Server-rendered web portals | Published for human readers; no documented programmatic interface | Discussion threads, unstructured and unindexed by intent |
+| **Messaging applications** | Centralised client/server with end-to-end encrypted content | Bot and notification interfaces only; message content unreadable to third parties by design | Conversations, inaccessible by construction |
+| **Agency and booking systems** | Business-to-business distribution systems | Reachable only under commercial agreement | Inventory and itineraries; no traveller profile or availability data |
 
-The design meets this obligation by placing the decision of *where* a kind of data lives in a dedicated component — the data source of [3.2](./proposed-architecture/subsystem-decomposition) — which, on its first read, looks in the new store, falls back to the old one, and promotes what it finds. [3.4](./proposed-architecture/persistent-data) specifies the mechanism, and [3.7](./proposed-architecture/boundary-conditions) treats it as a start-up condition.
+## Integration Assessment
 
-The consequence for the architecture is that **the choice of storage mechanism is not permitted to be visible above the persistence layer**. It has already changed once; it is exactly the kind of decision that changes again. This is the origin of design goal [DG-M2](./introduction/design-goals).
+TravelMate requires structured data about travellers: their interests, the journeys they are drawn to, and their availability to travel with someone. None of the systems above holds that data in a form that can be obtained programmatically.
+
+| Question | Finding |
+|----------|---------|
+| Does any system expose the required data through a documented interface? | No. Interfaces are oriented to publishing, not to querying other users' content. |
+| Could the required data be derived from what is exposed? | No. Where travel intent appears at all it is unstructured prose, not attributes. |
+| Is identity federation available? | Not on terms compatible with a system holding all data on the device. |
+| Is any existing system's logic being preserved? | No. |
+
+The development context is therefore **greenfield**, in the specific sense that matters to system design: there is no existing architecture to conform to, no legacy interface to wrap, and no existing logic to preserve. The design is unconstrained in its structure — and equally unassisted, since nothing can be reused.
+
+## Architectural Constraints
+
+The absence of an integrable system is not a neutral finding. It determines four properties of the proposed architecture.
+
+| Constraint | Consequence for the design |
+|------------|---------------------------|
+| No external source of trip or companion data | The catalogue must be supplied with the application and served from local storage |
+| No identity provider usable on these terms | The account must be established, stored and verified on the device |
+| No external system to interoperate with | Schema, data representation and internal interfaces are chosen freely |
+| No party consuming data from TravelMate | The system exposes no external interface either, as [RAD 3.3.6](../rad/proposed-system/non-functional/interface) records |
+
+The first two constraints are the reason the system is self-contained on one device rather than the result of a preference for local storage: with no data source and no identity provider to call, there is nothing for a network tier to do in this release.
+
+## Design Response
+
+The proposed architecture answers these constraints as follows, each specified in Chapter 3:
+
+- A **single node** carrying the whole system, since no external node holds anything it needs ([3.3](./proposed-architecture/hardware-software-mapping)).
+- **Local persistence** of every kind of data, with the storage mechanism chosen per kind rather than imposed by an external schema ([3.4](./proposed-architecture/persistent-data)).
+- **Local authentication and protection at rest**, since the device rather than a server is the trust boundary ([3.5](./proposed-architecture/access-control)).
+- **Off-the-shelf components** for persistence, cryptography and media selection, which is the only reuse available where no existing system can be built upon ([3.3](./proposed-architecture/hardware-software-mapping)).
+
+| Constraint | Response in the proposed architecture |
+|------------|---------------------------------------|
+| Catalogue must be local | Trip catalogue seeded into the database on first run and read from it thereafter |
+| Account must be local | Single-row account table with a one-way derived credential ([NFR-I.4](../rad/proposed-system/non-functional/implementation)) |
+| Device is the trust boundary | Authenticated field-level encryption under a key held by the operating system ([NFR-I.3](../rad/proposed-system/non-functional/implementation)) |
+| No external schema to conform to | Storage mechanism selected per kind of data and confined to one subsystem ([NFR-S.2](../rad/proposed-system/non-functional/supportability)) |
+| No reuse of existing systems available | Established components integrated behind application-declared interfaces ([NFR-S.3](../rad/proposed-system/non-functional/supportability)) |

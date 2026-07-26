@@ -42,7 +42,7 @@ Terms of the **solution domain**, as used in this document. Application-domain t
 
 **DAO (Data Access Object)** — Issues storage commands, expressed in rows rather than domain objects. Declared as an interface.
 
-**Data source** — Decides which mechanism holds a kind of data, and migrates between mechanisms when that decision changes.
+**Data source** — Decides which mechanism holds a kind of data, and performs store fallback when that decision changes.
 
 **Adapter** — A component whose only purpose is to satisfy an interface by delegating to a platform facility. The only device-dependent code in the system.
 
@@ -68,7 +68,7 @@ Terms of the **solution domain**, as used in this document. Application-domain t
 
 **Upsert** — A write that replaces an existing row rather than adding a second one. How single-row tables enforce uniqueness.
 
-**Migration** — Carrying data written by a previous version into the current mechanism. Performed once, inside the first read.
+**Store fallback** — Reading from a secondary store when the primary one holds nothing, and promoting what is found into the primary store. The mechanism by which data is carried forward when the store holding a kind of data changes; performed once, inside the first read.
 
 **Seeding** — Writing built-in content on a first run only, so that a later run never overwrites the Traveler's data.
 

@@ -89,7 +89,7 @@ The consequence is the property the Repository style exists to obtain, and the o
 
 The same mechanism yields testability. Every subsystem above layer 3 can be exercised with the platform facilities replaced by in-memory substitutes, which is why the logic can be tested without a database engine, a key store, or a device.
 
-The cost is the one the slides identify: a level of indirection that would not otherwise exist, and more declarations than a direct call would need. It is accepted because the storage mechanism has already changed once ([2](../current-architecture)) and is expected to change again.
+The cost is the one the slides identify: a level of indirection that would not otherwise exist, and more declarations than a direct call would need. It is accepted because the storage mechanism is a point of variation: [3.4](./persistent-data) selects a different mechanism for each kind of data, and a release acquiring a network tier would change the selection again.
 
 ## Goals and requirements served
 

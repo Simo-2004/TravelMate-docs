@@ -24,7 +24,7 @@ Three things are created on a first run and on no subsequent run. Each is **idem
 
 Two further things happen lazily rather than at start-up, on first use: the **database connection** is opened, and the **key is read** into memory. Neither is needed until data is actually touched, and deferring them keeps start-up shorter.
 
-Migration from the previous storage mechanism ([2](../current-architecture)) is also a start-up condition, though it is not a separate step: it happens inside the first read of the profile and of the conversations, as [3.4](./persistent-data) describes.
+Store fallback is also a start-up condition, though not a separate step: it occurs inside the first read performed by a data source, as [3.4](./persistent-data) describes.
 
 ## Termination
 
@@ -77,4 +77,4 @@ Failures arising from a network, a remote service, or a second node do not exist
 | [DG-D1](../introduction/design-goals) Confidentiality | The key is created at the boundary and never leaves the OS key store |
 | [NFR-R.1](../../rad/proposed-system/non-functional/reliability) | **Partly** — see the gap recorded above |
 | [NFR-R.3](../../rad/proposed-system/non-functional/reliability), [NFR-R.5](../../rad/proposed-system/non-functional/reliability) | Alteration detected; optional operations fail without taking the task with them |
-| [NFR-R.4](../../rad/proposed-system/non-functional/reliability) | Migration performed once, inside the first read |
+| [NFR-R.4](../../rad/proposed-system/non-functional/reliability) | Store fallback performed once, inside the first read |
