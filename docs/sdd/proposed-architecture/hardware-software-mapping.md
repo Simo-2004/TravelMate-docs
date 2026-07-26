@@ -5,6 +5,7 @@
 The system runs on **one node**: the Traveler's own device. There is no second node, no network topology, and no inter-node communication to design.
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryTextColor':'#1a1a1a','textColor':'#1a1a1a','titleColor':'#1a1a1a','nodeTextColor':'#1a1a1a','lineColor':'#6b7280','clusterBkg':'#f7f9fc','clusterBorder':'#9aa5b8','primaryColor':'#ffffff','primaryBorderColor':'#9aa5b8'}}}%%
 flowchart TD
     subgraph DEV["Traveler's device"]
         subgraph APP["TravelMate application process"]
@@ -25,9 +26,9 @@ flowchart TD
     SUB --> FS
     SUB --> GAL
 
-    style DEV fill:#f4f4f8,stroke:#7a7a99
-    style APP fill:#e8f0fe,stroke:#5b7cba
-    style OS fill:#fdf0e6,stroke:#c98a4b
+    style DEV fill:#f4f4f8,stroke:#7a7a99,color:#1a1a1a
+    style APP fill:#e8f0fe,stroke:#5b7cba,color:#1a1a1a
+    style OS fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
 ```
 
 Every subsystem of [3.2](./subsystem-decomposition) is allocated to this single node and runs inside a single process. The questions this decision area normally poses — how many nodes, which node is responsible for which function, how nodes communicate, what bandwidth is required, whether a protocol is needed — have no content for this system, and inventing answers to them would describe a system that has not been built.

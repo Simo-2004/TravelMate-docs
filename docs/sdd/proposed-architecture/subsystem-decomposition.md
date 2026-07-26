@@ -17,6 +17,7 @@ The system is decomposed into **seven subsystems**, distributed across the three
 ## Component diagram
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryTextColor':'#1a1a1a','textColor':'#1a1a1a','titleColor':'#1a1a1a','nodeTextColor':'#1a1a1a','lineColor':'#6b7280','clusterBkg':'#f7f9fc','clusterBorder':'#9aa5b8','primaryColor':'#ffffff','primaryBorderColor':'#9aa5b8'}}}%%
 flowchart TD
     PRES["Presentation"]
     STATE["Application State"]
@@ -42,13 +43,13 @@ flowchart TD
     SEC --> KS
     MEDIA --> FS
 
-    style PRES fill:#e8f0fe,stroke:#5b7cba
-    style STATE fill:#e9f7ef,stroke:#5ba37c
-    style LOGIC fill:#e9f7ef,stroke:#5ba37c
-    style PERS fill:#fdf0e6,stroke:#c98a4b
-    style DAO fill:#fdf0e6,stroke:#c98a4b
-    style SEC fill:#fdf0e6,stroke:#c98a4b
-    style MEDIA fill:#fdf0e6,stroke:#c98a4b
+    style PRES fill:#e8f0fe,stroke:#5b7cba,color:#1a1a1a
+    style STATE fill:#e9f7ef,stroke:#5ba37c,color:#1a1a1a
+    style LOGIC fill:#e9f7ef,stroke:#5ba37c,color:#1a1a1a
+    style PERS fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
+    style DAO fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
+    style SEC fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
+    style MEDIA fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
 ```
 
 Two dependencies deserve comment because they appear to breach the closed layering.

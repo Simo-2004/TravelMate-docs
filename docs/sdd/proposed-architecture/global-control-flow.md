@@ -13,6 +13,7 @@ TravelMate is **event-driven**. The application does not execute a predetermined
 ## The event cycle
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryTextColor':'#1a1a1a','textColor':'#1a1a1a','titleColor':'#1a1a1a','nodeTextColor':'#1a1a1a','lineColor':'#6b7280','clusterBkg':'#f7f9fc','clusterBorder':'#9aa5b8','primaryColor':'#ffffff','primaryBorderColor':'#9aa5b8'}}}%%
 flowchart LR
     E["Event<br/>touch, timer,<br/>completed read"] --> L["Event loop"]
     L --> H["Handler<br/>in Presentation"]
@@ -22,9 +23,9 @@ flowchart LR
     S -.-> W["Write to storage<br/>not awaited"]
     W -.-> L
 
-    style E fill:#e8f0fe,stroke:#5b7cba
-    style S fill:#e9f7ef,stroke:#5ba37c
-    style W fill:#fdf0e6,stroke:#c98a4b
+    style E fill:#e8f0fe,stroke:#5b7cba,color:#1a1a1a
+    style S fill:#e9f7ef,stroke:#5ba37c,color:#1a1a1a
+    style W fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
 ```
 
 A single **event loop** takes the next event and delivers it to its handler. The handler — an event handler of a screen — calls an operation on the store that owns the affected state. The store changes its value and **publishes** that it has changed; every view subscribed to it rebuilds from the new value.
