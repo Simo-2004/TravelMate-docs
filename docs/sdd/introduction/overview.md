@@ -2,7 +2,7 @@
 
 The remainder of this document is organised as follows.
 
-**[Chapter 2 — Current Software Architecture](../current-architecture)** states what the design starts from. TravelMate is greenfield: there is no system being replaced. The chapter records the one respect in which this is not quite true, and the obligation that follows from it.
+**[Chapter 2 — Current Software Architecture](../current-architecture)** assesses the existing software travellers coordinate journeys through, establishes that none of it can be integrated with or built upon, and derives the architectural constraints that follow.
 
 **[Chapter 3 — Proposed Software Architecture](../proposed-architecture/)** is the substance of the document, in seven parts:
 

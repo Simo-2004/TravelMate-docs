@@ -20,7 +20,7 @@ Terms of the **application domain** — Traveler, Companion, Trip, Bookmark, Con
 - **Store** — An observable holder of application state, notifying the presentation when the value it holds changes. The system's control objects are realised as stores.
 - **Repository** — The component that translates between domain objects and stored rows, and that applies encryption. The only component that knows data is encrypted.
 - **DAO** *(Data Access Object)* — The component that issues the actual storage commands. Declared as an interface, so the repository above it never depends on the storage engine.
-- **Data source** — The component that chooses *where* a kind of data lives, and performs migration between stores when that choice changes.
+- **Data source** — The component that chooses *where* a kind of data lives, and performs store fallback when that choice changes.
 - **Adapter** — A thin component whose only purpose is to satisfy an interface by delegating to a platform facility.
 
 ## Technical terms

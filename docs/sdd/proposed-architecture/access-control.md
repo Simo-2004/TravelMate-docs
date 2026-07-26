@@ -84,9 +84,9 @@ Two are recorded, because a design that claims none is not being honest.
 
 | Serves | How |
 |--------|-----|
-| [DG-1](../introduction/design-goals) Confidentiality | Authenticated encryption under an OS-held key; one-way credential storage |
-| [DG-2](../introduction/design-goals) Survival of data | The authentication tag turns silent corruption into an explicit failure |
-| [DG-3](../introduction/design-goals) Testability | Key access sits behind an interface; the cipher is pure and needs no device |
+| [DG-D1](../introduction/design-goals) Confidentiality | Authenticated encryption under an OS-held key; one-way credential storage |
+| [DG-D2](../introduction/design-goals) Survival of data | The authentication tag turns silent corruption into an explicit failure |
+| [DG-M1](../introduction/design-goals) Testability | Key access sits behind an interface; the cipher is pure and needs no device |
 | [NFR-I.3](../../rad/proposed-system/non-functional/implementation), [NFR-I.4](../../rad/proposed-system/non-functional/implementation) | The parameters and key handling above |
 | [NFR-L.2](../../rad/proposed-system/non-functional/legal), [NFR-L.3](../../rad/proposed-system/non-functional/legal) | Credentials unrecoverable even by the development team; content unreadable without the OS-held key |
 | [NFR-R.3](../../rad/proposed-system/non-functional/reliability) | Alteration is detectable |

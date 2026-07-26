@@ -6,19 +6,21 @@
 
 TravelMate uses a **lightweight, reactive state management approach** based on **ValueNotifier** and **ChangeNotifier** from the Flutter framework. This provides a balance between simplicity and scalability without requiring external packages.
 
-## Architecture Pattern: MVVM + Stores
+## Architecture Pattern: MVC with observable stores
+
+The stores are the **model**: the views subscribe to them directly, and a store exposes its domain object without reshaping it for presentation. The **controller** role is played by the event handlers of the widgets, which call operations on the store. There is no per-view intermediate object.
 
 ```
-UI Layer (Widgets)
+UI Layer (Widgets)                          — View
     ↑
-    ↓ (ValueListenableBuilder)
-    └─ State Stores (ValueNotifier<T>)
+    ↓ (ValueListenableBuilder / method call)
+    └─ State Stores (ValueNotifier<T>)      — Model
             ↑
             ↓ (read/write)
-            └─ Data Layer (Repositories)
+            └─ Data Layer (Repositories, DAOs)
                     ↑
-                    ↓ (serialize/deserialize)
-                    └─ Local Storage (SharedPreferences)
+                    ↓
+                    └─ Local Storage (SQLite, preference store, file system)
 ```
 
 ## Core State Management Components

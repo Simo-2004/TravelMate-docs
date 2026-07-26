@@ -17,6 +17,7 @@ The system is decomposed into **seven subsystems**, distributed across the three
 ## Component diagram
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryTextColor':'#1a1a1a','textColor':'#1a1a1a','titleColor':'#1a1a1a','nodeTextColor':'#1a1a1a','lineColor':'#6b7280','clusterBkg':'#f7f9fc','clusterBorder':'#9aa5b8','primaryColor':'#ffffff','primaryBorderColor':'#9aa5b8'}}}%%
 flowchart TD
     PRES["Presentation"]
     STATE["Application State"]
@@ -42,13 +43,13 @@ flowchart TD
     SEC --> KS
     MEDIA --> FS
 
-    style PRES fill:#e8f0fe,stroke:#5b7cba
-    style STATE fill:#e9f7ef,stroke:#5ba37c
-    style LOGIC fill:#e9f7ef,stroke:#5ba37c
-    style PERS fill:#fdf0e6,stroke:#c98a4b
-    style DAO fill:#fdf0e6,stroke:#c98a4b
-    style SEC fill:#fdf0e6,stroke:#c98a4b
-    style MEDIA fill:#fdf0e6,stroke:#c98a4b
+    style PRES fill:#e8f0fe,stroke:#5b7cba,color:#1a1a1a
+    style STATE fill:#e9f7ef,stroke:#5ba37c,color:#1a1a1a
+    style LOGIC fill:#e9f7ef,stroke:#5ba37c,color:#1a1a1a
+    style PERS fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
+    style DAO fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
+    style SEC fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
+    style MEDIA fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
 ```
 
 Two dependencies deserve comment because they appear to breach the closed layering.
@@ -89,15 +90,15 @@ The consequence is the property the Repository style exists to obtain, and the o
 
 The same mechanism yields testability. Every subsystem above layer 3 can be exercised with the platform facilities replaced by in-memory substitutes, which is why the logic can be tested without a database engine, a key store, or a device.
 
-The cost is the one the slides identify: a level of indirection that would not otherwise exist, and more declarations than a direct call would need. It is accepted because the storage mechanism has already changed once ([2](../current-architecture)) and is expected to change again.
+The cost is the one the slides identify: a level of indirection that would not otherwise exist, and more declarations than a direct call would need. It is accepted because the storage mechanism is a point of variation: [3.4](./persistent-data) selects a different mechanism for each kind of data, and a release acquiring a network tier would change the selection again.
 
 ## Goals and requirements served
 
 | Serves | How |
 |--------|-----|
-| [DG-3](../introduction/design-goals) Testability | Every platform facility sits behind an interface that a test can satisfy |
-| [DG-4](../introduction/design-goals) Isolation of storage | Only Data Access names the storage engine |
-| [DG-5](../introduction/design-goals) Openness to a network tier | A remote implementation of the data-source interfaces would be invisible above layer 3 |
+| [DG-M1](../introduction/design-goals) Testability | Every platform facility sits behind an interface that a test can satisfy |
+| [DG-M2](../introduction/design-goals) Isolation of storage | Only Data Access names the storage engine |
+| [DG-M3](../introduction/design-goals) Openness to a network tier | A remote implementation of the data-source interfaces would be invisible above layer 3 |
 | [NFR-S.2](../../rad/proposed-system/non-functional/supportability) | Logic separated from storage and presentation |
 | [NFR-S.3](../../rad/proposed-system/non-functional/supportability) | Components depend on abstractions rather than platform services |
 | [NFR-S.7](../../rad/proposed-system/non-functional/supportability) | A new function is added within one subsystem |

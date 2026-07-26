@@ -113,9 +113,9 @@ Two consequences follow from the choices above and are recorded rather than conc
 
 The schema will change again, and the design provides for it in two ways.
 
-**Within the database**, the version number is raised and the creation statements — written as `CREATE TABLE IF NOT EXISTS` — are executed on both a fresh install and an upgrade. Initialisation is therefore idempotent: a table already present is left untouched, a table newly introduced is created, and existing rows are not disturbed. This satisfies [NFR-R.4](../../rad/proposed-system/non-functional/reliability) for additive change, which is the change the schema has actually undergone. A change that *reshaped* an existing table would need a migration step this mechanism does not provide, and would be a deliberate addition rather than an automatic one.
+**Within the database**, the version number is raised and the creation statements — written as `CREATE TABLE IF NOT EXISTS` — are executed on both a fresh install and an upgrade. Initialisation is therefore idempotent: a table already present is left untouched, a table newly introduced is created, and existing rows are not disturbed. This satisfies [NFR-R.4](../../rad/proposed-system/non-functional/reliability) for **additive** change — the introduction of a table or of a new kind of record. A change that *reshaped* an existing table would require a transformation step the mechanism does not provide, and would be specified deliberately rather than applied automatically.
 
-**Between mechanisms**, the data source of [3.2](./subsystem-decomposition) resolves the obligation set out in [2](../current-architecture). On its first read it looks in the database; finding nothing, it consults the previous key–value store; finding something there, it writes it into the database and returns it. Every subsequent read finds the database populated and never consults the old store again. Migration therefore happens **exactly once**, is driven by a read rather than by a version check, and requires no knowledge of it anywhere above the Persistence subsystem.
+**Between mechanisms**, the data source of [3.2](./subsystem-decomposition) supports **store fallback**, which is how [NFR-R.4](../../rad/proposed-system/non-functional/reliability) is satisfied when the mechanism holding a kind of data changes. On its first read the data source consults the primary store; finding it empty, it consults the secondary store; finding data there, it writes it into the primary store and returns it. Every subsequent read finds the primary store populated and does not consult the secondary one again. The transfer therefore occurs **exactly once**, is driven by a read rather than by a version check, and is invisible above the Persistence subsystem.
 
 The trip catalogue uses the same shape of decision for seeding: rows are inserted only if the table is empty, so seeding is idempotent and a Traveler's database is never overwritten by the built-in catalogue on a later run.
 
@@ -127,10 +127,10 @@ Access to the database is coordinated through a **single connection**, opened la
 
 | Serves | How |
 |--------|-----|
-| [DG-1](../introduction/design-goals) Confidentiality | Readable content encrypted before it reaches the engine; credentials stored one-way |
-| [DG-2](../introduction/design-goals) Survival of data | Idempotent creation, single-row upserts, once-only migration |
-| [DG-4](../introduction/design-goals) Isolation of storage | The mechanism for each kind of data is chosen inside Persistence and known nowhere above it |
-| [DG-6](../introduction/design-goals) Responsiveness | Index on `mate_id`; structural columns left queryable; images out of the database |
+| [DG-D1](../introduction/design-goals) Confidentiality | Readable content encrypted before it reaches the engine; credentials stored one-way |
+| [DG-D2](../introduction/design-goals) Survival of data | Idempotent creation, single-row upserts, once-only store fallback |
+| [DG-M2](../introduction/design-goals) Isolation of storage | The mechanism for each kind of data is chosen inside Persistence and known nowhere above it |
+| [DG-P1](../introduction/design-goals) Responsiveness | Index on `mate_id`; structural columns left queryable; images out of the database |
 | [NFR-I.3](../../rad/proposed-system/non-functional/implementation), [NFR-I.4](../../rad/proposed-system/non-functional/implementation), [NFR-I.5](../../rad/proposed-system/non-functional/implementation) | The per-column policy above |
 | [NFR-R.2](../../rad/proposed-system/non-functional/reliability), [NFR-R.4](../../rad/proposed-system/non-functional/reliability), [NFR-R.6](../../rad/proposed-system/non-functional/reliability) | Single-row schema, idempotent upgrade, single connection |
 | [NFR-P.4](../../rad/proposed-system/non-functional/performance), [NFR-P.5](../../rad/proposed-system/non-functional/performance) | Index on conversation; photographs held as files |

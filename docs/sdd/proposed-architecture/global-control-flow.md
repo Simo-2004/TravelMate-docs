@@ -13,6 +13,7 @@ TravelMate is **event-driven**. The application does not execute a predetermined
 ## The event cycle
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryTextColor':'#1a1a1a','textColor':'#1a1a1a','titleColor':'#1a1a1a','nodeTextColor':'#1a1a1a','lineColor':'#6b7280','clusterBkg':'#f7f9fc','clusterBorder':'#9aa5b8','primaryColor':'#ffffff','primaryBorderColor':'#9aa5b8'}}}%%
 flowchart LR
     E["Event<br/>touch, timer,<br/>completed read"] --> L["Event loop"]
     L --> H["Handler<br/>in Presentation"]
@@ -22,9 +23,9 @@ flowchart LR
     S -.-> W["Write to storage<br/>not awaited"]
     W -.-> L
 
-    style E fill:#e8f0fe,stroke:#5b7cba
-    style S fill:#e9f7ef,stroke:#5ba37c
-    style W fill:#fdf0e6,stroke:#c98a4b
+    style E fill:#e8f0fe,stroke:#5b7cba,color:#1a1a1a
+    style S fill:#e9f7ef,stroke:#5ba37c,color:#1a1a1a
+    style W fill:#fdf0e6,stroke:#c98a4b,color:#1a1a1a
 ```
 
 A single **event loop** takes the next event and delivers it to its handler. The handler — an event handler of a screen — calls an operation on the store that owns the affected state. The store changes its value and **publishes** that it has changed; every view subscribed to it rebuilds from the new value.
@@ -66,9 +67,9 @@ The two timers are the closest thing to concurrent activity, and they are not co
 
 | Serves | How |
 |--------|-----|
-| [DG-6](../introduction/design-goals) Responsiveness | Views update on notification; writes never block the interface |
-| [DG-7](../introduction/design-goals) Directness | Any function may be invoked at any time, since no sequence is imposed |
-| [DG-3](../introduction/design-goals) Testability | Control lives in stores and pure functions, both exercisable without a device |
+| [DG-P1](../introduction/design-goals) Responsiveness | Views update on notification; writes never block the interface |
+| [DG-U1](../introduction/design-goals) Directness | Any function may be invoked at any time, since no sequence is imposed |
+| [DG-M1](../introduction/design-goals) Testability | Control lives in stores and pure functions, both exercisable without a device |
 | [NFR-P.2](../../rad/proposed-system/non-functional/performance) | The write is not awaited |
 | [NFR-R.6](../../rad/proposed-system/non-functional/reliability) | Writes serialised through one connection |
 | [FR-D.1.2](../../rad/proposed-system/functional), [FR-D.1.5](../../rad/proposed-system/functional) | The two timed behaviours realised as scheduled events |
