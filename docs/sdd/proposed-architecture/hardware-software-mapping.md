@@ -53,7 +53,7 @@ The desktop and web scaffolding present in the repository is **not supported**, 
 
 ## Off-the-shelf components
 
-Building persistence, cryptography, and image selection from scratch was rejected under [DG-8](../introduction/design-goals). Each is realised by an established component.
+Building persistence, cryptography, and image selection from scratch was rejected under [DG-C1](../introduction/design-goals). Each is realised by an established component.
 
 | Component | Provides | Subsystem | Isolated behind |
 |-----------|----------|-----------|-----------------|
@@ -80,9 +80,9 @@ The adapters are the parts of the system that cannot be exercised without a devi
 
 | Serves | How |
 |--------|-----|
-| [DG-1](../introduction/design-goals) Confidentiality | The key store is an OS facility, not application storage |
-| [DG-3](../introduction/design-goals) Testability | Adapters are the only device-dependent code, and are thin enough to be excluded honestly |
-| [DG-8](../introduction/design-goals) Economy | Persistence, cryptography and image selection are integrated rather than built |
+| [DG-D1](../introduction/design-goals) Confidentiality | The key store is an OS facility, not application storage |
+| [DG-M1](../introduction/design-goals) Testability | Adapters are the only device-dependent code, and are thin enough to be excluded honestly |
+| [DG-C1](../introduction/design-goals) Economy | Persistence, cryptography and image selection are integrated rather than built |
 | [NFR-I.1](../../rad/proposed-system/non-functional/implementation) | The framework constraint is honoured, and the single node is what it targets |
 | [NFR-I.2](../../rad/proposed-system/non-functional/implementation) | Every facility used is local; the system requires no network permission |
 | [NFR-Int](../../rad/proposed-system/non-functional/interface) (3.3.6) | The only external facilities used are the OS key store and the gallery, reached through the platform's documented mechanisms |

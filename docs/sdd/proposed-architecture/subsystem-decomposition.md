@@ -95,9 +95,9 @@ The cost is the one the slides identify: a level of indirection that would not o
 
 | Serves | How |
 |--------|-----|
-| [DG-3](../introduction/design-goals) Testability | Every platform facility sits behind an interface that a test can satisfy |
-| [DG-4](../introduction/design-goals) Isolation of storage | Only Data Access names the storage engine |
-| [DG-5](../introduction/design-goals) Openness to a network tier | A remote implementation of the data-source interfaces would be invisible above layer 3 |
+| [DG-M1](../introduction/design-goals) Testability | Every platform facility sits behind an interface that a test can satisfy |
+| [DG-M2](../introduction/design-goals) Isolation of storage | Only Data Access names the storage engine |
+| [DG-M3](../introduction/design-goals) Openness to a network tier | A remote implementation of the data-source interfaces would be invisible above layer 3 |
 | [NFR-S.2](../../rad/proposed-system/non-functional/supportability) | Logic separated from storage and presentation |
 | [NFR-S.3](../../rad/proposed-system/non-functional/supportability) | Components depend on abstractions rather than platform services |
 | [NFR-S.7](../../rad/proposed-system/non-functional/supportability) | A new function is added within one subsystem |

@@ -66,9 +66,9 @@ The two timers are the closest thing to concurrent activity, and they are not co
 
 | Serves | How |
 |--------|-----|
-| [DG-6](../introduction/design-goals) Responsiveness | Views update on notification; writes never block the interface |
-| [DG-7](../introduction/design-goals) Directness | Any function may be invoked at any time, since no sequence is imposed |
-| [DG-3](../introduction/design-goals) Testability | Control lives in stores and pure functions, both exercisable without a device |
+| [DG-P1](../introduction/design-goals) Responsiveness | Views update on notification; writes never block the interface |
+| [DG-U1](../introduction/design-goals) Directness | Any function may be invoked at any time, since no sequence is imposed |
+| [DG-M1](../introduction/design-goals) Testability | Control lives in stores and pure functions, both exercisable without a device |
 | [NFR-P.2](../../rad/proposed-system/non-functional/performance) | The write is not awaited |
 | [NFR-R.6](../../rad/proposed-system/non-functional/reliability) | Writes serialised through one connection |
 | [FR-D.1.2](../../rad/proposed-system/functional), [FR-D.1.5](../../rad/proposed-system/functional) | The two timed behaviours realised as scheduled events |

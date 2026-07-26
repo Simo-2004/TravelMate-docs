@@ -127,10 +127,10 @@ Access to the database is coordinated through a **single connection**, opened la
 
 | Serves | How |
 |--------|-----|
-| [DG-1](../introduction/design-goals) Confidentiality | Readable content encrypted before it reaches the engine; credentials stored one-way |
-| [DG-2](../introduction/design-goals) Survival of data | Idempotent creation, single-row upserts, once-only migration |
-| [DG-4](../introduction/design-goals) Isolation of storage | The mechanism for each kind of data is chosen inside Persistence and known nowhere above it |
-| [DG-6](../introduction/design-goals) Responsiveness | Index on `mate_id`; structural columns left queryable; images out of the database |
+| [DG-D1](../introduction/design-goals) Confidentiality | Readable content encrypted before it reaches the engine; credentials stored one-way |
+| [DG-D2](../introduction/design-goals) Survival of data | Idempotent creation, single-row upserts, once-only migration |
+| [DG-M2](../introduction/design-goals) Isolation of storage | The mechanism for each kind of data is chosen inside Persistence and known nowhere above it |
+| [DG-P1](../introduction/design-goals) Responsiveness | Index on `mate_id`; structural columns left queryable; images out of the database |
 | [NFR-I.3](../../rad/proposed-system/non-functional/implementation), [NFR-I.4](../../rad/proposed-system/non-functional/implementation), [NFR-I.5](../../rad/proposed-system/non-functional/implementation) | The per-column policy above |
 | [NFR-R.2](../../rad/proposed-system/non-functional/reliability), [NFR-R.4](../../rad/proposed-system/non-functional/reliability), [NFR-R.6](../../rad/proposed-system/non-functional/reliability) | Single-row schema, idempotent upgrade, single connection |
 | [NFR-P.4](../../rad/proposed-system/non-functional/performance), [NFR-P.5](../../rad/proposed-system/non-functional/performance) | Index on conversation; photographs held as files |

@@ -12,4 +12,4 @@ This is not project history: it is a **live obligation on the design**. Copies o
 
 The design meets this obligation by placing the decision of *where* a kind of data lives in a dedicated component — the data source of [3.2](./proposed-architecture/subsystem-decomposition) — which, on its first read, looks in the new store, falls back to the old one, and promotes what it finds. [3.4](./proposed-architecture/persistent-data) specifies the mechanism, and [3.7](./proposed-architecture/boundary-conditions) treats it as a start-up condition.
 
-The consequence for the architecture is that **the choice of storage mechanism is not permitted to be visible above the persistence layer**. It has already changed once; it is exactly the kind of decision that changes again. This is the origin of design goal [DG-4](./introduction/design-goals).
+The consequence for the architecture is that **the choice of storage mechanism is not permitted to be visible above the persistence layer**. It has already changed once; it is exactly the kind of decision that changes again. This is the origin of design goal [DG-M2](./introduction/design-goals).

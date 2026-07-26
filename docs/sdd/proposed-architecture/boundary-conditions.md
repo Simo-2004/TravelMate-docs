@@ -73,8 +73,8 @@ Failures arising from a network, a remote service, or a second node do not exist
 
 | Serves | How |
 |--------|-----|
-| [DG-2](../introduction/design-goals) Survival of data | Durability at the moment of change rather than at shutdown; idempotent first-run configuration |
-| [DG-1](../introduction/design-goals) Confidentiality | The key is created at the boundary and never leaves the OS key store |
+| [DG-D2](../introduction/design-goals) Survival of data | Durability at the moment of change rather than at shutdown; idempotent first-run configuration |
+| [DG-D1](../introduction/design-goals) Confidentiality | The key is created at the boundary and never leaves the OS key store |
 | [NFR-R.1](../../rad/proposed-system/non-functional/reliability) | **Partly** — see the gap recorded above |
 | [NFR-R.3](../../rad/proposed-system/non-functional/reliability), [NFR-R.5](../../rad/proposed-system/non-functional/reliability) | Alteration detected; optional operations fail without taking the task with them |
 | [NFR-R.4](../../rad/proposed-system/non-functional/reliability) | Migration performed once, inside the first read |

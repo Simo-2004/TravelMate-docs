@@ -1,13 +1,15 @@
 # 1.1 Purpose of the System
 
-TravelMate lets a Traveler describe themselves, discover trips and companions, set aside those of interest, and converse with a companion about a possible journey. The full statement of purpose is given in [RAD 1.1](../../rad/introduction/purpose) and is not repeated here.
+TravelMate lets a Traveler describe themselves, discover trips and companions, set aside those of interest, and converse with a companion about a possible journey. The purpose of the system is stated in full in [RAD 1.1](../../rad/introduction/purpose).
 
-What matters for the design is the consequence of the scope fixed in [RAD 1.2](../../rad/introduction/scope): the system runs **entirely on one device, with no server**. Three properties follow, and they shape every decision in this document.
+What concerns the design is the **shape** that purpose takes: TravelMate is a self-contained application that runs entirely on the Traveler's own device. Everything the Traveler does is served locally, from data held locally, under an account held locally.
 
-**There is no network tier.** Nothing may be designed on the assumption that data can be fetched, synchronised, or validated remotely. Every function is served from the device, and the absence of a connection is the normal operating condition rather than a degraded one.
+That shape is what the architecture is built for, and it settles three things at the outset.
 
-**There is a single user and a single account.** Access control has one subject, not many. There is no session to distribute, no concurrent access by distinct principals, and no role hierarchy to enforce.
+**The device is the whole system.** Every function is computed and every value stored on one node, so the design is free of the concerns that dominate distributed systems — no topology, no protocol, no latency budget, no partial failure. What it gains in exchange is that responsiveness is entirely within its control: nothing the Traveler does waits on anything outside the device.
 
-**The device is the trust boundary.** Because the data never leaves the device, protecting it means protecting it *at rest*: whoever obtains the stored files must not be able to read the Traveler's personal data or recover their credentials. This is the security problem the design actually has, and [3.5](../proposed-architecture/access-control) addresses it.
+**Access has a single subject.** One Traveler, one account. Authentication establishes who is using the application; there are no roles to arrange, no rights to delegate, and no concurrent principals to arbitrate between.
 
-The design must also leave the system open to acquiring a network tier later, without that acquisition forcing a rewrite. This is a design goal, stated with its priority in [1.2](./design-goals) — not a licence to build server infrastructure now.
+**The device is the trust boundary.** Because data stays on the device, protecting it means protecting it *where it rests*: the design's security obligation is that whoever obtains the stored files cannot read the Traveler's personal data or recover their credentials. This is the security problem the system genuinely has, and the one the architecture solves.
+
+The design must also stay open to acquiring a network tier in a later release, so that doing so is an addition beneath the existing logic rather than a rewrite of it. This is a design goal with a stated priority — deliberately a low one — rather than a licence to build server machinery now.

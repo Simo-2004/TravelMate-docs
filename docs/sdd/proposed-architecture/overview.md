@@ -36,7 +36,7 @@ flowchart TD
 
 **Layer 3 — Storage** makes state outlive the running application, and protects it while stored.
 
-The layering is **closed**: each layer addresses only the layer immediately below it. The interface never reaches storage, and storage never calls back into logic. Closed layering is chosen over open layering because the goal it serves — maintainability, a change to one layer having bounded and predictable effect — is design goal [DG-4](../introduction/design-goals), while the efficiency that open layering buys is not needed at these data volumes ([DG-6](../introduction/design-goals) is met with margin).
+The layering is **closed**: each layer addresses only the layer immediately below it. The interface never reaches storage, and storage never calls back into logic. Closed layering is chosen over open layering because the goal it serves — maintainability, a change to one layer having bounded and predictable effect — is design goal [DG-M2](../introduction/design-goals), while the efficiency that open layering buys is not needed at these data volumes ([DG-P1](../introduction/design-goals) is met with margin).
 
 ## Why this style, and not another
 
@@ -44,7 +44,7 @@ The decomposition into subsystems is difficult to change once development is und
 
 | Style | Verdict | Reason |
 |-------|---------|--------|
-| **Three-layer** | **Adopted** | The system has exactly the three concerns the style separates: an interface, a body of application logic, and persistent state. The separation is what makes the logic testable without a device ([DG-3](../introduction/design-goals)) and the storage mechanism replaceable ([DG-4](../introduction/design-goals)). |
+| **Three-layer** | **Adopted** | The system has exactly the three concerns the style separates: an interface, a body of application logic, and persistent state. The separation is what makes the logic testable without a device ([DG-M1](../introduction/design-goals)) and the storage mechanism replaceable ([DG-M2](../introduction/design-goals)). |
 | **MVC** | **Adopted, within layers 1–2** | The application is interactive, and several views present the same state — the profile appears in the settings summary, the editor, and the companion-facing card. MVC is the style for exactly that situation, and its subscribe/notify mechanism keeps the model ignorant of its views. |
 | **Repository** | **Adopted in part** | The database is a shared structure that several subsystems depend upon. The problem the style warns against — every subsystem addressing the store directly, so that a change to it propagates everywhere — is avoided by interposing a single storage layer, as the style prescribes. It is *not* adopted as a whole-system style: subsystems do not communicate through the store, they communicate through their interfaces. |
 | **Client/Server** | **Rejected** | Presupposes a server. There is none, and building one is outside the scope of this lifecycle. |
@@ -63,8 +63,8 @@ This is also where the Repository style contributes. A store, on being changed, 
 
 | Serves | How |
 |--------|-----|
-| [DG-3](../introduction/design-goals) Testability | Layer 2 depends on abstractions declared in layer 3, never on the storage engine, so it can be exercised against in-memory substitutes |
-| [DG-4](../introduction/design-goals) Isolation of storage | Closed layering forbids layer 1 from reaching layer 3 at all |
-| [DG-5](../introduction/design-goals) Openness to a network tier | A remote implementation of the layer-3 interfaces would be invisible to layers 1 and 2 |
-| [DG-6](../introduction/design-goals) Responsiveness | Views update on notification, independently of the write that follows |
+| [DG-M1](../introduction/design-goals) Testability | Layer 2 depends on abstractions declared in layer 3, never on the storage engine, so it can be exercised against in-memory substitutes |
+| [DG-M2](../introduction/design-goals) Isolation of storage | Closed layering forbids layer 1 from reaching layer 3 at all |
+| [DG-M3](../introduction/design-goals) Openness to a network tier | A remote implementation of the layer-3 interfaces would be invisible to layers 1 and 2 |
+| [DG-P1](../introduction/design-goals) Responsiveness | Views update on notification, independently of the write that follows |
 | [NFR-S.2](../../rad/proposed-system/non-functional/supportability) | Business logic separated from storage and from presentation |
