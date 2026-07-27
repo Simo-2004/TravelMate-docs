@@ -1,6 +1,6 @@
 # 3.4 Persistent Data Management
 
-## What must survive
+## Persistent data
 
 Persistent data is what outlives one run of the application. The candidates are the entity objects of [RAD 3.4.3.2](../../rad/proposed-system/system-models/object-model), but not all of them qualify and not only they do.
 
@@ -16,17 +16,17 @@ Persistent data is what outlives one run of the application. The candidates are 
 | Companion catalogue | **No** | Fixed content compiled into the application; never modified, so nothing to persist |
 | Companion presence, search results, ranking | **No** | Derived, and meaningful only during a run |
 
-## Three mechanisms, deliberately
+## Storage mechanisms
 
 The data is not homogeneous, and one mechanism does not suit all of it. The choice for each follows the standard decision criteria — access pattern, need for queries, volume, and whether the data is structured.
 
 | Mechanism | Holds | Why this mechanism |
 |-----------|-------|--------------------|
-| **Relational database** (`travelmate.db`) | Account, personal profile, conversations, trip catalogue | Structured, queried by attribute, and — for messages — retrieved as a subset selected by conversation and kept in order. This is what a relational store is for. |
+| **Relational database** (`travelmate.db`) | Account, personal profile, conversations, trip catalogue | Structured records, selected by attribute, ordered, and — for messages — appended individually and deleted by conversation. These are the operations a relational store provides. |
 | **Key–value preference store** | Saved items, privacy preferences | Small, read whole and written whole, never queried by attribute. A database table would add a schema, a migration path and a join for data that is always fetched in its entirety. |
 | **File system** | Profile photographs | Large and unstructured. Storing images as rows would make the database grow with them and force image bytes through the query engine. The database holds only the path. |
 
-The third choice is the one the criteria most clearly dictate: large unstructured content belongs in files, and is exactly the case flat files exist for. It is also what makes [NFR-P.5](../../rad/proposed-system/non-functional/performance) satisfiable.
+The third is the case the criteria settle most clearly: large unstructured content belongs in files rather than in a database, which is also what makes [NFR-P.5](../../rad/proposed-system/non-functional/performance) satisfiable.
 
 ## Database schema
 
@@ -80,13 +80,15 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_mate_id
 
 Three properties of this schema are design decisions rather than incidental.
 
-**`personal_profile` and `account` hold a single row**, identified by a fixed key. Writing is an upsert, so an update replaces the row rather than appending a second one — which is how [NFR-R.2](../../rad/proposed-system/non-functional/reliability) is enforced by the schema itself rather than by a convention the code must remember.
+**`personal_profile` and `account` hold a single row**, pinned to a fixed primary key. Writing is an insert that replaces on conflict, so an update overwrites the existing row rather than appending a second one. [NFR-R.2](../../rad/proposed-system/non-functional/reliability) is therefore enforced by the schema and the write mode, not by a convention the calling code must observe.
 
-**`chat_messages` carries an index on `mate_id`.** Retrieving one conversation must not examine the messages of others ([NFR-P.4](../../rad/proposed-system/non-functional/performance)); the index is what makes that true rather than merely intended. It is also the reason `mate_id` cannot be encrypted — see below.
+**`chat_messages` holds one row per message**, rather than one row per conversation, so appending costs the size of the message and not the size of the history.
+
+Retrieval and selection follow different routes, and the distinction matters for [NFR-P.4](../../rad/proposed-system/non-functional/performance). The history is read **once at start-up**, in a single pass ordered by insertion, and grouped by companion in memory; obtaining one exchange thereafter is a lookup on that grouping and does not examine the messages of others. The **index on `mate_id`** serves the operations that select rows by companion in the database — at present the deletion of a single exchange ([FR-D.1.7](../../rad/proposed-system/functional)) — and stands ready for a selective read should the history grow beyond what is worth loading whole. `mate_id` is left unencrypted for both reasons: an encrypted column could not be indexed, and grouping would require decrypting every row.
 
 **`trips` stores two collections in one table**, distinguished by `collection` and ordered by `position`. The catalogue is public read-only content: it is seeded once on first run and read from the database thereafter, which keeps a single retrieval path rather than one for seeded data and another for stored data.
 
-## What is encrypted, and what is not
+## Encryption policy
 
 Encryption is applied by the Persistence subsystem, per column, before the value reaches Data Access. The engine never sees plaintext for a protected column, and no component above Persistence knows encryption happens at all.
 
@@ -96,18 +98,16 @@ Protection is deliberately **not uniform**, as [NFR-I.5](../../rad/proposed-syst
 |-------|-----------|-------|-----------|
 | `personal_profile` | `first_name`, `last_name`, `description`, `photo_path`, `interest_tags`, `trip_tags` | `id` | A fixed key with no informational content |
 | `account` | `username` | `password_salt`, `password_hash`, `password_iterations` | The stored credential is one-way, not concealed: encrypting it would protect nothing that derivation does not already protect |
-| `chat_messages` | `text` | `mate_id`, `message_id`, `is_from_me`, `sent_at`, `attached_trip_id` | The columns by which conversations are selected and ordered. Encrypting `mate_id` would defeat the index and force every message to be decrypted to find one conversation |
+| `chat_messages` | `text` | `mate_id`, `message_id`, `is_from_me`, `sent_at`, `attached_trip_id` | The columns by which messages are grouped, ordered and deleted. Encrypting `mate_id` would make the index unusable and force every row to be decrypted before the history could be grouped |
 | `trips` | — | all | Public catalogue content |
 
 Label lists are serialised before encryption, so a structured value is protected as one payload rather than field by field.
 
-### Residual exposure, stated plainly
+### Residual exposure
 
-Two consequences follow from the choices above and are recorded rather than concealed.
+**Conversation metadata is readable.** Someone who obtains the database learns *that* an exchange took place with a given companion, when, and in which direction — but not what was said. This is the cost of leaving in the clear the columns by which messages are grouped and deleted.
 
-**Conversation metadata is readable.** Someone who obtains the database learns *that* an exchange took place with a given companion, when, and in which direction — but not what was said. This is the price of [NFR-P.4](../../rad/proposed-system/non-functional/performance), and it is a genuine trade-off, not an oversight.
-
-**Saved items and privacy preferences are not encrypted**, because they live in the preference store, which offers no field-level encryption. Saved items are references to public catalogue entries and fall squarely under [NFR-I.5](../../rad/proposed-system/non-functional/implementation). Privacy preferences are four booleans about the Traveler, which is weaker ground: they are personal, if barely informative. The current design accepts this on the grounds that the preferences reveal nothing beyond four settings, but it is the point at which the protection policy is least uniform, and moving them into the encrypted database is the natural correction should the policy be tightened.
+**Saved items and privacy preferences are not encrypted**, since they are held in the preference store, which offers no field-level encryption. Saved items are references to public catalogue entries and fall under [NFR-I.5](../../rad/proposed-system/non-functional/implementation). Privacy preferences are four booleans concerning the Traveler, and are the weaker case: they are personal, if barely informative, it's not a problem.
 
 ## Evolution of the schema
 
@@ -121,7 +121,11 @@ The trip catalogue uses the same shape of decision for seeding: rows are inserte
 
 ## Concurrency
 
-Access to the database is coordinated through a **single connection**, opened lazily and held by one owner. Concurrent operations are serialised by that owner rather than competing through independent handles, which is what [NFR-R.6](../../rad/proposed-system/non-functional/reliability) requires. No locking policy beyond this is needed: as [3.6](./global-control-flow) establishes, the application has one user, one process and one thread of execution, so the concurrent access that locking policies exist to arbitrate does not arise.
+Access to the database is coordinated through a **single shared connection**, created on first request and reused for the life of the process. Operations are serialised through it rather than competing through independent handles, which is what [NFR-R.6](../../rad/proposed-system/non-functional/reliability) requires.
+
+No locking policy beyond this is specified. As [3.6](./global-control-flow) establishes, the application has one user, one process and one thread of execution, so the contention that locking policies exist to arbitrate does not arise; writes issued without being awaited are serialised in the order the connection receives them.
+
+**One caveat is recorded.** The connection is created lazily, and its creation is not guarded against re-entry. The start-up sequence of [3.7](./boundary-conditions) issues its initialisations concurrently, so two subsystems may each request the connection before the first request has completed, and each obtain one. The consequence is bounded — the storage engine serialises writes across connections within a process, so no data is lost or corrupted — but the single-connection property stated above is not guaranteed by construction. Making concurrent callers await a single opening would establish it.
 
 ## Goals and requirements served
 
@@ -130,7 +134,7 @@ Access to the database is coordinated through a **single connection**, opened la
 | [DG-D1](../introduction/design-goals) Confidentiality | Readable content encrypted before it reaches the engine; credentials stored one-way |
 | [DG-D2](../introduction/design-goals) Survival of data | Idempotent creation, single-row upserts, once-only store fallback |
 | [DG-M2](../introduction/design-goals) Isolation of storage | The mechanism for each kind of data is chosen inside Persistence and known nowhere above it |
-| [DG-P1](../introduction/design-goals) Responsiveness | Index on `mate_id`; structural columns left queryable; images out of the database |
+| [DG-P1](../introduction/design-goals) Responsiveness | History read once and grouped in memory; structural columns left queryable and indexed; images out of the database |
 | [NFR-I.3](../../rad/proposed-system/non-functional/implementation), [NFR-I.4](../../rad/proposed-system/non-functional/implementation), [NFR-I.5](../../rad/proposed-system/non-functional/implementation) | The per-column policy above |
 | [NFR-R.2](../../rad/proposed-system/non-functional/reliability), [NFR-R.4](../../rad/proposed-system/non-functional/reliability), [NFR-R.6](../../rad/proposed-system/non-functional/reliability) | Single-row schema, idempotent upgrade, single connection |
 | [NFR-P.4](../../rad/proposed-system/non-functional/performance), [NFR-P.5](../../rad/proposed-system/non-functional/performance) | Index on conversation; photographs held as files |
