@@ -1,18 +1,18 @@
 # 4. Subsystems & Services
 
-A service is the set of operations a subsystem offers to the others; together they form its interface, and that interface is the contract between the subsystem and its callers. This chapter states each contract at the level of **operations and their purpose**. Signatures, parameter types, visibility, and pre- and postconditions belong to the [ODD](../odd/classes) and are deliberately not given here.
+A service is a set of related operations that share a common purpose and together form a subsystem's interface — the contract between it and its callers. Each entry below states an operation's purpose: what it does, what it requires, and what it returns, at the level meaningful to a caller. Signatures, parameter types, visibility, and pre- and postconditions are the concern of the [ODD](../odd/classes) and are not repeated here.
 
 The subsystems are those of [3.2](./proposed-architecture/subsystem-decomposition). Services are listed in dependency order, from the layer that calls to the layer that is called.
 
 ## Presentation
 
-Offers no service to other subsystems. It is the top of the layering: everything calls into it from the framework, and it calls downwards only.
+Offers no service to other subsystems. It is the top of the layering: the framework invokes it, and it calls only downward.
 
 Its internal structure is a set of screens, one per destination of [RAD 3.4.5](../rad/proposed-system/system-models/ui-navigational-paths), built from shared widgets and a common set of visual conventions. Navigation is offered *within* the subsystem, by a controller that publishes the selected destination so that the shell and the screens agree on it without addressing one another.
 
 ## Application State
 
-The subsystem the Presentation layer calls. Each service owns one kind of state, publishes changes to it, and is the only writer of it.
+Called by Presentation. Each service owns one kind of state, publishes changes to it, and is the only writer of it.
 
 | Service | Operations offered |
 |---------|--------------------|
@@ -24,9 +24,9 @@ The subsystem the Presentation layer calls. Each service owns one kind of state,
 | **Trip catalogue** | Obtain the recommended and recently consulted collections |
 | **Search mode** | Read whether trips or companions are being searched; change it |
 
-Every service in this subsystem shares one property that is part of the contract: **an operation that changes state returns as soon as the change is visible, not when it has been stored.** Callers must not assume a completed write, and [3.6](./proposed-architecture/global-control-flow) explains why.
+Every service in this subsystem shares one contractual property: **an operation that changes state returns as soon as the change is visible, not when it has been stored.** Callers must not assume a completed write, and [3.6](./proposed-architecture/global-control-flow) explains why.
 
-Each service also offers an **initialisation** operation, called once by the start-up sequence of [3.7](./proposed-architecture/boundary-conditions), and safe to call more than once.
+Six of the seven services persist their state and offer an **initialisation** operation, called once by the start-up sequence of [3.7](./proposed-architecture/boundary-conditions) and safe to call more than once. Search mode is the exception: its value is not persisted, so it is not part of that sequence and always starts at its default.
 
 ## Domain Logic
 
@@ -102,7 +102,7 @@ Called by Presentation, for the reason recorded in [3.2](./proposed-architecture
 | **Image storage** | Copy a chosen file into the application's private storage under a unique name, and return the path by which it is thereafter found |
 | **Image selection** | Obtain a file from the device's gallery |
 
-The separation is deliberate: selection requires a device and cannot be tested without one, while the copy is ordinary file handling and can. Only the first is an adapter.
+The separation is deliberate: selection requires a device and cannot be tested without one; storage is ordinary file handling and can. Only selection is an adapter.
 
 ## Traceability
 
@@ -118,4 +118,4 @@ Every use case of the delivered system is realised by subsystems, and every subs
 | UC6 Share a trip | ● | ● | ● | ● | ● | ● | |
 | UC7 Manage profile and settings | ● | ● | ● | ● | ● | ● | ● |
 
-Two readings of this table are worth stating. **Presentation and Application State appear in every row**, which is expected: every use case is initiated through the interface and changes or reads application state. **Data Access and Security are absent from UC4**, because saved items are held in the preference store and are not encrypted — the consequence of the decisions recorded in [3.4](./proposed-architecture/persistent-data), visible here as a structural fact rather than an assertion.
+Two readings follow from this table. **Presentation and Application State appear in every row**: every use case is initiated through the interface and changes or reads application state. **Data Access and Security are absent from UC4**, because saved items are held in the preference store and are not encrypted, by the decisions of [3.4](./proposed-architecture/persistent-data).
