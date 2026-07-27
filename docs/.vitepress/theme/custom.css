@@ -11,3 +11,20 @@
   --vp-c-brand-2: #d9ad31;
   --vp-c-brand-3: #b88d1f;
 }
+
+/* Diagrams wider than the text column scroll instead of overflowing the page. */
+.vp-doc div.mermaid {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Class diagrams are wider than the text column. Mermaid emits width="100%",
+   so the browser shrinks them to the column until their labels are unreadable.
+   Setting an explicit width overrides that attribute; Mermaid's own inline
+   max-width — which equals the diagram's natural width — is deliberately left
+   in place, so a diagram narrower than this value keeps its natural size and
+   only a wider one is capped and scrolled by the container above.
+   Flowcharts, which fit the column, are untouched. */
+.vp-doc div.mermaid > svg.classDiagram {
+  width: 900px;
+}

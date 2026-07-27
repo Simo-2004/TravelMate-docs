@@ -106,7 +106,7 @@ The separation is deliberate: selection requires a device and cannot be tested w
 
 ## Traceability
 
-Every use case of the delivered system is realised by subsystems, and every subsystem realises at least one use case — the check of design correctness the slides require in both directions.
+Every use case of the delivered system is realised by subsystems, and every subsystem realises at least one use case — the check of design correctness, verifiable in both directions.
 
 | Use case | Presentation | Application State | Domain Logic | Persistence | Data Access | Security | Media |
 |----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|

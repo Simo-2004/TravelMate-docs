@@ -8,9 +8,9 @@
 
 Below is the complete UML Class Diagram representing the system architecture.
 
-<iframe src="/static/pics/UML.png" width="100%" height="700px" style="border: 1px solid #ddd; border-radius: 7px;"></iframe>
+<iframe src="/static/pics/UML2.png" width="100%" height="700px" style="border: 1px solid #ddd; border-radius: 7px;"></iframe>
 
-*(If you cannot view the image correctly, you can download it [by clicking here](/static/pics/UML.png)).*
+*(If you cannot view the image correctly, you can download it [by clicking here](/static/pics/UML2.png)).*
 
 ### Project Overview
 

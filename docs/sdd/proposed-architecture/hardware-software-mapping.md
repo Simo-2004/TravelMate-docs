@@ -71,7 +71,7 @@ Building persistence, cryptography, and image selection from scratch was rejecte
 
 Every component that could be replaced is reached through an interface the application declares, not through its own API. The pattern is the same in each case: a **thin adapter** implements the application's interface by delegating to the component, and nothing above the adapter names the component.
 
-This is what makes the substitutions of [3.2](./subsystem-decomposition) possible, and it is also how the risk the slides associate with off-the-shelf components — a supplier changing, or a component being withdrawn — is contained: the replacement would be a new adapter, not a change to the system.
+This is what makes the substitutions of [3.2](./subsystem-decomposition) possible, and it is also how the risk inherent in off-the-shelf components — a supplier changing, or a component being withdrawn — is contained: the replacement would be a new adapter, not a change to the system.
 
 Two components are deliberately *not* isolated. `path_provider` returns a directory path and nothing else; wrapping it would add an interface without hiding a decision. `flutter_svg` is a rendering widget, confined to Presentation, which is the layer designed to change most freely.
 
