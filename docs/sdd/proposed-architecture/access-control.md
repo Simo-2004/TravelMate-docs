@@ -22,7 +22,7 @@ The matrix is implemented as an **access-control list oriented to the object**, 
 
 ## Authentication
 
-The Traveler is admitted by **username and password**, the mechanism the slides identify as the most common and the one appropriate here: a smart card presupposes hardware the design cannot require, and biometrics would delegate the decision to a platform facility whose behaviour this lifecycle does not verify.
+The Traveler is admitted by **username and password**, the most widely used mechanism and the one appropriate here: a smart card presupposes hardware the design cannot require, and biometrics would delegate the decision to a platform facility whose behaviour this lifecycle does not verify.
 
 Verification proceeds as follows.
 

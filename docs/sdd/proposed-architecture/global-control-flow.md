@@ -6,9 +6,9 @@ TravelMate is **event-driven**. The application does not execute a predetermined
 
 | Mechanism | Verdict |
 |-----------|---------|
-| **Event-driven** | **Adopted.** The system is an interactive application whose order of operations is decided by the Traveler, not by the program. This is the mechanism the slides identify as appropriate for graphical interfaces, and it is also the one the implementation framework imposes. |
+| **Event-driven** | **Adopted.** The system is an interactive application whose order of operations is decided by the Traveler, not by the program. This is the mechanism conventionally applied to graphical interfaces, and the one the implementation framework imposes. |
 | Procedure-driven | Rejected. It would require the program to decide when input is needed, which is precisely what an interactive application cannot do: the Traveler may search, then abandon the search to open settings, then return. |
-| Thread-based | Rejected. There is one user, one process, and no computation long enough to justify parallel execution. Threads would buy responsiveness the system already has, at the cost of the synchronisation problems and non-determinism the slides warn of. |
+| Thread-based | Rejected. There is one user, one process, and no computation long enough to justify parallel execution. Threads would provide responsiveness the system already has, at the cost of synchronisation problems and non-deterministic behaviour. |
 
 ## The event cycle
 
@@ -59,7 +59,7 @@ The application runs in a **single thread of execution**. Asynchronous operation
 
 **The one genuine concurrency hazard is storage, and it is addressed structurally.** Several operations may have writes in flight at once, since none of them waits. They are serialised by the single database connection of [3.4](./persistent-data), which is the whole of the concurrency control the system needs and what [NFR-R.6](../../rad/proposed-system/non-functional/reliability) requires.
 
-The design questions the slides pose about concurrency — which components can operate without interfering, which activities warrant separate threads, whether several users must be served at once, whether a request decomposes into parallel sub-tasks — are answered the same way: **no**, because there is one user, no computation exceeding a frame, and no work whose parallel execution would be observable. Introducing threads would add the slides' costs without their benefit.
+The standard design questions concerning concurrency — which components can operate without interfering, which activities warrant separate threads, whether several users must be served at once, whether a request decomposes into parallel sub-tasks — are answered the same way: **no**, because there is one user, no computation exceeding a frame, and no work whose parallel execution would be observable. Introducing threads would incur their costs without their benefits.
 
 The two timers are the closest thing to concurrent activity, and they are not concurrent either: they are scheduled events on the same loop. Each companion has at most one presence timer, and starting a new one cancels the pending one, so a stale timer cannot mark a companion absent while the exchange is still active.
 
