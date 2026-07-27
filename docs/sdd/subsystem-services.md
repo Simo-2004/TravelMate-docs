@@ -1,6 +1,6 @@
 # 4. Subsystems & Services
 
-A service is a set of related operations that share a common purpose and together form a subsystem's interface — the contract between it and its callers. Each entry below states an operation's purpose: what it does, what it requires, and what it returns, at the level meaningful to a caller. Signatures, parameter types, visibility, and pre- and postconditions are the concern of the [ODD](../odd/classes) and are not repeated here.
+A service is a set of related operations that share a common purpose and together form a subsystem's interface — the contract between it and its callers. Each entry below states an operation's purpose: what it does, what it requires, and what it returns, at the level meaningful to a caller. Signatures, parameter types, visibility, and pre- and postconditions are the concern of the [ODD](../odd/class-interfaces/) and are not repeated here.
 
 The subsystems are those of [3.2](./proposed-architecture/subsystem-decomposition). Services are listed in dependency order, from the layer that calls to the layer that is called.
 

@@ -6,7 +6,7 @@ Terms of the **application domain** — Traveler, Companion, Trip, Bookmark, Con
 
 - **SDD** — System Design Document, this document
 - **RAD** — [Requirements Analysis Document](../../rad/overview), which this design realises
-- **ODD** — [Object Design Document](../../odd/classes), which specifies the classes realising this design
+- **ODD** — [Object Design Document](../../odd/overview), which specifies the classes realising this design
 
 ## Architecture
 

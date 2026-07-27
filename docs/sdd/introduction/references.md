@@ -3,7 +3,7 @@
 ## Project documents
 
 - **[RAD — Requirements Analysis Document](../../rad/overview)** — the requirements this design realises. The design goals of [1.2](./design-goals) are derived from [RAD 3.3](../../rad/proposed-system/non-functional/), and the subsystems of [3.2](../proposed-architecture/subsystem-decomposition) from the analysis objects of [RAD 3.4.3](../../rad/proposed-system/system-models/object-model).
-- **[ODD — Object Design Document](../../odd/classes)** — the class-level specification of the subsystems defined here.
+- **[ODD — Object Design Document](../../odd/overview)** — the class-level specification of the subsystems defined here.
 - **Feasibility Study** — the product vision, and the choice of the implementation framework recorded as [NFR-I.1](../../rad/proposed-system/non-functional/implementation).
 
 ## Source

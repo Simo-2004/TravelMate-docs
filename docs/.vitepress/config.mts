@@ -74,40 +74,78 @@ const waterfallSidebar = [
     text: 'Phase 3: System Design',
     collapsed: false,
     items: [
-      // SDD
-      { text: 'SDD - Overview', link: '/sdd/overview' },
       {
-        text: '1. Introduction',
-        link: '/sdd/introduction/',
+        // SDD — the architecture: how the system is organised as a whole.
+        text: 'SDD — System Design Document',
+        link: '/sdd/overview',
         collapsed: false,
         items: [
-          { text: '1.1 Purpose of the System', link: '/sdd/introduction/purpose' },
-          { text: '1.2 Design Goals', link: '/sdd/introduction/design-goals' },
-          { text: '1.3 Definitions, Acronyms & Abbreviations', link: '/sdd/introduction/definitions' },
-          { text: '1.4 References', link: '/sdd/introduction/references' },
-          { text: '1.5 Overview', link: '/sdd/introduction/overview' }
+          {
+            text: '1. Introduction',
+            link: '/sdd/introduction/',
+            collapsed: true,
+            items: [
+              { text: '1.1 Purpose of the System', link: '/sdd/introduction/purpose' },
+              { text: '1.2 Design Goals', link: '/sdd/introduction/design-goals' },
+              { text: '1.3 Definitions, Acronyms & Abbreviations', link: '/sdd/introduction/definitions' },
+              { text: '1.4 References', link: '/sdd/introduction/references' },
+              { text: '1.5 Overview', link: '/sdd/introduction/overview' }
+            ]
+          },
+          { text: '2. Current Software Architecture', link: '/sdd/current-architecture' },
+          {
+            text: '3. Proposed Software Architecture',
+            link: '/sdd/proposed-architecture/',
+            collapsed: true,
+            items: [
+              { text: '3.1 Overview', link: '/sdd/proposed-architecture/overview' },
+              { text: '3.2 Subsystem Decomposition', link: '/sdd/proposed-architecture/subsystem-decomposition' },
+              { text: '3.3 Hardware/Software Mapping', link: '/sdd/proposed-architecture/hardware-software-mapping' },
+              { text: '3.4 Persistent Data Management', link: '/sdd/proposed-architecture/persistent-data' },
+              { text: '3.5 Access Control & Security', link: '/sdd/proposed-architecture/access-control' },
+              { text: '3.6 Global Software Control', link: '/sdd/proposed-architecture/global-control-flow' },
+              { text: '3.7 Boundary Conditions', link: '/sdd/proposed-architecture/boundary-conditions' }
+            ]
+          },
+          { text: '4. Subsystems & Services', link: '/sdd/subsystem-services' },
+          { text: '5. Glossary', link: '/sdd/glossary' }
         ]
       },
-      { text: '2. Current Software Architecture', link: '/sdd/current-architecture' },
       {
-        text: '3. Proposed Software Architecture',
-        link: '/sdd/proposed-architecture/',
+        // ODD — the object design: how each subsystem is built from classes.
+        text: 'ODD — Object Design Document',
+        link: '/odd/overview',
         collapsed: false,
         items: [
-          { text: '3.1 Overview', link: '/sdd/proposed-architecture/overview' },
-          { text: '3.2 Subsystem Decomposition', link: '/sdd/proposed-architecture/subsystem-decomposition' },
-          { text: '3.3 Hardware/Software Mapping', link: '/sdd/proposed-architecture/hardware-software-mapping' },
-          { text: '3.4 Persistent Data Management', link: '/sdd/proposed-architecture/persistent-data' },
-          { text: '3.5 Access Control & Security', link: '/sdd/proposed-architecture/access-control' },
-          { text: '3.6 Global Software Control', link: '/sdd/proposed-architecture/global-control-flow' },
-          { text: '3.7 Boundary Conditions', link: '/sdd/proposed-architecture/boundary-conditions' }
+          {
+            text: '1. Introduction',
+            link: '/odd/introduction/',
+            collapsed: true,
+            items: [
+              { text: '1.1 Object Design Trade-offs', link: '/odd/introduction/trade-offs' },
+              { text: '1.2 Interface Documentation Guidelines', link: '/odd/introduction/interface-guidelines' },
+              { text: '1.3 Definitions, Acronyms & Abbreviations', link: '/odd/introduction/definitions' },
+              { text: '1.4 References', link: '/odd/introduction/references' }
+            ]
+          },
+          { text: '2. Packages', link: '/odd/packages' },
+          {
+            text: '3. Class Interfaces',
+            link: '/odd/class-interfaces/',
+            collapsed: true,
+            items: [
+              { text: '3.1 Presentation', link: '/odd/class-interfaces/presentation' },
+              { text: '3.2 Application State', link: '/odd/class-interfaces/application-state' },
+              { text: '3.3 Domain Logic', link: '/odd/class-interfaces/domain-logic' },
+              { text: '3.4 Persistence', link: '/odd/class-interfaces/persistence' },
+              { text: '3.5 Data Access', link: '/odd/class-interfaces/data-access' },
+              { text: '3.6 Security', link: '/odd/class-interfaces/security' },
+              { text: '3.7 Media Storage', link: '/odd/class-interfaces/media-storage' }
+            ]
+          },
+          { text: '4. Glossary', link: '/odd/glossary' }
         ]
-      },
-      { text: '4. Subsystems & Services', link: '/sdd/subsystem-services' },
-      { text: '5. Glossary', link: '/sdd/glossary' },
-      // ODD
-      { text: 'ODD - Class Diagrams (UML)', link: '/odd/classes' },
-      { text: 'ODD - Object Interfaces', link: '/odd/interfaces' }
+      }
     ]
   },
   {

@@ -10,7 +10,7 @@ Where the RAD states **what** the system must do, this document states **how** i
 |----------|-------------------|-------|
 | [RAD](../rad/overview) | What must the system do, for whom, under what constraints? | Application domain |
 | **SDD** (this document) | How is the system organised as a whole? | Architecture |
-| [ODD](../odd/classes) | How are the classes realising each subsystem specified? | Individual objects |
+| [ODD](../odd/overview) | How are the classes realising each subsystem specified? | Individual objects |
 
 Every design decision recorded here is traceable to a requirement in the RAD, and no requirement of the delivered system is left without a corresponding decision. Terms belonging to the application domain are defined in the [RAD glossary](../rad/glossary); terms belonging to the solution domain are defined in [5. Glossary](./glossary).
 
