@@ -47,7 +47,7 @@ features:
       height: 48
     title: SDD - System Design
     details: System Design Document. Architecture, technology stack, data models, deployment strategy, and scalability roadmap.
-    link: /sdd/architecture
+    link: /sdd/overview
     linkText: Open SDD
 
   - icon:
@@ -56,8 +56,8 @@ features:
       width: 48
       height: 48
     title: ODD - Object Design
-    details: Object Design Document. Class documentation, interfaces, design patterns, and Flutter architecture layers.
-    link: /odd/classes
+    details: Object Design Document. Object design trade-offs, interface conventions, packages, and the public interface of every class.
+    link: /odd/overview
     linkText: Open ODD
 
   - icon:

@@ -14,7 +14,7 @@ The remainder of this document is organised as follows.
 - **[3.6 Global Software Control](../proposed-architecture/global-control-flow)** — the control model, and how concurrency is handled without threads.
 - **[3.7 Boundary Conditions](../proposed-architecture/boundary-conditions)** — start-up, termination, and failure.
 
-**[Chapter 4 — Subsystems & Services](../subsystem-services)** specifies the interface each subsystem offers the others: the contract on which the [ODD](../../odd/classes) builds.
+**[Chapter 4 — Subsystems & Services](../subsystem-services)** specifies the interface each subsystem offers the others: the contract on which the [ODD](../../odd/overview) builds.
 
 **[Chapter 5 — Glossary](../glossary)** defines the solution-domain terms.
 
