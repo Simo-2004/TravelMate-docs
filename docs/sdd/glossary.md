@@ -28,10 +28,6 @@ Terms of the **solution domain**, as used in this document. Application-domain t
 
 **Model–View–Controller (MVC)** — A style separating state, its presentation, and the handling of input, in which the model does not know its views. Adopted within the upper two layers.
 
-**Repository style** — A style in which subsystems address a shared store through a single point rather than directly. Adopted in part: the storage layer is that single point.
-
-**Client/Server, Peer-to-Peer** — Styles presupposing more than one node. Rejected; there is one.
-
 **Pipes and Filters** — A style for data transformed in successive stages. Rejected; the system is interactive, not a pipeline.
 
 ## Solution-domain components
