@@ -75,19 +75,19 @@ features:
       light: /static/icons/flutter-light.svg
       width: 48
       height: 48
-    title: Flutter Architecture
-    details: Detailed breakdown of 4-layer architecture, design patterns, state management, and core dependencies.
-    link: /flutter/architecture
-    linkText: Architecture Guide
+    title: Implementation
+    details: Development environment, coding standards, design-to-code traceability, build process, and quality criteria.
+    link: /implementation/overview
+    linkText: Open Implementation
 
   - icon:
       dark: /static/icons/state-management-dark.svg
       light: /static/icons/state-management-light.svg
       width: 48
       height: 48
-    title: State Management
-    details: ValueNotifier-based reactive architecture with Singleton stores, reactive UI patterns, and persistence layer.
-    link: /flutter/state-management
-    linkText: State Management
+    title: Testing & Integration
+    details: Static analysis, coverage and duplication results measured against the quality criteria adopted for the project.
+    link: /system-testing
+    linkText: Open Testing
 ---
 ---

@@ -152,11 +152,14 @@ const waterfallSidebar = [
     text: 'Phase 4: Implementation',
     collapsed: false,
     items: [
-      // Inseriamo la documentazione Flutter direttamente nella cascata!
-      { text: 'Flutter Architecture', link: '/flutter/architecture' },
-      { text: 'State Management', link: '/flutter/state-management' },
-      { text: 'Dependencies', link: '/flutter/dependencies' },
-      { text: 'Code Documentation (API)', link: '/api/index.html', target: '_blank' }
+      { text: 'Overview', link: '/implementation/overview' },
+      { text: '4.1 Development Environment & Toolchain', link: '/implementation/environment' },
+      { text: '4.2 Coding Standards & Static Analysis', link: '/implementation/coding-standards' },
+      { text: '4.3 Design-to-Code Traceability', link: '/implementation/traceability' },
+      { text: '4.4 Build & Execution Process', link: '/implementation/build-process' },
+      { text: '4.5 Quality Criteria', link: '/implementation/quality-criteria' },
+      { text: '4.6 API Code Documentation', link: '/implementation/api-documentation' },
+      { text: 'API Reference (generated)', link: '/api/index.html', target: '_blank' }
     ]
   },
   {
@@ -201,7 +204,7 @@ export default withMermaid({
       '/rad/': waterfallSidebar,
       '/sdd/': waterfallSidebar,
       '/odd/': waterfallSidebar,
-      '/flutter/': waterfallSidebar,
+      '/implementation/': waterfallSidebar,
       
       // Serve per mappare correttamente anche i due file nuovi se li hai messi nella root
       '/feasibility-study': waterfallSidebar,
