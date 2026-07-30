@@ -72,9 +72,12 @@
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Future.wait([
+    AuthService.instance.initialize(),
+    TripStore.instance.initialize(),
     SavedTripPreviewStore.instance.initialize(),
     PersonalProfileStore.instance.initialize(),
     PrivacySettingsStore.instance.initialize(),
+    ChatStore.instance.initialize(),
   ]);
   runApp(const TravelMateApp());
 }</code></pre>

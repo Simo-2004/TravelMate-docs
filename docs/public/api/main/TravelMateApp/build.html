@@ -113,7 +113,19 @@ Widget build(BuildContext context) {
     title: AppStrings.appTitle,
     debugShowCheckedModeBanner: false,
     theme: AppTheme.light(),
-    home: const NavigationShell(),
+    builder: (context, child) {
+      final mediaQuery = MediaQuery.of(context);
+      final clampedScaler = mediaQuery.textScaler.clamp(
+        minScaleFactor: 0.9,
+        maxScaleFactor: 1.2,
+      );
+
+      return MediaQuery(
+        data: mediaQuery.copyWith(textScaler: clampedScaler),
+        child: child!,
+      );
+    },
+    home: const LoginScreen(),
   );
 }</code></pre>
 </section>

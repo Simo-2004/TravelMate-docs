@@ -139,7 +139,7 @@ Widget build(BuildContext context) {
               alignment: Alignment.centerRight,
               child: ValueListenableBuilder&lt;List&lt;SavedTripPreview&gt;&gt;(
                 valueListenable: SavedTripPreviewStore.instance,
-                builder: (context, _, __) {
+                builder: (context, _, _) {
                   final isSaved = SavedTripPreviewStore.instance.isSaved(
                     _buildTripPreview(),
                   );

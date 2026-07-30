@@ -53,6 +53,10 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Holds the current user's <a href="../shared_models_personal_profile/PersonalProfile-class.html">PersonalProfile</a>, persisted through an injected
+<a href="../shared_data_profile_data_source/ProfileDataSource-class.html">ProfileDataSource</a> (SQLite by default; see <a href="../shared_data_sqlite_profile_data/SqliteProfileData-class.html">SqliteProfileData</a>).</p>
+</section>
 
 
     <section>
@@ -156,6 +160,20 @@
 
 </dd>
 
+        <dt id="debugSetDataSource" class="callable">
+  <span class="name"><a href="../shared_state_personal_profile_store/PersonalProfileStore/debugSetDataSource.html">debugSetDataSource</a></span><span class="signature">(<wbr><span class="parameter" id="debugSetDataSource-param-source"><span class="type-annotation"><a href="../shared_data_profile_data_source/ProfileDataSource-class.html">ProfileDataSource</a></span> <span class="parameter-name">source</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Replaces the backing data source. Test-only seam so widget/unit tests can
+inject an in-memory source instead of touching SQLite / secure storage.
+  
+
+</dd>
+
         <dt id="dispose" class="callable inherited">
   <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/dispose.html">dispose</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; void</span>
@@ -179,7 +197,7 @@ object is not in a usable state and should be discarded (calls to
 
 </dt>
 <dd>
-  
+  Loads the persisted profile on first call; a no-op afterwards.
   
 
 </dd>
@@ -245,7 +263,7 @@ notified when the object changes.
 
 </dt>
 <dd>
-  
+  Updates just the description, persisting the change.
   
 
 </dd>
@@ -258,7 +276,7 @@ notified when the object changes.
 
 </dt>
 <dd>
-  
+  Updates the first and/or last name, persisting the change.
   
 
 </dd>
@@ -271,7 +289,7 @@ notified when the object changes.
 
 </dt>
 <dd>
-  
+  Updates just the photo asset/file path, persisting the change.
   
 
 </dd>
@@ -284,7 +302,7 @@ notified when the object changes.
 
 </dt>
 <dd>
-  
+  Replaces the current profile and persists it.
   
 
 </dd>

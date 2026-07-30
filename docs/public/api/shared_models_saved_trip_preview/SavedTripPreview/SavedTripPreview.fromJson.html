@@ -66,43 +66,17 @@
   <pre class="language-dart"><code class="language-dart">factory SavedTripPreview.fromJson(Map&lt;String, dynamic&gt; json) {
   final destinationTitle = _asString(json[&#39;destinationTitle&#39;]);
   final rawBookmarkType = _asString(json[&#39;bookmarkType&#39;]).toLowerCase();
-  final resolvedBookmarkType =
-      rawBookmarkType == SavedBookmarkType.mate ||
-          rawBookmarkType == SavedBookmarkType.trip
-      ? rawBookmarkType
-      : destinationTitle.toLowerCase().startsWith(&#39;profile:&#39;)
-      ? SavedBookmarkType.mate
-      : SavedBookmarkType.trip;
-
-  final rawTags = json[&#39;tags&#39;];
-  final parsedTags = rawTags is List
-      ? rawTags
-            .whereType&lt;Map&gt;()
-            .map((rawTag) {
-              final tag = Map&lt;String, dynamic&gt;.from(rawTag);
-
-              return TripTag(
-                label: _asString(tag[&#39;label&#39;]),
-                backgroundColor: Color(
-                  _asInt(tag[&#39;backgroundColor&#39;], fallback: 0xFFFFF700),
-                ),
-                textColor: Color(
-                  _asInt(tag[&#39;textColor&#39;], fallback: 0xFF3A3200),
-                ),
-                borderColor: tag[&#39;borderColor&#39;] == null
-                    ? null
-                    : Color(_asInt(tag[&#39;borderColor&#39;], fallback: 0xFFFFF199)),
-              );
-            })
-            .toList(growable: false)
-      : const &lt;TripTag&gt;[];
+  final resolvedBookmarkType = _resolveBookmarkType(
+    rawBookmarkType,
+    destinationTitle,
+  );
 
   return SavedTripPreview(
     tripName: _asString(json[&#39;tripName&#39;]),
     destinationTitle: destinationTitle,
     description: _asString(json[&#39;description&#39;]),
     coverImage: _asString(json[&#39;coverImage&#39;]),
-    tags: parsedTags,
+    tags: TripTagCodec.decodeList(json[&#39;tags&#39;]),
     bookmarkType: resolvedBookmarkType,
     sourceId: _asString(json[&#39;sourceId&#39;]),
   );

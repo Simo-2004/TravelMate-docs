@@ -132,7 +132,7 @@ Widget build(BuildContext context) {
           entry.key + paletteOffset,
         );
 
-        return PersonalTag(
+        return TripTag(
           label: baseTag.label,
           backgroundColor: Colors.transparent,
           textColor: AppColors.black,
@@ -152,7 +152,7 @@ Widget build(BuildContext context) {
             fontSize: (sizes.textMd * 1.02).clamp(16.0, 26.0).toDouble(),
           ),
         ),
-        PersonalTagSection(
+        TagSection(
           tags: personalTags,
           padding: EdgeInsets.only(top: sizes.padS),
           spacing: sizes.padM,
