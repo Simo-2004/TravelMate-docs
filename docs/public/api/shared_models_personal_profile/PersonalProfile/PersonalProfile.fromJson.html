@@ -64,7 +64,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">factory PersonalProfile.fromJson(Map&lt;String, dynamic&gt; json) {
-  final fallback = defaultProfile;
+  const fallback = defaultProfile;
   return PersonalProfile(
     firstName: _asString(json[&#39;firstName&#39;], fallback.firstName),
     lastName: _asString(json[&#39;lastName&#39;], fallback.lastName),

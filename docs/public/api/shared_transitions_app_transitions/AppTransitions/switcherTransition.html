@@ -68,10 +68,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Widget switcherTransition(
-  Widget child,
-  Animation&lt;double&gt; animation,
-) {
+  <pre class="language-dart"><code class="language-dart">static Widget switcherTransition(Widget child, Animation&lt;double&gt; animation) {
   final curved = CurvedAnimation(
     parent: animation,
     curve: Curves.easeOutCubic,
@@ -84,10 +81,7 @@
 
   return FadeTransition(
     opacity: curved,
-    child: SlideTransition(
-      position: offset,
-      child: child,
-    ),
+    child: SlideTransition(position: offset, child: child),
   );
 }</code></pre>
 </section>

@@ -54,36 +54,30 @@
 
     <section class="multi-line-signature">
       
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../shared_models_personal_profile/PersonalProfile-class.html">PersonalProfile</a></span>&gt;</span></span>
 <span class="name ">read</span>(<wbr>)
 
-      
+      <div class="features"><span class="feature">override</span></div>
 
     </section>
     
+<section class="desc markdown">
+  <p>Returns the stored profile, falling back to
+<a href="../../shared_models_personal_profile/PersonalProfile/defaultProfile-constant.html">PersonalProfile.defaultProfile</a> when nothing has been persisted yet.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;PersonalProfile&gt; read() async {
-  final preferences = await SharedPreferences.getInstance();
-  final serialized = preferences.getString(_storageKey);
-
-  if (serialized == null || serialized.isEmpty) {
-    return PersonalProfile.defaultProfile;
-  }
-
-  try {
-    final decoded = jsonDecode(serialized);
-    if (decoded is! Map) {
-      return PersonalProfile.defaultProfile;
-    }
-
-    return PersonalProfile.fromJson(Map&lt;String, dynamic&gt;.from(decoded));
-  } catch (_) {
-    return PersonalProfile.defaultProfile;
-  }
+  <pre class="language-dart"><code class="language-dart">@override
+Future&lt;PersonalProfile&gt; read() async {
+  return await readStored() ?? PersonalProfile.defaultProfile;
 }</code></pre>
 </section>
 

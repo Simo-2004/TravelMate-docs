@@ -74,16 +74,7 @@
     &#39;coverImage&#39;: coverImage,
     &#39;bookmarkType&#39;: bookmarkType,
     &#39;sourceId&#39;: sourceId,
-    &#39;tags&#39;: tags
-        .map(
-          (tag) =&gt; {
-            &#39;label&#39;: tag.label,
-            &#39;backgroundColor&#39;: tag.backgroundColor.value,
-            &#39;textColor&#39;: tag.textColor.value,
-            &#39;borderColor&#39;: tag.borderColor?.value,
-          },
-        )
-        .toList(growable: false),
+    &#39;tags&#39;: TripTagCodec.encodeList(tags),
   };
 }</code></pre>
 </section>

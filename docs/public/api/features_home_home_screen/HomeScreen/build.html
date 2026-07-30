@@ -110,6 +110,8 @@ and</li>
   <pre class="language-dart"><code class="language-dart">@override
 Widget build(BuildContext context) {
   final sizes = AppSizes.of(context);
+  final tripTiles = TripStore.instance.trips;
+  final recentTiles = TripStore.instance.recents;
 
   return SafeArea(
     child: LayoutBuilder(
@@ -150,11 +152,11 @@ Widget build(BuildContext context) {
                       height: sizes.sliderTileSize,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-                        itemCount: _tripTiles.length,
-                        separatorBuilder: (_, __) =&gt;
+                        itemCount: tripTiles.length,
+                        separatorBuilder: (_, _) =&gt;
                             SizedBox(width: sizes.sliderTileSpacing),
                         itemBuilder: (context, index) {
-                          final item = _tripTiles[index];
+                          final item = tripTiles[index];
 
                           return SquareImageButton(
                             imageAsset: item.asset,
@@ -185,11 +187,11 @@ Widget build(BuildContext context) {
                       height: sizes.sliderTileSize,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-                        itemCount: _recentTiles.length,
-                        separatorBuilder: (_, __) =&gt;
+                        itemCount: recentTiles.length,
+                        separatorBuilder: (_, _) =&gt;
                             SizedBox(width: sizes.sliderTileSpacing),
                         itemBuilder: (context, index) {
-                          final item = _recentTiles[index];
+                          final item = recentTiles[index];
 
                           return SquareImageButton(
                             imageAsset: item.asset,

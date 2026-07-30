@@ -64,7 +64,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">factory PrivacySettings.fromJson(Map&lt;String, dynamic&gt; json) {
-  final fallback = defaults;
+  const fallback = defaults;
   return PrivacySettings(
     privateProfile: _asBool(json[&#39;privateProfile&#39;], fallback.privateProfile),
     onlyPeopleInRadius: _asBool(

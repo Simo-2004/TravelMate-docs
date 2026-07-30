@@ -115,7 +115,7 @@ Widget build(BuildContext context) {
   final listView = ListView.separated(
     scrollDirection: Axis.vertical,
     itemCount: mates.length,
-    separatorBuilder: (_, __) =&gt; SizedBox(height: resolvedItemSpacing),
+    separatorBuilder: (_, _) =&gt; SizedBox(height: resolvedItemSpacing),
     itemBuilder: (context, index) {
       final mate = mates[index];
 
@@ -128,10 +128,7 @@ Widget build(BuildContext context) {
     },
   );
   final listContent = resolvedListHeight.isFinite
-      ? SizedBox(
-          height: resolvedListHeight,
-          child: listView,
-        )
+      ? SizedBox(height: resolvedListHeight, child: listView)
       : Expanded(child: listView);
 
   return SliderSection(
@@ -141,10 +138,9 @@ Widget build(BuildContext context) {
             padding: EdgeInsets.only(top: sizes.padXs),
             child: Text(
               emptyMessage,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(fontSize: sizes.textSm),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontSize: sizes.textSm),
             ),
           )
         : listContent,

@@ -120,49 +120,72 @@ Widget build(BuildContext context) {
       ),
     ),
     body: SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            sizes.padL,
-            sizes.padL,
-            sizes.padL,
-            sizes.padL * 1.4,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: sizes.padS),
-              MateDetailsPanel(
-                name: mate.name,
-                description: mate.description,
-                profileImageAsset: mate.profileImageAsset,
-                nameTrailing: ValueListenableBuilder&lt;List&lt;SavedTripPreview&gt;&gt;(
-                  valueListenable: SavedTripPreviewStore.instance,
-                  builder: (context, _, __) {
-                    final isSaved = SavedTripPreviewStore.instance.isSaved(
-                      _buildMatePreview(),
-                    );
+      child: Stack(
+        children: [
+          &#47;&#47; Positioned.fill (rather than a plain child) makes this the
+          &#47;&#47; only content Stack sizes around, so Stack claims the full
+          &#47;&#47; available height instead of shrink-wrapping to the profile
+          &#47;&#47; content — otherwise the floating button below would anchor
+          &#47;&#47; itself to the bottom of the content instead of the screen.
+          Positioned.fill(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  sizes.padL,
+                  sizes.padL,
+                  sizes.padL,
+                  sizes.padL * 3.4,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: sizes.padS),
+                    MateDetailsPanel(
+                      name: mate.name,
+                      description: mate.description,
+                      profileImageAsset: mate.profileImageAsset,
+                      nameTrailing:
+                          ValueListenableBuilder&lt;List&lt;SavedTripPreview&gt;&gt;(
+                            valueListenable: SavedTripPreviewStore.instance,
+                            builder: (context, _, _) {
+                              final isSaved = SavedTripPreviewStore.instance
+                                  .isSaved(_buildMatePreview());
 
-                    return SaveTripButton(
-                      isSaved: isSaved,
-                      onTap: () =&gt; _toggleMateBookmark(context),
-                    );
-                  },
+                              return SaveTripButton(
+                                isSaved: isSaved,
+                                onTap: () =&gt; _toggleMateBookmark(context),
+                              );
+                            },
+                          ),
+                    ),
+                    MateTagGroup(
+                      title: AppStrings.mateInterestsTitle,
+                      tags: mate.interests,
+                      paletteOffset: 0,
+                    ),
+                    MateTagGroup(
+                      title: AppStrings.matePreferredTripsTitle,
+                      tags: mate.preferredTrips,
+                      paletteOffset: 3,
+                      matchTripTagCatalog: true,
+                    ),
+                  ],
                 ),
               ),
-              MateTagGroup(
-                title: AppStrings.mateInterestsTitle,
-                tags: mate.interests,
-                paletteOffset: 0,
-              ),
-              MateTagGroup(
-                title: AppStrings.matePreferredTripsTitle,
-                tags: mate.preferredTrips,
-                paletteOffset: 3,
-              ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: sizes.padL,
+            child: Center(
+              child: ChatButton(
+                label: AppStrings.mateChatButtonLabel,
+                onTap: () =&gt; _openChat(context),
+              ),
+            ),
+          ),
+        ],
       ),
     ),
   );

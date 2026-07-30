@@ -115,7 +115,8 @@ Widget build(BuildContext context) {
 
   final sizes = AppSizes.of(context);
   final resolvedPadding = padding ?? EdgeInsets.only(top: sizes.spaceM);
-  final resolvedTagPadding = tagPadding ??
+  final resolvedTagPadding =
+      tagPadding ??
       EdgeInsets.symmetric(
         horizontal: sizes.padL,
         vertical: sizes.padS * 0.9,
@@ -125,22 +126,36 @@ Widget build(BuildContext context) {
   final tripTags = tags
       .asMap()
       .entries
-      .map(
-        (entry) {
-          final index = entry.key;
-          final tag = entry.value;
-          final paletteIndex =
-              (index + paletteOffset) % _defaultPalette.length;
-          final palette = _defaultPalette[paletteIndex];
+      .map((entry) {
+        final index = entry.key;
+        final tag = entry.value;
 
-          return TripTag(
+        &#47;&#47; When this group mirrors real trip tags (e.g. a mate&#39;s
+        &#47;&#47; preferred trips), reuse the actual trip tag&#39;s colors instead
+        &#47;&#47; of the arbitrary cycling palette below, so the chip matches
+        &#47;&#47; how that same tag looks on a real trip.
+        if (matchTripTagCatalog) {
+          final catalogTag = TripTagCatalog.resolve(tag);
+          if (catalogTag != null) {
+            return TripTag(
+              label: catalogTag.label,
+              backgroundColor:
+                  tagBackgroundColor ?? catalogTag.backgroundColor,
+              textColor: tagTextColor ?? catalogTag.textColor,
+              borderColor: tagBorderColor ?? catalogTag.borderColor,
+            );
+          }
+        }
+
+        final palette = MateTagPalette.resolve(index + paletteOffset);
+
+        return TripTag(
           label: tag,
           backgroundColor: tagBackgroundColor ?? palette.backgroundColor,
           textColor: tagTextColor ?? palette.textColor,
           borderColor: tagBorderColor ?? palette.borderColor,
         );
-        },
-      )
+      })
       .toList(growable: false);
 
   return Padding(
