@@ -87,7 +87,7 @@ features:
       height: 48
     title: Testing & Integration
     details: Static analysis, coverage and duplication results measured against the quality criteria adopted for the project.
-    link: /system-testing
+    link: /testing/overview
     linkText: Open Testing
 ---
 ---

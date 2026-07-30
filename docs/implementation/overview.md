@@ -10,7 +10,7 @@ Implementation is the base of the V-model, at which specification ends and const
 
 | Specifying phase | Verified by |
 |------------------|-------------|
-| [RAD](../rad/overview) — requirements | [System testing](../system-testing) |
+| [RAD](../rad/overview) — requirements | [System testing](../testing/overview) |
 | [SDD](../sdd/overview) — architecture | Integration testing |
 | [ODD](../odd/overview) — class interfaces | Unit testing |
 

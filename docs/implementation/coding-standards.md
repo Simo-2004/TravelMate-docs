@@ -35,7 +35,7 @@ A comment states **why** an element takes the form it does, the form itself bein
 
 ## Test suite
 
-The tests are source subject to every convention above and are analysed together with the application. They are recorded here because they are written during construction; the results obtained from them belong to [Phase 5](../system-testing).
+The tests are source subject to every convention above and are analysed together with the application. They are recorded here because they are written during construction; the results obtained from them belong to [Phase 5](../testing/overview).
 
 Each is exercised against the substitutes specified in [ODD 3](../odd/class-interfaces/), so that no test requires a database, a key store or a device. A shared harness supplies those substitutes.
 

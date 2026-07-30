@@ -1,6 +1,6 @@
 # 4.5 Quality Criteria
 
-The thresholds a change to the source is required to satisfy, and the analysis by which satisfaction is established. The criteria constrain construction: they state what a change must satisfy to be admitted, not what the completed system is found to achieve. The results obtained against them belong to [Phase 5](../system-testing).
+The thresholds a change to the source is required to satisfy, and the analysis by which satisfaction is established. The criteria constrain construction: they state what a change must satisfy to be admitted, not what the completed system is found to achieve. The results obtained against them belong to [Phase 5](../testing/overview).
 
 ## The thresholds adopted
 
