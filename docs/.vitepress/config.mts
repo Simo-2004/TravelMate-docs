@@ -166,8 +166,10 @@ const waterfallSidebar = [
     text: 'Phase 5: Testing & Integration',
     collapsed: false,
     items: [
-      // Assicurati che system-testing.md sia nella stessa cartella base (es. docs/)
-      { text: 'System Testing (SonarCloud)', link: '/system-testing' }
+      { text: 'Overview', link: '/testing/overview' },
+      { text: '5.1 System Quality', link: '/testing/system-quality' },
+      { text: '5.2 System Testing', link: '/testing/system-testing' },
+      { text: '5.3 Requirements Traceability', link: '/testing/requirements-traceability' }
     ]
   },
   {
@@ -208,7 +210,7 @@ export default withMermaid({
       
       // Serve per mappare correttamente anche i due file nuovi se li hai messi nella root
       '/feasibility-study': waterfallSidebar,
-      '/system-testing': waterfallSidebar,
+      '/testing/': waterfallSidebar,
     },
 
     footer: { 
