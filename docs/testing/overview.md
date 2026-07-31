@@ -1,10 +1,8 @@
 # Testing & Integration
 
-> **Status: skeleton.** The structure of this document is fixed; the chapters are placeholders and their content is to be written.
-
 This document records the verification of TravelMate: what was measured, what was exercised, and what each result establishes about the specifications of the preceding phases.
 
-It records **results**. The thresholds those results are assessed against are set in [4.5](../implementation/quality-criteria), the commands producing them in [4.4](../implementation/build-process), and the conventions the source is required to obey in [4.2](../implementation/coding-standards). None is restated here.
+It records **results**. The thresholds those results are assessed against are set in [4.5](../implementation/quality-criteria), the commands producing them in [4.4](../implementation/build-process), and the conventions the source must obey in [4.2](../implementation/coding-standards). None is restated here.
 
 ## Position in the lifecycle
 
@@ -16,7 +14,7 @@ Verification is the ascending side of the V-model. Each specifying phase is answ
 | [SDD](../sdd/overview) — architecture | Integration testing | [5.2](./system-testing) |
 | [RAD](../rad/overview) — requirements | System testing | [5.2](./system-testing), [5.3](./requirements-traceability) |
 
-Static quality is examined separately from behaviour: a source that behaves correctly may still fail the maintainability criteria, and a source satisfying them may still behave incorrectly. [5.1](./system-quality) records the first, [5.2](./system-testing) the second.
+Static quality is examined separately from behaviour: source that behaves correctly may still fail the maintainability criteria, and source that satisfies them may still behave incorrectly. [5.1](./system-quality) records the first, [5.2](./system-testing) the second.
 
 ## Contents
 

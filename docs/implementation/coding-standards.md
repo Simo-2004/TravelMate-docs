@@ -39,19 +39,26 @@ The tests are source subject to every convention above and are analysed together
 
 Each is exercised against the substitutes specified in [ODD 3](../odd/class-interfaces/), so that no test requires a database, a key store or a device. A shared harness supplies those substitutes.
 
-| Test file | Exercises | Corresponding specification |
-|-----------|-----------|----------------------------|
-| `logic_test.dart` | Trip and companion ranking, reply selection, proposal matching, validation, tag normalisation, and the domain objects | [ODD 3.3](../odd/class-interfaces/domain-logic) |
-| `persistence_test.dart` | The preference-store data sources and the state-owning classes reading them | [ODD 3.2](../odd/class-interfaces/application-state), [3.4](../odd/class-interfaces/persistence) |
-| `profile_sqlite_test.dart` | The cipher, the key provider, the profile repository and its data source | [ODD 3.6](../odd/class-interfaces/security), [3.4](../odd/class-interfaces/persistence) |
-| `chat_sqlite_test.dart` | The conversation repository, its data source, and the store reading them | [ODD 3.4](../odd/class-interfaces/persistence), [3.2](../odd/class-interfaces/application-state) |
-| `auth_test.dart` | Credential derivation and verification, and the account repository | [ODD 3.6](../odd/class-interfaces/security), [3.4](../odd/class-interfaces/persistence) |
-| `trip_sqlite_test.dart` | Catalogue seeding and reading | [ODD 3.4](../odd/class-interfaces/persistence) |
-| `widgets_test.dart`, `screens_test.dart` | The shared interface elements and the screens composed from them | [ODD 3.1](../odd/class-interfaces/presentation) |
-| `login_test.dart`, `account_creation_test.dart` | Entry and account creation, through their substitutable operations | [ODD 3.1](../odd/class-interfaces/presentation) |
-| `navigation_test.dart` | Selection of a destination and the consuming of a focus request | [ODD 3.1](../odd/class-interfaces/presentation) |
+### Organisation
 
-The largest group exercises Domain Logic, which follows from its specification: every operation there is pure, and a pure operation is exercised by supplying arguments and comparing the result.
+The suite is arranged by **testing level**, one directory per level, so that the directory a test is placed in states what kind of failure it reports.
+
+| Directory | Scope of one test |
+|-----------|------------------|
+| `unit/` | One function, in isolation |
+| `object/` | One class, over its whole interface and every state it can hold |
+| `component/` | One widget or screen, through its own interface |
+| `integration/` | Several layers wired together, across their interfaces |
+| `system/` | The assembled application, driven as a person would |
+| `regression/` | A specific defect that was fixed, and the behaviour that replaced it |
+| `security/` | The guarantees for data at rest, from the position of someone holding the stored files |
+| `helpers/` | The shared harness: substitutes, builders and the plumbing for driving the application |
+
+The first five follow the levels of the V-model, each answering the specification made at the corresponding phase. The last three are not levels: two are defined by concern, and one holds no tests.
+
+A test is placed by the question it answers, not by the class it happens to touch. A test that runs one screen with substitutes behind it belongs to `component/` even where it reaches a state-owning class, because a failure in it reports that the screen is wrong.
+
+The tests themselves, and what each level establishes, are recorded in [5.2](../testing/system-testing).
 
 The classes excluded from coverage measurement in [4.5](./quality-criteria) are those holding no decision — the concrete classes addressing the database, the key store and the gallery. The logic they carry is exercised through the classes above them.
 
