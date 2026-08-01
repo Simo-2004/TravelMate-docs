@@ -43,6 +43,10 @@
 .vp-doc .phone-shots figure {
   margin: 0;
   max-width: 250px;
+  /* min-width:0 lets the figure shrink below 250px on a very narrow screen.
+     Without it a flex item refuses to go under its content width and the page
+     scrolls sideways. */
+  min-width: 0;
   flex: 0 1 250px;
 }
 

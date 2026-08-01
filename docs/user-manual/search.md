@@ -1,36 +1,67 @@
 # 3. Finding Trips and Companions
 
-> **Status: placeholder.**
+This chapter covers searching, switching between trips and companions, and what opening a result shows.
 
-To be written: how to search, how to switch between searching for trips and searching for people, and what opening a result shows.
+## Searching
 
-Intended scope:
+Open the **Search** tab and type in the field at the top. Results appear as you type and narrow with each character; there is no button to press.
 
-- **Starting a search** — where the field is, and that results narrow as you type.
-- **Choosing what to search** — the control that switches between trips and companions, and what each returns.
-- **Reading the results** — what a result card shows, and the order results appear in.
-- **Seeing all results** — submitting the query opens the full list, which can be refined without going back.
-- **Opening a trip** — the itinerary screen: the destination, the description, the tags and the images.
-- **Opening a companion** — their profile: description, interests and preferred trips, and the buttons for messaging or saving them.
-- **When nothing matches** — what the screen shows, and what to try.
+A search looks at more than the title. For a trip it also matches the destination, the description and the tags; for a companion, the description and their tags. Capital letters do not matter.
 
-## Screenshots to include
+Typing more than one word narrows the result further: only entries matching **every** word are kept.
+
+## Trips or companions
+
+The round button at the bottom right sets what is searched. It shows what you are searching now — **Trips** or **Mates** — and tapping it switches to the other.
+
+The field and the heading above the results follow the switch, so you can always tell which one is active.
 
 <div class="phone-shots">
   <figure>
-    <img src="/static/manual/placeholder.svg" alt="The search field with results below" />
-    <figcaption>Searching, with results narrowing as you type</figcaption>
+    <img src="/static/manual/chapter3-image1.jpg" alt="Searching for trips" />
+    <figcaption>Searching <strong>Trips</strong></figcaption>
   </figure>
   <figure>
-    <img src="/static/manual/placeholder.svg" alt="The trips and companions switch" />
-    <figcaption>Switching between trips and companions</figcaption>
-  </figure>
-  <figure>
-    <img src="/static/manual/placeholder.svg" alt="A trip itinerary" />
-    <figcaption>A trip opened from the results</figcaption>
-  </figure>
-  <figure>
-    <img src="/static/manual/placeholder.svg" alt="A companion profile" />
-    <figcaption>A companion opened from the results</figcaption>
+    <img src="/static/manual/chapter3-image2.jpg" alt="Searching for companions" />
+    <figcaption>Searching <strong>Companions</strong> </figcaption>
   </figure>
 </div>
+
+Results are ordered by how well each one matches. A match at the start of a title counts for more than one in the middle of a description, so the closest results come first. Only the best few are shown under the field; submitting the query opens the full list.
+
+If nothing matches, the list is simply empty. Try fewer words, or switch to the other mode.
+
+## Opening a trip
+
+Tapping a trip opens its itinerary.
+
+<div class="phone-shots">
+  <figure>
+    <img src="/static/manual/chapter3-image3.jpg" alt="A trip itinerary" />
+    <figcaption>A trip, with its images, tags and description</figcaption>
+  </figure>
+</div>
+
+The screen holds:
+
+- **Images**, which you swipe through. The counter in the corner shows where you are.
+- **Tags** describing the trip.
+- **A description** of the route.
+- **A bookmark button** for saving the trip, covered in [chapter 4](./saved).
+
+## Opening a companion
+
+Tapping a companion opens their profile.
+
+<div class="phone-shots">
+  <figure>
+    <img src="/static/manual/chapter3-image4.jpg" alt="A companion profile" />
+    <figcaption>A companion, with interests, preferred trips and the Chat button</figcaption>
+  </figure>
+</div>
+
+The screen holds their photo, name and description, then two sets of tags: **Interests**, and **Preferred trips**. These are what a search matches against, and what decides whether they accept a trip you share with them.
+
+The **Chat** button at the bottom opens a conversation with them, covered in [chapter 5](./conversations). The bookmark button beside their name saves them.
+
+Use the arrow at the top left, or the back gesture, to return to the results.
