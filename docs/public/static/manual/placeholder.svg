@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 520" width="250" height="520" role="img" aria-label="Screenshot placeholder">
+  <rect width="250" height="520" rx="18" fill="#f2f4f7"/>
+  <rect x="0.5" y="0.5" width="249" height="519" rx="18" fill="none" stroke="#c9cfd8"/>
+  <rect x="86" y="18" width="78" height="7" rx="3.5" fill="#d5dae2"/>
+  <g fill="#c9cfd8">
+    <rect x="26" y="60" width="120" height="12" rx="6"/>
+    <rect x="26" y="86" width="198" height="8" rx="4"/>
+    <rect x="26" y="104" width="160" height="8" rx="4"/>
+  </g>
+  <rect x="26" y="140" width="198" height="112" rx="12" fill="#e3e7ee"/>
+  <rect x="26" y="270" width="198" height="112" rx="12" fill="#e3e7ee"/>
+  <g fill="#c9cfd8">
+    <rect x="26" y="400" width="140" height="8" rx="4"/>
+    <rect x="26" y="418" width="100" height="8" rx="4"/>
+  </g>
+  <rect x="16" y="462" width="218" height="44" rx="14" fill="#e3e7ee"/>
+  <g fill="#c2c9d3">
+    <circle cx="52" cy="484" r="7"/>
+    <circle cx="107" cy="484" r="7"/>
+    <circle cx="162" cy="484" r="7"/>
+    <circle cx="217" cy="484" r="7"/>
+  </g>
+  <text x="125" y="228" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#9aa5b8">screenshot</text>
+</svg>

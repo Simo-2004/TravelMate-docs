@@ -181,6 +181,25 @@ const waterfallSidebar = [
   }
 ];
 
+// Sidebar del manuale utente. Volutamente separata da quella del ciclo a
+// cascata: il manuale si rivolge a chi usa l'app, non a chi la costruisce.
+const userManualSidebar = [
+  {
+    text: 'User Manual',
+    collapsed: false,
+    items: [
+      { text: 'Overview', link: '/user-manual/' },
+      { text: '1. Getting Started', link: '/user-manual/getting-started' },
+      { text: '2. Moving Around the App', link: '/user-manual/navigation' },
+      { text: '3. Finding Trips and Companions', link: '/user-manual/search' },
+      { text: '4. Saving Trips and Companions', link: '/user-manual/saved' },
+      { text: '5. Conversations', link: '/user-manual/conversations' },
+      { text: '6. Your Profile', link: '/user-manual/profile' },
+      { text: '7. Settings and Privacy', link: '/user-manual/settings' }
+    ]
+  }
+];
+
 export default withMermaid({
   // Render diagram labels as native SVG <text> instead of HTML in <foreignObject>.
   // The foreignObject path clips class-diagram multiplicity labels ("0..*", "1..*")
@@ -195,16 +214,21 @@ export default withMermaid({
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
-      // Modificato: il link principale ora punta all'inizio della cascata (Fase 1)
-      { text: 'Waterfall Lifecycle', link: '/feasibility-study' }, 
+      // Il link principale punta all'inizio della cascata (Fase 1)
+      { text: 'Waterfall Lifecycle', link: '/feasibility-study' },
+      { text: 'User Manual', link: '/user-manual/' },
       { text: 'API Reference', link: '/api/index.html', target: '_blank' }
     ],
 
-    // Una sola voce '/' applica la sidebar a OGNI pagina del sito, comprese
-    // quelle nella root (/deployment, /feasibility-study, ...). Elencare i
+    // Il manuale utente ha una sidebar propria: non fa parte del ciclo a
+    // cascata e non deve comparire fra le sue fasi. Il percorso più specifico
+    // va dichiarato per primo.
+    // La voce '/' applica la sidebar del ciclo a OGNI altra pagina, comprese
+    // quelle nella root (/deployment, /feasibility-study, ...): elencare i
     // singoli percorsi lasciava senza sidebar qualsiasi pagina dimenticata.
     // La home usa layout: home e non mostra comunque la sidebar.
     sidebar: {
+      '/user-manual/': userManualSidebar,
       '/': waterfallSidebar,
     },
 
