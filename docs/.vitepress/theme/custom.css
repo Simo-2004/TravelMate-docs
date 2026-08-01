@@ -28,3 +28,39 @@
 .vp-doc div.mermaid > svg.flowchart {
   width: 900px;
 }
+
+/* User-manual screenshots are taken on a phone, so they are tall and narrow.
+   Left at full width one image would fill the whole page, so each is capped at
+   a phone-like width and several can sit side by side in one row. */
+.vp-doc .phone-shots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.vp-doc .phone-shots figure {
+  margin: 0;
+  max-width: 250px;
+  /* min-width:0 lets the figure shrink below 250px on a very narrow screen.
+     Without it a flex item refuses to go under its content width and the page
+     scrolls sideways. */
+  min-width: 0;
+  flex: 0 1 250px;
+}
+
+.vp-doc .phone-shots img {
+  width: 100%;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 18px;
+  display: block;
+}
+
+.vp-doc .phone-shots figcaption {
+  margin-top: 0.6rem;
+  text-align: center;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: var(--vp-c-text-2);
+}
