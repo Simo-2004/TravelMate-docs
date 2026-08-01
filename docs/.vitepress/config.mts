@@ -176,7 +176,7 @@ const waterfallSidebar = [
     text: 'Phase 6: Deployment',
     collapsed: false,
     items: [
-      { text: 'Release 1.0 (APK)', link: '/deployment' }
+      { text: 'Release & Distribution', link: '/deployment' }
     ]
   }
 ];
@@ -200,17 +200,12 @@ export default withMermaid({
       { text: 'API Reference', link: '/api/index.html', target: '_blank' }
     ],
 
+    // Una sola voce '/' applica la sidebar a OGNI pagina del sito, comprese
+    // quelle nella root (/deployment, /feasibility-study, ...). Elencare i
+    // singoli percorsi lasciava senza sidebar qualsiasi pagina dimenticata.
+    // La home usa layout: home e non mostra comunque la sidebar.
     sidebar: {
-      // Applichiamo la STESSA sidebar universale a tutte le sezioni del sito.
-      // Così, ovunque si trovi l'utente, vedrà l'intero processo a cascata.
-      '/rad/': waterfallSidebar,
-      '/sdd/': waterfallSidebar,
-      '/odd/': waterfallSidebar,
-      '/implementation/': waterfallSidebar,
-      
-      // Serve per mappare correttamente anche i due file nuovi se li hai messi nella root
-      '/feasibility-study': waterfallSidebar,
-      '/testing/': waterfallSidebar,
+      '/': waterfallSidebar,
     },
 
     footer: { 
