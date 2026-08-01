@@ -1,28 +1,23 @@
-# Phase 6: Deployment & Release
+# Deployment & Release
 
+The delivered artefact, how it was produced, and what happens to the system after it.
 
+## Release
 
-> **Methodological Note:** Following the successful completion of the Integration and System Testing phase (with the SonarCloud Quality Gate passed), the TravelMate software has reached its final, production-ready state. In accordance with the final active phase of the Waterfall lifecycle, this document officially marks the Deployment of Release 1.0.
+The application is distributed as a standalone Android package, built in release mode by the command given in [4.4](./implementation/build-process). Release mode compiles ahead of time and leaves out the development instrumentation, so the artefact is the one intended for use rather than for debugging.
 
+Android is the platform the design targets and the one against which the system is verified, as recorded in [SDD 3.3](./sdd/proposed-architecture/hardware-software-mapping). The package carries the whole application: it holds its own data on the device and needs no server, so installing it is the only step required to run it.
 
+👉 **[Download TravelMate (Release 1.2.0)](https://github.com/Simo-2004/TravelMate/releases#release-v1.2.0)**
 
-## 1. Release Overview
+## State of the release
 
-The application has been compiled into an optimized, standalone executable for the Android platform. This local-first version (Release 1.0) fully satisfies the frozen requirements specified in the RAD and adheres strictly to the architecture defined in the SDD and ODD.
+The release realises the requirements the RAD states for the delivered system. Three non-functional requirements are met only in part, each recorded in [5.3](./testing/requirements-traceability) with the respect in which it falls short, and none of them prevents the system from being used.
 
+The requirements the RAD defers — trip organisation, administration, and everything that presupposes a server — are not in this release and were never designed into it.
 
+## After this release
 
-## 2. Application Executable (APK)
+Any later change falls under maintenance and evolution rather than under this lifecycle. A change that adds a requirement — a remote service, a shared database, a new function — starts a new pass through the lifecycle, beginning with an assessment of whether the change is worth making.
 
-The final executable file is built in `release` mode, ensuring maximum performance and a minimal footprint. The APK is officially distributed via the project's repository.
-
-
-
-👉 **[Download TravelMate APK (Release 1.0)](https://github.com/Simo-2004/TravelMate/releases)**
-
-
-
-## 3. Future Lifecycle: Maintenance & Evolution
-
-As dictated by the traditional Software Development Life Cycle (SDLC), any future modifications to this baseline—such as the integration of a remote cloud backend, real-time databases, or new functional requirements—will fall strictly under the **Maintenance and Evolution** phase. Such major updates will trigger a new iteration of the lifecycle, beginning with a new feasibility assessment for the proposed changes.
-
+The design admits such a change without being rewritten. [DG-M3](./sdd/introduction/design-goals) required the logic to depend on abstractions a networked implementation could satisfy equally, and [ODD 2](./odd/packages) keeps the classes that address storage in one package. What a later release would replace is what sits behind those interfaces, not the logic above them.

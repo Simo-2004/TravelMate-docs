@@ -1,68 +1,60 @@
 # Feasibility Study: TravelMate
 
+## 1. Purpose
 
+This is the first formal step of the lifecycle adopted for TravelMate. Its purpose is to decide whether the project should begin. It states the problem, weighs the options for addressing it, estimates the time and resources needed, and records the decision taken.
 
-## 1. Objectives and Scope of the Document
+## 2. Definition of the problem
 
-This document represents the first formal step within the Waterfall software lifecycle adopted for the TravelMate project. The main objective of this feasibility study is to determine whether to initiate the project[cite: 1, 2]. To this end, the document provides a preliminary assessment of costs and benefits, identifies the most appropriate design options, and estimates the necessary human and financial resources[cite: 1, 2].
+A traveller looking for someone to travel with has no dedicated means of finding one. General social platforms are not built for it: they offer no way to match on the things that decide whether two people travel well together — budget, interests, pace, and the kind of trip each has in mind. A search carried out through them is slow, and it puts the traveller in contact with strangers without any of the checks such a meeting would call for.
 
+The problem calls for a dedicated application, built around matching and around the safety of the people using it.
 
+## 3. Options considered
 
-## 2. Preliminary Definition of the Problem
+Three decisions settle the shape of the project.
 
-As required by the methodological specifications, the initial output of this phase is the preliminary definition of the problem[cite: 1, 2]. 
+| Decision | Option taken | Reason |
+|----------|-------------|--------|
+| **Development technology** | A cross-platform framework, compiling one body of logic to more than one platform | One codebase rather than one per platform, which is what makes the schedule attainable by a single developer |
+| **Architecture and data** | A self-contained application, holding its data on the device | Removes the cost of running a server and a remote database, which a zero budget cannot cover |
+| **Visual design** | The interface is prototyped before it is built | Settling the interface in advance avoids rework in the later phases, which a sequential lifecycle makes expensive |
 
-The need arises from a real issue: solo travelers or small groups face increasing difficulties in finding travel companions who are compatible in terms of budget, interests, age group, and travel style. Currently, generic social platforms do not offer targeted matching tools, making the search inefficient and raising critical issues related to safety and reliability. The problem therefore requires a dedicated, structured, and secure software solution acting as a closed ecosystem for travelers.
+The second decision is the one that shapes the rest. An application that keeps its data on the device needs no infrastructure, so the project can be delivered at no cost; but it also means the data has no server to fall back on, which is why the protection of stored data becomes a leading concern in the phases that follow.
 
+### 3.1 Full product vision
 
+Beyond this release, TravelMate is conceived as a full platform for travellers. The vision is recorded here to guide any later development, not to commit this lifecycle to building it:
 
-## 3. Scenarios and Design Options
-To address the outlined problem, various alternative scenarios and design options have been identified and analyzed, leading to the following architectural decisions for Release 1.0:
-*   **Development Technology:** The **Flutter** framework was chosen for front-end development. This option ensures cross-platform deployment (iOS/Android) while maintaining a single codebase, drastically optimizing development time and the human resources available.
-*   **Architecture and Data:** Evaluating the cost/benefit ratio, an initial *local-first* architecture based on local persistence (via `SharedPreferences`) was chosen. This strategy allows the application's ecosystem to be validated while completely eliminating the financial costs associated with maintaining server infrastructure or remote cloud databases.
-*   **Visual Design:** **Figma** was used for UI/UX prototyping, allowing the user experience to be defined in advance to avoid costly rework during the subsequent phases of the Waterfall model.
+- A **client-server architecture** — mobile and web front ends, an application backend, a shared database — giving access to an account from any device.
+- **Identity verification**, trust and safety measures, and moderation tools for an administrator.
+- **Matching performed on the server** at scale, **messaging between real people**, notifications, and trips planned jointly.
+- The obligations a networked platform carries: data protection duties, availability, and capacity for a large number of users.
 
-### 3.1 Complete Product Vision
+Building any part of this is **evolutionary maintenance**. It starts a new lifecycle, beginning with a feasibility study of its own.
 
-Beyond the initial release, TravelMate is envisioned as a full-scale social platform for travellers. This long-term vision — documented here for completeness and to guide any future development — encompasses:
+### 3.2 Scope of this lifecycle
 
-*   A **remote client-server architecture** (mobile/web front-end, application backend, relational database) enabling account-based access from any device.
-*   **User authentication and identity verification**, trust and safety mechanisms, and administrative moderation tools.
-*   **Server-side matching** at scale, integrated **real-time messaging** (1-to-1 and group), notifications, and collaborative trip management.
-*   Compliance and operational requirements typical of a networked platform (privacy regulations, availability, scalability to a large user base).
+The project has a **zero budget** and a **fixed schedule of fourteen weeks**. Building the full vision within them is not possible, so the scope was cut deliberately rather than discovered to be too large partway through.
 
-> *This vision represents the aspirational end-state of the product. It is intentionally kept separate from what the present lifecycle formally commits to building (see §3.2). Under the Waterfall model, realising any part of this vision constitutes **Evolutionary Maintenance** and requires a new, complete lifecycle beginning with its own Feasibility Study.*
+**This lifecycle delivers a self-contained application** covering the core of the product: a personal profile, search for trips and companions, saved items, conversations, and privacy preferences — all held on the device, with no network.
 
-### 3.2 Release Scoping Decision (Waterfall Baseline)
+The rest of the vision is recorded as **deferred**. The RAD carries each deferred item in the section of its module that lists them, and two whole modules — trip organisation and administration — are deferred in full. They are written down so that the record of the intended product stays complete, but they are outside what this lifecycle commits to.
 
-Given the strict constraints of this project — a **zero-cost budget** and a fixed **14-week schedule** — building the complete vision in a single lifecycle is neither feasible nor compatible with the sequential, document-driven nature of the Waterfall model. A formal scoping decision was therefore taken:
+This keeps every later phase working from one buildable baseline, which is what allows the design, the code and the tests to be checked against each other.
 
-*   **This lifecycle delivers Release 1.0**, a **self-contained, local-first** Flutter application realising the core discovery experience: personal profile, local search of trips and companions, saved items (bookmarks), and privacy preferences — all persisted on-device via `SharedPreferences`, with no network dependency.
-*   The remaining capabilities of the Complete Product Vision (§3.1) are recorded as **domain requirements deferred to Evolutionary Maintenance**. They are traced throughout the RAD (tagged `[EM – Deferred]`) and outlined in the informative annexes of the SDD/ODD, but they are **not part of the frozen baseline** of this lifecycle.
+## 4. Time and resources
 
-This scoping keeps the design, implementation, testing, and deployment phases strictly aligned with a coherent, buildable baseline (**design = code**), while preserving the full analytical record of the intended product.
+The work is grouped into phases and spread over fourteen weeks, one work package per phase, each starting only when the one before it is complete.
 
-## 4. Time and Resource Estimation (Gantt Chart)
-Below is the estimation of the development time and working modalities required for the project. The planning strictly follows the Waterfall Model: activities are grouped into homogeneous phases and organized into sequential Work Packages (WP) spread over a 14-week timeframe (S01-S14).
+<img src="/static/pics/diagramma-di-gantt.png" alt="Gantt chart of the fourteen-week schedule" width="100%" style="border: 1px solid #ddd; border-radius: 7px;" />
 
-<iframe src="/static/pics/diagramma-di-gantt.png" width="100%" height="450px" style="border: 1px solid #ddd; border-radius: 7px;"></iframe>
+The diagonal shape and the absence of any bar reaching back into an earlier phase are what the sequential lifecycle means in practice: a phase ends with its documents fixed, and they are not reopened unless a formal review calls for it.
 
-> *Methodological Note: The strictly diagonal trend and the absence of backward overlaps (X) highlight the formal adoption of the sequential lifecycle. Each WP begins only upon completion of the previous phase, whose deliverables are officially frozen so as not to be modifiable, unless a formal review process is triggered.*
+The resource estimate is one developer for the whole period. No paid service, licence or hosting is required, which is what holds the cost at zero.
 
-## 5. Visual Mock-up
-To support the design choices and tangibly assess the feasibility of the solution, a comprehensive graphic document was developed. Attached below is the mockup generated via Figma, which serves as a visual guideline for the product's implementation.
+## 5. Conclusion
 
-<iframe src="/static/pics/homepage.svg" width="440px" height="935px" style="border: 1px solid #dddddd; border-radius: 30px;"></iframe>
+The assessment of costs against benefits is positive. A cross-platform framework and an application that holds its own data keep the project inside a zero budget and a fourteen-week schedule, and leave enough of that schedule for the design and verification a sequential lifecycle requires.
 
-*(If you cannot view the frame correctly, you can download the full document [by clicking here](/static/pics/homepage.svg)).*
-
-
-
-## 6. Final Evaluation and Conclusion
-
-The overall analysis produced a clearly positive preliminary assessment of costs and benefits[cite: 1, 2]. The use of a local architecture and a *cross-platform* framework allows development costs to be kept within the predefined (zero) budget and timeframe (14 weeks), while ensuring a high quality standard. 
-
-
-
-**Decision:** The Feasibility Study is approved. The formal start of the project and the transition to the next **Requirements Analysis (RAD)** phase for drafting formal specifications are hereby authorized.
-
+**The study is approved.** The project starts, and the next phase is the [Requirements Analysis Document](./rad/overview), in which the requirements are stated formally.
