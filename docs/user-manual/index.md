@@ -1,7 +1,5 @@
 # User Manual
 
-> **Status: skeleton.** The structure is fixed; the chapters are placeholders and their content is to be written.
-
 This manual explains how to use TravelMate. It covers opening the app for the first time, finding your way around it, and every task it lets you carry out.
 
 It is written for someone using the app, not for someone building it. No technical knowledge is needed, and nothing here assumes you have read any other document on this site.
