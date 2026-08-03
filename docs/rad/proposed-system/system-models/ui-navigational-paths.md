@@ -50,3 +50,7 @@ Every screen that alters stored data reports the outcome through a transient not
 The following belong to the envisioned platform and have no counterpart in the delivered system: password recovery and email verification; a multi-step introduction for a first-time Traveler; a conversations list and group conversations; a section devoted to the Traveler's own trips, those they have joined, and the creation of new ones; the list of Travelers they have blocked; account management including obtaining and erasing one's data; and the dialogues for reporting or blocking another Traveler.
 
 Two of these deserve mention because they are commonly expected of an application of this kind and are deliberately absent. A **swipeable recommendation feed** presenting one companion at a time with a compatibility percentage would require the matching described in [3.2.2](../functional); the delivered system offers instead the Home carousels and the ranked results of a search. An **advanced filter screen**, restricting results by age, budget, language, or location, would require information the delivered system does not hold about companions.
+
+## Screen mockups
+
+The mockups for the screens described above are available at the following Figma file: [Figma Mockups](https://www.figma.com/design/Z3Ac0nogw45Vh2j7Vyhk2l/Ingegneria-del-software-team-library?node-id=0-1).
